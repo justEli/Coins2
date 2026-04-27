@@ -1,0 +1,5 @@
+name: '${project.name}'
+main: '${project.groupId}.${plugin.main}'
+version: '${project.version}'
+api-version: '${plugin.api-version}'
+folia-supported: true

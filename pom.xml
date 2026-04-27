@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>community.coins.plugin</groupId>
+    <artifactId>Coins2</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>Coins</module>
+        <module>coins2-core</module>
+        <module>coins2-paper</module>
+        <module>coins2-spigot</module>
+        <module>folialib</module>
+    </modules>
+
+    <properties>
+        <!-- plugin details -->
+        <project.name>Coins2</project.name>
+        <revision>2.0</revision>
+
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- dependency versions -->
+        <version.maven-shade-plugin>3.6.2</version.maven-shade-plugin>
+        <version.directory-maven-plugin>1.0</version.directory-maven-plugin>
+        <version.maven-resources-plugin>3.4.0</version.maven-resources-plugin>
+
+        <!-- settings for (paper-)plugin.yml -->
+        <plugin.api-version>1.21.11</plugin.api-version>
+
+        <!-- platform versions -->
+        <version.spigot>26.1.2-R0.1-SNAPSHOT</version.spigot>
+        <version.paper>[26.1.2.build,)</version.paper>
+        <version.folia>1.21.11-R0.1-SNAPSHOT</version.folia>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>papermc-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <finalName>${project.artifactId}-${revision}</finalName>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <targetPath>.</targetPath>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${version.maven-shade-plugin}</version>
+                <configuration>
+                    <shadedArtifactAttached>false</shadedArtifactAttached>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>${project.groupId}</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/**</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>${version.directory-maven-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>highest-basedir</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <property>project.directory.base</property>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${version.maven-resources-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>copy-files-on-build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.directory.base}/target</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <include>*.jar</include>
+                                    <exclude>original-*.jar</exclude>
+                                    <exclude>*-shaded.jar</exclude>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
