@@ -1,5 +1,6 @@
 package community.coins.plugin.api;
 
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
 
@@ -18,6 +19,10 @@ public abstract class BasicPlugin extends JavaPlugin {
     public abstract PluginAttributes getAttributes();
 
     public abstract ItemParseApi getItemParseApi();
+
+    public void parseEventHandlers(Listener listener) {
+        getServer().getPluginManager().registerEvents(listener, this);
+    }
 
     public static final String LINE = "--------------------------------------------------------------------";
 

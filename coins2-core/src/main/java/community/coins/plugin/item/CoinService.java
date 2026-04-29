@@ -8,13 +8,8 @@ import community.coins.plugin.CoinsCore;
  */
 public final class CoinService {
     private final CoinsCore coins;
-    private final CoinMeta coinMeta;
     public CoinService(CoinsCore coins) {
         this.coins = coins;
-        this.coinMeta = new CoinMeta(coins);
-    }
 
-    public CoinMeta getCoinMeta() {
-        return coinMeta;
     }
 }

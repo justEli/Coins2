@@ -4,7 +4,9 @@ import community.coins.plugin.api.BasicPlugin;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigYml;
 import community.coins.plugin.folialib.FoliaScheduler;
+import community.coins.plugin.handler.MobTransformHandler;
 import community.coins.plugin.item.CoinService;
+import community.coins.plugin.data.PersistentData;
 import community.coins.plugin.metrics.Stats;
 import community.coins.plugin.util.VersionCheck;
 
@@ -16,6 +18,9 @@ public abstract class CoinsCore extends BasicPlugin {
     @Override
     public void onEnable() {
         beforeCoreLoaded();
+
+        // basic utilities
+        this.persistentData = new PersistentData(this);
 
         // scheduler setup with folia and Bukkit support
         this.foliaScheduler = new FoliaScheduler(this);
@@ -31,7 +36,16 @@ public abstract class CoinsCore extends BasicPlugin {
         getLogger().info("Loading CoinsCore");
         new Stats(this);
 
+        // some event handling
+        new MobTransformHandler(this);
+
+        // things to load after core enabled
         afterCoreLoaded();
+    }
+
+    private PersistentData persistentData;
+    public PersistentData getPersistentData() {
+        return persistentData;
     }
 
     private FoliaScheduler foliaScheduler;
