@@ -25,20 +25,7 @@ public final class ItemEnchantType extends EventType {
         super(coins, service, "item_enchant", filter);
     }
 
-    // event: 'item_enchant'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     enabled: true
-    //     type: List<String>   (enchantment types)
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#item_enchant
 
     // todo allow calculations with with event.getExpLevelCost()
     @EventHandler(ignoreCancelled = true)

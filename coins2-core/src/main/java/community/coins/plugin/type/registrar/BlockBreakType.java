@@ -30,22 +30,7 @@ public final class BlockBreakType extends EventType {
         super(coins, service, "block_break", filter);
     }
 
-    // event: 'block_break'
-    // filters:
-    //   initiator:
-    //     type: ['player', 'enderman']
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     type: List<String>   (block types)
-    //     min-xp-drop: Integer
-    //     allow-same-block: Boolean
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#block_break
 
     // todo default config set xp to drop > 0
     @EventHandler(ignoreCancelled = true)

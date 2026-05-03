@@ -46,6 +46,12 @@ public final class EventFilterBuilder {
 
     // target
 
+    // todo allow multiplier to be set on the type. for example
+    // type:
+    //   'diamond_ore': 5
+    //   'gold_ore': 2
+    // instead of
+    // type: [diamond_ore, gold_ore]
     public EventFilterBuilder hasTargetType() {
         allows("target", "type");
         return this;

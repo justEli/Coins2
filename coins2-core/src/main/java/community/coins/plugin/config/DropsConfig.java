@@ -60,11 +60,14 @@ public final class DropsConfig implements FileConfig<DefinedDrop> {
             }
 
             String definedEvent = drop.getString("event"); // predefined event in the plugin
-            ConfigurationSection filters = drop.getConfigurationSection("filters");
-            if (definedEvent == null || filters == null) {
-                // todo it is kind of fine that it doesn't have a filter, just don't filter it
-                service.printConfigWarning(getFileName(), "No event type or filter found for drop '%s'.".formatted(dropName));
+            if (definedEvent == null) {
+                service.printConfigWarning(getFileName(), "No event type found for drop '%s'.".formatted(dropName));
                 continue;
+            }
+
+            boolean enabled = drop.contains("enabled") && !drop.getBoolean("enabled");
+            if (!enabled) {
+                continue; // drop is not enabled
             }
 
             Optional<EventType> eventType = coins.getEventTypeService().getEventType(definedEvent.toLowerCase());
@@ -77,6 +80,7 @@ public final class DropsConfig implements FileConfig<DefinedDrop> {
 
             // todo handle section 'filters' with DefinedDrop and EventType
             // todo implement
+            ConfigurationSection filters = drop.getConfigurationSection("filters"); // can be null!
             eventType.get().getFilter().applyConfig(filters, definedEvent.toLowerCase());
             coins.debug("Registered drop '%s' for event type '%s'.".formatted(dropName, definedEvent));
         }

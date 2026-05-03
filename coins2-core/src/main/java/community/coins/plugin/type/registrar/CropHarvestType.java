@@ -28,20 +28,7 @@ public final class CropHarvestType extends EventType {
         super(coins, service, "crop_harvest", filter);
     }
 
-    // event: 'crop_harvest'
-    // filters:
-    //   initiator:
-    //     type: ['player', 'villager']
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     type: List<String>   (block types)
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#crop_harvest
 
     @EventHandler(ignoreCancelled = true)
     void onBlockBreakEvent(BlockBreakEvent event) {

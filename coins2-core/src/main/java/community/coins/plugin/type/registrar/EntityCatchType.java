@@ -22,22 +22,7 @@ public final class EntityCatchType extends EventType {
         super(coins, service, "entity_catch", filter);
     }
 
-    // event: 'entity_catch'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     enabled: true
-    //     type: List<String>   (entity type, i.e. cod, clown_fish, etc.)
-    //     category: List<String>   (passive, hostile, tameable, from_spawner, from_split, etc.)
-    //     min-xp-drop: Integer
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#entity_catch
 
     @EventHandler(ignoreCancelled = true)
     void onPlayerFishEvent(PlayerFishEvent event) {

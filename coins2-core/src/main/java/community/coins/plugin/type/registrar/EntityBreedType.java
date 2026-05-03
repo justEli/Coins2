@@ -21,22 +21,7 @@ public final class EntityBreedType extends EventType {
         super(coins, service, "entity_breed", filter);
     }
 
-    // event: 'entity_breed'
-    // filters:
-    //   initiator:
-    //     type: ['player']
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     enabled: true
-    //     type: List<String>     (entity types)
-    //     category: List<String>   (passive, hostile, tameable, from_spawner, from_split, etc.)
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#entity_breed
 
     @EventHandler(ignoreCancelled = true)
     void onEntityBreedEvent(EntityBreedEvent event) {

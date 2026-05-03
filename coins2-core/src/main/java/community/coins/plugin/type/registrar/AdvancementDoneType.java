@@ -21,16 +21,7 @@ public final class AdvancementDoneType extends EventType {
         super(coins, service, "advancement_done", filter);
     }
 
-    // event: 'advancement_done'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     type: List<String>   (advancement types)
-    //   location:
-    //     disabled-worlds: List<String>
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#advancement_done
 
     @EventHandler(ignoreCancelled = true)
     void onPlayerAdvancementDoneEvent(PlayerAdvancementDoneEvent event) {

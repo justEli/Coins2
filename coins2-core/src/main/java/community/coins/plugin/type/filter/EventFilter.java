@@ -3,6 +3,7 @@ package community.coins.plugin.type.filter;
 import community.coins.plugin.CoinsCore;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +40,12 @@ public final class EventFilter {
         return eventIdentifier;
     }
 
-    public void applyConfig(ConfigurationSection config, String eventType) {
+    public void applyConfig(@Nullable ConfigurationSection config, String eventType) {
+        if (config == null) {
+            filterConfig.set(new FilterConfig()); // no filters
+            return;
+        }
+
         filterConfig.set(null);
 
         var filter = new FilterConfig();

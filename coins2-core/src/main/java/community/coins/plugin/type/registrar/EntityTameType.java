@@ -22,21 +22,7 @@ public final class EntityTameType extends EventType {
         super(coins, service, "entity_tame", filter);
     }
 
-    // event: 'entity_tame'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     enabled: true
-    //     type: List<String>
-    //     category: List<String>   (passive, hostile, tameable, from_spawner, from_split, etc.)
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#entity_tame
 
     @EventHandler(ignoreCancelled = true)
     void onEntityTameEvent(EntityTameEvent event) {

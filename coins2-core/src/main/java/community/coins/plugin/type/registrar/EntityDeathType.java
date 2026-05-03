@@ -29,25 +29,7 @@ public final class EntityDeathType extends EventType {
         super(coins, service, "entity_death", filter);
     }
 
-    // event: 'entity_death'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     type: ['player', 'skeleton', 'any']
-    //     action: ['projectile', 'stabbing', 'any']
-    //     permission: String
-    //   target:
-    //     type: List<String>  (entity types)
-    //     category: List<String>   (passive, hostile, tameable, from_spawner, from_split, etc.)
-    //     min-xp-drop: Integer
-    //     prevent-alts: Boolean  (if player)
-    //     min-player-damage: Double  (percentage)
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#entity_death
 
     @EventHandler(ignoreCancelled = true)
     void onEntityDeathEvent(EntityDeathEvent event) {

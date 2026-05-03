@@ -19,14 +19,7 @@ public final class LootChestOpenType extends EventType {
         super(coins, service, "loot_chest_open", filter);
     }
 
-    // event: 'loot_chest_open'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     permission: String
-    //   location:
-    //     disabled-worlds: List<String>
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#loot_chest_open
 
     @EventHandler
     void onLootGenerateEvent(LootGenerateEvent event) {

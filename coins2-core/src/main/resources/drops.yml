@@ -1,0 +1,240 @@
+# https://github.com/justEli/Coins2/wiki/Defining-drop-filters
+default:
+  filters:
+    location:
+      disabled-worlds: []
+
+# define events with selectors and filters to use in 'drops'
+# every predefined event supports a set of filters
+# essentially modifying an existing event with filters to fit your needs
+drops:
+  'advancement_done': # the id of the event, can be anything you want
+    event: 'advancement_done' # the event to use for this drop
+    coins:
+      'bag_of_gold': # coins id as defined in coins.yml
+        value: 100
+        chance: 1.00
+  'valueable_ore_break':
+    event: 'block_break'
+    filters:
+      target:
+        allow-same-block: false
+        type:
+          - 'minecraft:diamond_ore'
+          - 'minecraft:deepslate_diamond_ore'
+          - 'minecraft:spawner'
+          - 'minecraft:emerald_ore'
+          - 'minecraft:deepslate_emerald_ore'
+          - 'minecraft:gold_ore'
+          - 'minecraft:deepslate_gold_ore'
+          - 'minecraft:nether_gold_ore'
+    coins:
+      'enchanted_gold_coin':
+        value: [10, 20]
+        chance: 0.05
+      'gold_coin':
+        value: [3, 10]
+        chance: 0.80
+  'common_ore_break':
+    event: 'block_break'
+    filters:
+      target:
+        allow-same-block: false
+        type:
+          - 'minecraft:iron_ore'
+          - 'minecraft:deepslate_iron_ore'
+          - 'minecraft:lapis_ore'
+          - 'minecraft:deepslate_lapis_ore'
+          - 'minecraft:copper_ore'
+          - 'minecraft:deepslate_copper_ore'
+          - 'minecraft:nether_quartz_ore'
+          - 'minecraft:coal_ore'
+          - 'minecraft:deepslate_coal_ore'
+          - 'minecraft:redstone_ore'
+          - 'minecraft:deepslate_redstone_ore'
+    coins:
+      'gold_coin':
+        value: [3, 10]
+        chance: 0.10
+      'silver_coin':
+        value: [1, 7]
+        chance: 0.50
+  'mining_block_break':
+    event: 'block_break'
+    filters:
+      initiator:
+        permission: 'coins.drops.mining_block_break' # can remove to allow by default
+      target:
+        allow-same-block: true
+        type:
+          - 'minecraft:stone'
+          - 'minecraft:deepslate'
+          - 'minecraft:granite'
+          - 'minecraft:diorite'
+          - 'minecraft:andesite'
+          - 'minecraft:blackstone'
+          - 'minecraft:basalt'
+    coins:
+      'bronze_coin':
+        value: [1, 3]
+        chance: 0.05
+  'enderman_pickup':
+    event: 'block_break'
+    enabled: false
+    filters:
+      initiator:
+        type: ['minecraft:enderman']
+    coins:
+      'sunflower_coin':
+        value: [5, 20]
+        chance: 0.10
+  'crop_harvest':
+    event: 'crop_harvest'
+    filters:
+      initiator:
+        type: ['minecraft:player'] # can also be/add 'minecraft:villager'
+      location:
+        cooldown:
+          cap-amount: 1
+          duration: '2h'
+    coins:
+      'bronze_coin':
+        value: 1
+        chance: 0.15
+  'animal_breed':
+    event: 'entity_breed'
+    filters:
+      location:
+        cooldown:
+          cap-amount: 1
+          duration: '2h'
+    coins:
+      'gold_coin':
+        value: [3, 10]
+        chance: 0.05
+      'silver_coin':
+        value: [2, 5]
+        chance: 0.70
+  'fish_catch':
+    event: 'entity_catch'
+    filters:
+      target:
+        min-xp-drop: 1
+    coins:
+      'silver_coin':
+        value: [2, 5]
+        chance: 0.35
+  'hostile_entity_kill':
+    event: 'entity_death'
+    filters:
+      initiator:
+        type: ['minecraft:player']
+      target:
+        category: ['hostile', '!from_spawner', '!from_split']
+        min-player-damage: 0.80
+      location:
+        cooldown:
+          cap-amount: 1
+          duration: '2h'
+    coins:
+      'gold_coin':
+        value: [5, 12]
+        chance: 0.05
+      'silver_coin':
+        value: [2, 5]
+        chance: 0.20
+      'bronze_coin':
+        value: [1, 2]
+        chance: 0.60
+  'passive_entity_kill':
+    event: 'entity_death'
+    filters:
+      initiator:
+        type: ['minecraft:player']
+      target:
+        category: ['passive', '!from_spawner']
+        min-player-damage: 0.70
+      location:
+        cooldown:
+          cap-amount: 1
+          duration: '2h'
+    coins:
+      'silver_coin':
+        value: [2, 5]
+        chance: 0.40
+      'bronze_coin':
+        value: [1, 2]
+        chance: 0.50
+  'spawner_entity_kill':
+    event: 'entity_death'
+    filters:
+      initiator:
+        type: ['minecraft:player']
+        permission: 'coins.drops.spawner_entity_kill'
+      target:
+        category: ['from_spawner']
+        min-player-damage: 0.90
+      location:
+        cooldown:
+          cap-amount: 1
+          duration: '6h'
+    coins:
+      'bronze_coin':
+        value: [1, 3]
+        chance: 0.90
+  'animal_tame':
+    event: 'entity_tame'
+    coins:
+      'enchanted_gold_coin':
+        value: [12, 20]
+        chance: 0.30
+      'gold_coin':
+        value: [5, 12]
+        chance: 0.60
+  'item_enchant':
+    event: 'item_enchant'
+    coins:
+      'silver_coin':
+        value: [1, 7]
+        chance: 0.80
+  'item_repair':
+    event: 'item_repair'
+    coins:
+      'gold_coin':
+        value: [6, 12]
+        chance: 0.20
+      'silver_coin':
+        value: [3, 8]
+        chance: 0.80
+  'loot_chest_open':
+    event: 'loot_chest_open'
+    coins:
+      'enchanted_gold_coin':
+        value: [12, 20]
+        chance: 0.15
+      'gold_coin':
+        value: [5, 15]
+        chance: 0.20
+      'silver_coin':
+        value: [3, 8]
+        chance: 0.30
+      'bronze_coin':
+        value: [1, 4]
+        chance: 0.35
+  'potion_brew':
+    event: 'potion_brew'
+    filters:
+      location:
+        cooldown:
+          cap-amount: 1
+          duration: '1h'
+    coins:
+      'bronze_coin':
+        value: [1, 4]
+        chance: 0.40
+  'recipe_unlock': # fired for every new item, i.e. 16 times for unlocking wool
+    event: 'recipe_unlock'
+    coins:
+      'bronze_coin':
+        value: [1, 4]
+        chance: 0.40

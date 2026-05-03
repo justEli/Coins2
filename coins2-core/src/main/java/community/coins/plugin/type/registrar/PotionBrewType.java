@@ -12,16 +12,24 @@ import org.bukkit.event.inventory.BrewEvent;
  */
 public final class PotionBrewType extends EventType {
     public PotionBrewType(CoinsCore coins, EventTypeService service) {
-        super(coins, service, "potion_brew", service.filterBuilder());
+        var filter = service.filterBuilder()
+            .hasLocationWorld()
+            .hasLocationCooldown();
+
+        super(coins, service, "potion_brew", filter);
     }
 
-    // todo disabled-worlds
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#potion_brew
 
     // todo never tested before
     @EventHandler(ignoreCancelled = true)
     void onBrewEvent(BrewEvent event) {
         // todo get player from who brewed it
+
+        var block = event.getBlock();
         var filter = createForm()
+            .withLocationWorld(block.getWorld())
+            .withLocationCooldown(block.getLocation())
             .build();
 
         filterEvent(filter).thenDrop(event.getBlock());

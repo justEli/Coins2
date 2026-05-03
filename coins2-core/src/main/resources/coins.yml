@@ -40,7 +40,6 @@ coins:
       plural: '<#F9CE64>Coins of Gold'
     meta:
       enchanted: true
-      glow-color: 'yellow'
       item-model: ['coins:enchanted_gold_coin']
 
   'gold_coin':
@@ -76,6 +75,7 @@ coins:
       plural: '<#FFAA00>Sunflower Coins'
     meta:
       enchanted: true
+      glow-color: 'gold'
       item-model: ['coins:sunflower_coin']
 
   'bag_of_gold':

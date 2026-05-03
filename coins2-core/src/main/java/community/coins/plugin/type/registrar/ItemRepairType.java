@@ -29,20 +29,7 @@ public final class ItemRepairType extends EventType {
         super(coins, service, "item_repair", filter);
     }
 
-    // event: 'item_repair'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     permission: String
-    //   target:
-    //     enabled: true
-    //     type: List<String>   (item types)
-    //   location:
-    //     disabled-worlds: List<String>
-    //     cooldown:
-    //       cap-amount: Boolean
-    //       duration: TimeString
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#item_repair
 
     @EventHandler(ignoreCancelled = true)
     void onInventoryClick(InventoryClickEvent event) {

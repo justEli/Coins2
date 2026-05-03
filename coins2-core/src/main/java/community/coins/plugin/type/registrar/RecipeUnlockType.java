@@ -21,14 +21,7 @@ public final class RecipeUnlockType extends EventType {
         super(coins, service, "recipe_unlock", filter);
     }
 
-    // event: 'recipe_unlock'
-    // filters:
-    //   initiator:
-    //     enabled: Boolean
-    //     permission: String
-    //   location:
-    //     disabled-worlds: List<String>
-    // coins: ...
+    // https://github.com/justEli/Coins2/wiki/Defining-drop-filters#recipe_unlock
 
     @EventHandler(ignoreCancelled = true)
     void onPlayerAdvancementDoneEvent(PlayerAdvancementDoneEvent event) {
