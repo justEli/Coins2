@@ -73,19 +73,19 @@ public final class TestLogic implements Listener {
                         }
 
                         String coinId = StringArgumentType.getString(context, "coin_id");
-                        var coin = coins.getConfigService().getCoinsConfig().getDefinedCoin(coinId);
+                        var coin = coins.getConfigService().getCoinsConfig().getDefinedItem(coinId);
                         if (coin.isEmpty()) {
                             player.sendRichMessage("<#ff0000>Not found");
                             return Command.SINGLE_SUCCESS;
                         }
 
-                        player.getInventory().addItem(coin.get().getClonedCoin());
+                        player.getInventory().addItem(coin.get().getItemStackClone());
                         player.sendRichMessage("<#00ff00>Gave coin");
                         return Command.SINGLE_SUCCESS;
                     })
                     .suggests((_, builder) -> {
-                        for (DefinedCoin coin : coins.getConfigService().getCoinsConfig().getDefinedCoins()) {
-                            builder.suggest(coin.id());
+                        for (DefinedCoin coin : coins.getConfigService().getCoinsConfig().getDefinedItems()) {
+                            builder.suggest(coin.getId());
                         }
 
                         return builder.buildFuture();

@@ -1,5 +1,6 @@
 package community.coins.plugin.item;
 
+import community.coins.plugin.component.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
@@ -9,8 +10,39 @@ import org.jspecify.annotations.NullMarked;
  * @since April 28, 2026
  */
 @NullMarked
-public record DefinedCoin(String id, ItemStack itemStack, Component singularName, Component pluralName, boolean immutable) {
-    public ItemStack getClonedCoin() {
+public final class DefinedCoin {
+    private final String id;
+    private final ItemStack itemStack;
+    private final Component singularName;
+    private final Component pluralName;
+
+    public DefinedCoin(String id, ItemStack itemStack, Component singularName, Component pluralName) {
+        this.id = id;
+        this.itemStack = itemStack;
+        this.singularName = singularName;
+        this.pluralName = pluralName;
+    }
+
+    public ItemStack getItemStackClone() {
         return itemStack.clone();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Component getSingularName() {
+        return singularName;
+    }
+
+    public Component getPluralName() {
+        return pluralName;
+    }
+
+    @Override
+    public String toString() {
+        return "DefinedCoin[id=%s, material=%s, singularName=%s, pluralName=%s]".formatted(
+            id, itemStack.getType(), ComponentUtil.toStripped(singularName), ComponentUtil.toStripped(pluralName)
+        );
     }
 }

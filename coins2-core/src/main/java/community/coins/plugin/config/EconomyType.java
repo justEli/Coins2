@@ -6,9 +6,11 @@ package community.coins.plugin.config;
  */
 public enum EconomyType {
     NONE("none"),
-    VAULT("Vault"),
+    VAULT("Vault"), // well, replace to 'virtual' probably with Vault and Treasury as option
+                    // or VAULT(Type.VIRTUAL) maybe
     PHYSICAL("physical");
 
+    // for currencies.yml
     private final String name;
     EconomyType(final String name) {
         this.name = name;

@@ -10,7 +10,6 @@ import org.bukkit.Registry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
@@ -28,6 +27,8 @@ public final class ConfigParser {
     private final BasicPlugin plugin;
     private final ConfigService service;
 
+    // todo make web interface with checkboxes that compile to config entries, especially useful for things like
+    //  filters (player alts, projectile kill, stab kill, etc.)
     public ConfigParser(BasicPlugin plugin, ConfigService service) {
         this.plugin = plugin;
         this.service = service;

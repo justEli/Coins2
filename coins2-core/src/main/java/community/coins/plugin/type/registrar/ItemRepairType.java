@@ -1,9 +1,9 @@
 package community.coins.plugin.type.registrar;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.type.EventType;
+import community.coins.plugin.type.EventTypeService;
+import community.coins.plugin.type.api.EventType;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,10 +19,30 @@ import org.bukkit.inventory.meta.Repairable;
  * @author Eli
  * @since April 29, 2026
  */
-public final class ItemRepairRegistrar extends DropRegistrar<Player, Block> {
-    public ItemRepairRegistrar(CoinsCore coins) {
-        super(coins);
+public final class ItemRepairType extends EventType {
+    public ItemRepairType(CoinsCore coins, EventTypeService service) {
+        var filter = service.filterBuilder()
+            .hasInitiatorPlayer()
+            .hasTargetType()
+            .hasLocationWorld()
+            .hasLocationCooldown();
+        super(coins, service, "item_repair", filter);
     }
+
+    // event: 'item_repair'
+    // filters:
+    //   initiator:
+    //     enabled: Boolean
+    //     permission: String
+    //   target:
+    //     enabled: true
+    //     type: List<String>   (item types)
+    //   location:
+    //     disabled-worlds: List<String>
+    //     cooldown:
+    //       cap-amount: Boolean
+    //       duration: TimeString
+    // coins: ...
 
     @EventHandler(ignoreCancelled = true)
     void onInventoryClick(InventoryClickEvent event) {
@@ -99,6 +119,14 @@ public final class ItemRepairRegistrar extends DropRegistrar<Player, Block> {
             return;
         }
 
-        performCoinEject(EventType.ITEM_REPAIR, player, anvil.getLocation().getBlock().getRelative(BlockFace.UP));
+        var block = anvil.getLocation().getBlock();
+        var filter = createForm()
+            .withInitiatorEntity(player)
+            .withTargetType(rightType)
+            .withLocationWorld(block.getWorld())
+            .withLocationCooldown(block.getLocation())
+            .build();
+
+        filterEvent(filter).thenDrop(block.getRelative(BlockFace.UP));
     }
 }

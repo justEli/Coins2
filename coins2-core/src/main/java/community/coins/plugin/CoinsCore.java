@@ -9,6 +9,7 @@ import community.coins.plugin.handler.CoinBehaviourHandler;
 import community.coins.plugin.handler.EntityDataHandler;
 import community.coins.plugin.item.CoinService;
 import community.coins.plugin.metrics.Stats;
+import community.coins.plugin.type.EventTypeService;
 import community.coins.plugin.util.VersionCheck;
 
 /**
@@ -23,6 +24,9 @@ public abstract class CoinsCore extends BasicPlugin {
     @Override
     public void onEnable() {
         beforeCoreLoaded();
+
+        // register all possible event types
+        this.eventTypeService = new EventTypeService(this);
 
         // parse all configs
         this.coinService = new CoinService(this);
@@ -55,6 +59,15 @@ public abstract class CoinsCore extends BasicPlugin {
             try { task.run(); }
             catch (Exception _) {}
         }
+    }
+
+    public void debug(String message) {
+        getLogger().warning("(Debug @ %d) %s".formatted(System.currentTimeMillis(), message));
+    }
+
+    private EventTypeService eventTypeService;
+    public EventTypeService getEventTypeService() {
+        return eventTypeService;
     }
 
     private PersistentData persistentData;
