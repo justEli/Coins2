@@ -7,6 +7,7 @@ import community.coins.plugin.api.PluginAttributes;
 import community.coins.plugin.spigot.implement.ComponentApiSpigot;
 import community.coins.plugin.spigot.implement.ItemParseApiSpigot;
 import community.coins.plugin.spigot.implement.PluginAttributesSpigot;
+import community.coins.plugin.spigot.type.AdvancementDisplayRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,6 +24,9 @@ public final class CoinsSpigot extends CoinsCore {
         this.componentApi = new ComponentApiSpigot();
         this.itemParseApi = new ItemParseApiSpigot(this);
         this.pluginAttributes = new PluginAttributesSpigot(this);
+
+        // registering events
+        new AdvancementDisplayRegistrar(this);
     }
 
     @Override
