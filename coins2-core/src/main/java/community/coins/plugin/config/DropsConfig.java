@@ -96,7 +96,10 @@ public final class DropsConfig implements FileConfig<DefinedDrop> {
 
             // create a DefinedCoinDrop from the "coins" section
             ConfigurationSection coinsSection = drop.getConfigurationSection("coins");
-            DefinedCoinDrop definedCoinDrop = DefinedCoinDrop.of(coins, service, coinsSection);
+            if (coinsSection == null) {
+                continue; // todo warning
+            }
+            DefinedCoinDrop definedCoinDrop = new DefinedCoinDrop(coins, service, coinsSection);
 
             // now we have a DefinedDrop with EventType, EventFilterConfig and DefinedCoinDrop
             DefinedDrop definedDrop = new DefinedDrop(dropName, filterConfig, definedCoinDrop);

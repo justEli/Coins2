@@ -62,7 +62,7 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
     public void parseAndReload() {
         var config = service.getOrCreateConfig(getFileName());
 
-        Optional<ItemStack> defaultItem = getItemValue(config.getConfigurationSection("default"), null);
+        Optional<ItemStack> defaultItem = getItemValue(config.getConfigurationSection("default"), null, "defined_coin");
         String defaultSingularName = config.getString("default.name.singular", "Coin");
         String defaultPluralName = config.getString("default.name.plural", "Coins");
         boolean defaultImmutable = config.getBoolean("default.name.immutable", true);
@@ -96,7 +96,7 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
                 continue;
             }
 
-            Optional<ItemStack> item = getItemValue(coin, defaultItem.orElse(null));
+            Optional<ItemStack> item = getItemValue(coin, defaultItem.orElse(null), id);
             if (item.isEmpty()) {
                 service.printConfigWarning(getFileName(), "Invalid item name found for coin '%s'.".formatted(id));
                 continue;
@@ -130,7 +130,7 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
                 continue;
             }
 
-            coins.getComponentApi().setDisplayName(meta, singularNameComponent, immutable);
+            coins.getComponentApi().setDisplayName(meta, singularNameComponent);
 
             if (immutable) {
                 coins.getCoinService().getCoinMeta().setImmutableProperty(meta, true);
@@ -200,7 +200,7 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
     // item:
     //   type: 'material|player_head'
     //   value: 'value'
-    private Optional<ItemStack> getItemValue(@Nullable ConfigurationSection section, @Nullable ItemStack defaultValue) {
+    private Optional<ItemStack> getItemValue(@Nullable ConfigurationSection section, @Nullable ItemStack defaultValue, String id) {
         if (section == null) {
             return Optional.ofNullable(defaultValue);
         }
@@ -210,13 +210,13 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
 
         if (type == null || value == null) {
             String material = section.getString("item");
-            return parseItemStack(material, null);
+            return parseItemStack(material, null, id);
         }
 
-        return parseItemStack(value, type);
+        return parseItemStack(value, type, id);
     }
 
-    private Optional<ItemStack> parseItemStack(String value, @Nullable String type) {
+    private Optional<ItemStack> parseItemStack(String value, @Nullable String type, String coinName) {
         if ("material".equalsIgnoreCase(type)) {
             return coins.getItemParseApi().getFromItemType(value);
         }
@@ -227,7 +227,7 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
             }
 
             // todo setCustomNameVisible shows defined_coin's Head even though custom name is set
-            var skullMeta = coins.getItemParseApi().applyMetaFromTexture(meta, value, HEAD_UUID, "defined_coin");
+            var skullMeta = coins.getItemParseApi().applyMetaFromTexture(meta, value, HEAD_UUID, coinName);
             if (skullMeta.isPresent()) {
                 stack.setItemMeta(skullMeta.get());
                 return Optional.of(stack);
@@ -235,11 +235,11 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
             return Optional.empty();
         }
 
-        var item = parseItemStack(value, "material");
+        var item = parseItemStack(value, "material", coinName);
         if (item.isPresent()) {
             return item;
         }
 
-        return parseItemStack(value, "player_head");
+        return parseItemStack(value, "player_head", coinName);
     }
 }

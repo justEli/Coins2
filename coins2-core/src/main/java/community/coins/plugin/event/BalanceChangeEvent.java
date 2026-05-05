@@ -17,7 +17,7 @@ public final class BalanceChangeEvent extends Event implements Cancellable {
     private final BigDecimal transactionAmount;
     private final BigDecimal previousBalance;
 
-    public BalanceChangeEvent(UUID uuid, BigDecimal transactionAmount, BigDecimal previousBalance, boolean async) {
+    public BalanceChangeEvent(boolean async, UUID uuid, BigDecimal transactionAmount, BigDecimal previousBalance) {
         super(async);
 
         this.uuid = uuid;

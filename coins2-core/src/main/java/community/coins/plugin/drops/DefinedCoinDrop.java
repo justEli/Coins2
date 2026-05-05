@@ -4,11 +4,9 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.item.DefinedCoin;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.SplittableRandom;
@@ -23,33 +21,8 @@ public final class DefinedCoinDrop {
     private final NavigableMap<Double, AmountedCoin> coinChances = new TreeMap<>();
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
-    private DefinedCoinDrop(Map<Double, AmountedCoin> chances) {
+    public DefinedCoinDrop(CoinsCore coins, ConfigService service, @NotNull ConfigurationSection coinsSection) {
         double total = 0.;
-        for (var entry : chances.entrySet()) {
-            double chance = entry.getKey();
-            if (chance <= 0) {
-                continue;
-            }
-
-            total += chance;
-            coinChances.put(total, entry.getValue());
-        }
-    }
-
-    // coins:
-    //   'coin_name':
-    //     value: 1
-    //     chance: 0.05
-    //   'coins_two':
-    //     value: [1, 5]
-    //     chance: 0.40
-
-    public static @Nullable DefinedCoinDrop of(CoinsCore coins, ConfigService service, ConfigurationSection coinsSection) {
-        if (coinsSection == null) {
-            return null;
-        }
-
-        Map<Double, AmountedCoin> coinChances = new HashMap<>();
         for (String coinName : coinsSection.getKeys(false)) {
             Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefinedItem(coinName);
             if (definedCoin.isEmpty()) {
@@ -59,10 +32,14 @@ public final class DefinedCoinDrop {
 
             ConfigurationSection section = coinsSection.getConfigurationSection(coinName);
             if (section == null) {
-                continue; // todo add warning
+                continue; // should be impossible
             }
 
             double chance = section.getDouble("chance", 1);
+            if (chance <= 0 || chance > 1) {
+                continue; // todo warn when the total sum of chance exceeds 1.00
+            }
+
             double min = section.getDouble("value", -1);
             double max = section.getDouble("value", -1);
 
@@ -84,14 +61,18 @@ public final class DefinedCoinDrop {
                 max = minimum;
             }
 
-            // todo warn when the total sum of chance exceeds 1.00
-
-            DefinedCoin coin = definedCoin.get();
-            coinChances.put(chance, new AmountedCoin(min, max, coin));
+            total += chance;
+            coinChances.put(total, new AmountedCoin(min, max, definedCoin.get()));
         }
-
-        return new DefinedCoinDrop(coinChances);
     }
+
+    // coins:
+    //   'coin_name':
+    //     value: 1
+    //     chance: 0.05
+    //   'coins_two':
+    //     value: [1, 5]
+    //     chance: 0.40
 
     /// pick a random coin from the list based on the configured chance
     /// @return empty when the chance didn't allow it

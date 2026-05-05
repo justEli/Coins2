@@ -68,23 +68,23 @@ coins:
     behavior:
       item-merge: true
 
-  'sunflower_coin':
+  'sun_coin':
     item: 'minecraft:sunflower'
     name:
-      singular: '<#FFAA00>Sunflower Coin'
-      plural: '<#FFAA00>Sunflower Coins'
+      singular: '<#FFAA00>Coin of the Sun'
+      plural: '<#FFAA00>Coins of the Sun'
     meta:
       enchanted: true
       glow-color: 'gold'
-      item-model: ['coins:sunflower_coin']
+      item-model: ['coins:sun_coin']
 
-  'bag_of_gold':
+  'bag_of_coins':
     item:
       type: 'player_head'
-      value: 'bf75d1b785d18d47b3ea8f0a7e0fd4a1fae9e7d323cf3b138c8c78cfe24ee59'
+      value: '95fd67d56ffc53fb360a17879d9b5338d7332d8f129491a5e17e8d6e8aea6c3a'
     name:
-      singular: '<#FFFF55>Bag of Gold'
-      plural: '<#FFFF55>Bags of Gold'
+      singular: '<#FFFF55>Bag of Coins'
+      plural: '<#FFFF55>Bags of Coins'
     meta:
       hologram: true
-      item-model: ['coins:bag_of_gold']
+      item-model: ['coins:bag_of_coins']

@@ -9,10 +9,12 @@ import community.coins.plugin.paper.CoinsPaper;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Bat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
@@ -26,6 +28,13 @@ import java.util.stream.Collectors;
 public final class TestLogic implements Listener {
     private final CoinsCore coins;
     private final NamespacedKey key;
+
+    @EventHandler
+    void onEntitySpawnEvent(EntitySpawnEvent event) {
+        if (event.getEntity() instanceof Bat) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler // for testing only
     void onEntityPickupItemEvent(EntityPickupItemEvent event) {

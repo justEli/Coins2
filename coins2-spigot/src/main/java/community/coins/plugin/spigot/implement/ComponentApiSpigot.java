@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Team;
 import org.jspecify.annotations.NullMarked;
@@ -22,11 +23,9 @@ public final class ComponentApiSpigot implements ComponentApi {
         LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
     @Override
-    public void setDisplayName(ItemMeta meta, Component component, boolean immutable) {
+    public void setDisplayName(ItemMeta meta, Component component) {
         var string = HEX_SERIALIZER.serialize(component);
-        if (immutable) {
-            meta.setItemName(string);
-        }
+        meta.setItemName(string);
         meta.setDisplayName(string);
     }
 
@@ -39,9 +38,18 @@ public final class ComponentApiSpigot implements ComponentApi {
         meta.setLore(lore);
     }
 
-    @Override
+    @Override // todo test
     public void setTeamColor(Team team, NamedTextColor color) {
-        // todo test
         team.setColor(ChatColor.valueOf(color.examinableName().toUpperCase()));
+    }
+
+    @Override // todo test
+    public void applyDisplayName(Item item) {
+        var meta = item.getItemStack().getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        item.setCustomName(meta.getDisplayName());
     }
 }
