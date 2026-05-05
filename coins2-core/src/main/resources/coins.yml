@@ -26,7 +26,7 @@ default:
     enchanted: false
     glow-color: 'none' # named text color, i.e. green, light_purple
     hologram: false
-    item-model: ['coins:coin']
+    model-strings: ['coin'] # adds "minecraft:custom_model_data": {strings: ["coin"]}
     lore: [] # avoid italic with <italic:false>
   behavior:
     item-merge: false # coins to merge when on the ground (of same value only)
@@ -40,31 +40,24 @@ coins:
       plural: '<#F9CE64>Coins of Gold'
     meta:
       enchanted: true
-      item-model: ['coins:enchanted_gold_coin']
 
   'gold_coin':
     item: 'minecraft:gold_nugget'
     name:
       singular: '<#F9CE64>Coin of Gold'
       plural: '<#F9CE64>Coins of Gold'
-    meta:
-      item-model: ['coins:gold_coin']
 
   'silver_coin':
     item: 'minecraft:iron_nugget'
     name:
       singular: '<#D2D2D2>Coin of Silver'
       plural: '<#D2D2D2>Coins of Silver'
-    meta:
-      item-model: ['coins:silver_coin']
 
   'bronze_coin':
     item: 'minecraft:copper_nugget'
     name:
       singular: '<#E68D3F>Coin of Bronze'
       plural: '<#E68D3F>Coins of Bronze'
-    meta:
-      item-model: ['coins:bronze_coin']
     behavior:
       item-merge: true
 
@@ -76,7 +69,6 @@ coins:
     meta:
       enchanted: true
       glow-color: 'gold'
-      item-model: ['coins:sun_coin']
 
   'bag_of_coins':
     item:
@@ -87,4 +79,3 @@ coins:
       plural: '<#FFFF55>Bags of Coins'
     meta:
       hologram: true
-      item-model: ['coins:bag_of_coins']

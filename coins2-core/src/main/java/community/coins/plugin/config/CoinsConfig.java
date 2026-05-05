@@ -67,7 +67,7 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
         String defaultPluralName = config.getString("default.name.plural", "Coins");
         boolean defaultImmutable = config.getBoolean("default.name.immutable", true);
         boolean defaultEnchanted = config.getBoolean("default.meta.enchanted", false);
-        List<String> defaultItemModel = config.getStringList("default.meta.item-model"); // todo maybe rename to model-strings?
+        List<String> defaultItemModel = config.getStringList("default.meta.model-strings");
         List<String> defaultLore = config.getStringList("default.meta.lore");
         String defaultGlowColor = config.getString("default.meta.glow-color");
         boolean defaultHologram = config.getBoolean("default.meta.hologram", false);
@@ -106,7 +106,7 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
             String pluralName = coin.getString("name.plural", defaultPluralName);
             boolean immutable = coin.getBoolean("name.immutable", defaultImmutable);
             boolean enchanted = coin.getBoolean("meta.enchanted", defaultEnchanted);
-            List<String> itemModel = coin.getStringList("meta.item-model");
+            List<String> itemModel = coin.getStringList("meta.model-strings");
             if (itemModel.isEmpty()) {
                 itemModel.addAll(defaultItemModel);
             }

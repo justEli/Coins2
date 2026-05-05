@@ -44,13 +44,13 @@ public final class CoinMeta {
             this.scoreboard = manager.getMainScoreboard();
         }
 
-        this.valueKey = NamespacedKey.fromString("coin_value", plugin);
-        this.withdrawnKey = NamespacedKey.fromString("coin_withdrawn", plugin);
-        this.uniqueKey = NamespacedKey.fromString("coin_unique", plugin);
-        this.glowKey = NamespacedKey.fromString("coin_glow", plugin);
-        this.hologramKey = NamespacedKey.fromString("coin_hologram", plugin);
-        this.noHopperKey = NamespacedKey.fromString("coin_no_hopper", plugin);
-        this.immutableKey = NamespacedKey.fromString("coin_immutable", plugin);
+        this.valueKey = NamespacedKey.fromString("value", plugin);
+        this.withdrawnKey = NamespacedKey.fromString("withdrawn", plugin);
+        this.uniqueKey = NamespacedKey.fromString("unique", plugin);
+        this.glowKey = NamespacedKey.fromString("glow", plugin);
+        this.hologramKey = NamespacedKey.fromString("hologram", plugin);
+        this.noHopperKey = NamespacedKey.fromString("no_hopper", plugin);
+        this.immutableKey = NamespacedKey.fromString("immutable", plugin);
 
         plugin.addShutdownTask(() -> scoreboard.getTeams().forEach(team -> {
             if (team.getName().startsWith(TEAM_PREFIX)) {
@@ -134,7 +134,7 @@ public final class CoinMeta {
         item.setItemMeta(meta);
     }
 
-    private <P, C> Optional<C> getMeta(ItemStack item, NamespacedKey key, @NotNull PersistentDataType<P, C> type) {
+    private <P, C> Optional<C> getMeta(@NotNull ItemStack item, NamespacedKey key, @NotNull PersistentDataType<P, C> type) {
         var meta = item.getItemMeta();
         if (meta == null) {
             return Optional.empty();

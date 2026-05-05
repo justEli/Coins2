@@ -5,9 +5,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Eli
@@ -49,15 +55,53 @@ public final class CoinBehaviourHandler implements Listener {
     }
 
     // prevent coins with immutable name from being changed
+
+    private boolean isImmutable(@Nullable ItemStack item) {
+        if (item == null) {
+            return false;
+        }
+        return coins.getCoinService().getCoinMeta().isImmutableName(item);
+    }
+
     @EventHandler(ignoreCancelled = true)
     void onPrepareAnvilEvent(PrepareAnvilEvent event) {
-        var result = event.getResult();
-        if (result == null) {
-            return;
-        }
-
-        if (coins.getCoinService().getCoinMeta().isImmutableName(result)) {
+        if (isImmutable(event.getResult())) {
             event.setResult(null);
+        }
+    }
+
+    @EventHandler
+    void onCraftItemEvent(CraftItemEvent event) {
+        for (ItemStack stack : event.getInventory().getContents()) {
+            if (isImmutable(stack)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+    }
+
+    @EventHandler
+    void onPrepareItemCraftEvent(PrepareItemCraftEvent event) {
+        for (ItemStack stack : event.getInventory().getContents()) {
+            if (isImmutable(stack)) {
+                event.getInventory().setResult(null);
+                break;
+            }
+        }
+    }
+
+    @EventHandler
+    void onFurnaceSmeltEvent(FurnaceSmeltEvent event) {
+        if (isImmutable(event.getSource())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    void onFurnaceBurnEvent(FurnaceBurnEvent event) {
+        if (isImmutable(event.getFuel())) {
+            event.setBurnTime(0);
+            event.setBurning(false);
         }
     }
 }
