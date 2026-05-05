@@ -2,7 +2,6 @@ package community.coins.plugin.type.filter;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.data.TransformType;
-import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -24,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -67,7 +67,6 @@ public final class EventFilterForm {
         return this;
     }
 
-    // todo replace with Set<NamespacedKey> to use #contains
     private Set<NamespacedKey> targetTypes;
     public EventFilterForm withTargetType(Collection<Keyed> types) {
         this.targetTypes = types.stream().map(Keyed::getKey).collect(Collectors.toSet());
@@ -131,7 +130,7 @@ public final class EventFilterForm {
             }
 
             // entities need to be of specific type, if type list is not empty
-            Set<NamespacedKey> allowedTypes = config.getInitiatorType(); // todo allow !type
+            Set<NamespacedKey> allowedTypes = config.getInitiatorType();
             if (allowedTypes != null && !allowedTypes.isEmpty()) {
                 NamespacedKey type = initiatorEntity.getType().getKey();
                 if (!allowedTypes.contains(type)) {
@@ -179,20 +178,12 @@ public final class EventFilterForm {
         }
 
         // first, types get priority (up here), and then category gets priority
-        if (targetEntity != null) {
-            boolean contains = false;
-            for (String category : config.getTargetCategory()) {
-                if (isInCategory(targetEntity, category.toLowerCase())) {
-                    contains = true;
-                    break;
-                }
-            }
-            if (!contains) {
-                coins.debug("Disallowed '%s' due to target entity '%s' not in category".formatted(
-                    eventIdentifier, targetEntity.getType().getKey()
-                ));
-                return false;
-            }
+        Set<String> targetCategory = config.getTargetCategory();
+        if (targetEntity != null && targetCategory != null && !isInCategory(targetEntity, targetCategory)) {
+            coins.debug("Disallowed '%s' due to target entity '%s' not in category %s".formatted(
+                eventIdentifier, targetEntity.getType().getKey(), targetCategory.toString()
+            ));
+            return false;
         }
 
         // target entity, handles: "target.type", "target.category", "target.min-player-damage"
@@ -210,7 +201,6 @@ public final class EventFilterForm {
                 }
             }
         }
-
 
         // handles: "target.min-xp-drop"
         Integer minXpDrop = config.getTargetMinXpDrop();
@@ -265,7 +255,47 @@ public final class EventFilterForm {
             && isLocationAllowed(config);
     }
 
-    private boolean isInCategory(Entity entity, @NotNull String selector) {
+    private boolean isInCategory(Entity entity, @NotNull Set<String> selector) {
+        if (selector.isEmpty()) {
+            return true; // empty lists accept anything
+        }
+
+        // split up listed categories into allowed (no !) and disallowed (starts with !)
+        Set<String> allowedCategories = new HashSet<>();
+        Set<String> disallowedCategories = new HashSet<>();
+        for (String category : selector) {
+            if (category.startsWith("!")) {
+                disallowedCategories.add(category.substring(1));
+            }
+            else {
+                allowedCategories.add(category);
+            }
+        }
+
+        boolean allowed = false;
+
+        // first check the allowed categories
+        for (String category : allowedCategories) {
+            if (isInCategory(entity, category)) {
+                allowed = true;
+                break;
+            }
+        }
+
+        if (!allowed) {
+            return false;
+        }
+
+        // then check the disallowed ones
+        for (String category : disallowedCategories) {
+            if (isInCategory(entity, category)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isInCategory(Entity entity, String selector) {
         return switch (selector.toLowerCase()) {
             case "any" -> true;
             case "player" -> entity instanceof Player;

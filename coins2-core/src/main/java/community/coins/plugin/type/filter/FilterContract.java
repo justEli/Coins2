@@ -25,61 +25,79 @@ public final class FilterContract {
     }
 
     // get a FilterConfig based on the contract (of the event)
-    public @NotNull EventFilterConfig getFilterConfig(@Nullable ConfigurationSection config, String eventType) {
-        if (config == null) {
+    public @NotNull EventFilterConfig getFilterConfig(@Nullable ConfigurationSection conf, ConfigurationSection def, String eventType) {
+        if (conf == null) {
+            conf = def;
+        }
+        if (conf == null) {
             return new EventFilterConfig(); // no filters
         }
 
         var filter = new EventFilterConfig();
-        if (contains("initiator.permission", config)) {
-            filter.setInitiatorPermission(config.getString("initiator.permission"));
+        if (contains("initiator.permission", conf, def)) {
+            filter.setInitiatorPermission(conf.getString("initiator.permission", def.getString("initiator.permission")));
         }
-        if (contains("initiator.type", config)) {
-            List<String> values = config.getStringList("initiator.type");
+        if (contains("initiator.type", conf, def)) {
+            List<String> values = conf.getStringList("initiator.type");
+            if (values.isEmpty()) {
+                values.addAll(def.getStringList("initiator.type"));
+            }
             filter.setInitiatorType(toNamespacedKeys(values, eventType));
         }
-        if (contains("initiator.any", config)) {
-            filter.setInitiatorAny(config.getBoolean("initiator.any"));
+        if (contains("initiator.any", conf, def)) {
+            filter.setInitiatorAny(conf.getBoolean("initiator.any", def.getBoolean("initiator.any")));
         }
-        if (contains("target.type", config)) {
-            List<String> values = config.getStringList("target.type");
+        if (contains("target.type", conf, def)) {
+            List<String> values = conf.getStringList("target.type");
+            if (values.isEmpty()) {
+                values.addAll(def.getStringList("target.type"));
+            }
             filter.setTargetType(toNamespacedKeys(values, eventType));
         }
-        if (contains("target.category", config)) {
-            List<String> values = config.getStringList("target.category");
+        if (contains("target.category", conf, def)) {
+            List<String> values = conf.getStringList("target.category");
+            if (values.isEmpty()) {
+                values.addAll(def.getStringList("target.category"));
+            }
             filter.setTargetCategory(new HashSet<>(values));
         }
-        if (contains("target.min-xp-drop", config)) {
-            filter.setTargetMinXpDrop(config.getInt("target.min-xp-drop"));
+        if (contains("target.min-xp-drop", conf, def)) {
+            filter.setTargetMinXpDrop(conf.getInt("target.min-xp-drop", def.getInt("target.min-xp-drop")));
         }
-        if (contains("target.allow-same-block", config)) {
-            filter.setTargetAllowSameBlock(config.getBoolean("target.allow-same-block"));
+        if (contains("target.allow-same-block", conf, def)) {
+            filter.setTargetAllowSameBlock(conf.getBoolean("target.allow-same-block", def.getBoolean("target.allow-same-block")));
         }
-        if (contains("target.prevent-alts", config)) {
-            filter.setTargetPreventAlts(config.getBoolean("target.prevent-alts"));
+        if (contains("target.prevent-alts", conf, def)) {
+            filter.setTargetPreventAlts(conf.getBoolean("target.prevent-alts", def.getBoolean("target.prevent-alts")));
         }
-        if (contains("target.min-player-damage", config)) {
-            filter.setTargetMinPlayerDamage(config.getDouble("target.min-player-damage"));
+        if (contains("target.min-player-damage", conf, def)) {
+            filter.setTargetMinPlayerDamage(conf.getDouble("target.min-player-damage", def.getDouble("target.min-player-damage")));
         }
-        if (contains("location.disabled-worlds", config)) {
-            List<String> values = config.getStringList("location.disabled-worlds");
+        if (contains("location.disabled-worlds", conf, def)) {
+            List<String> values = conf.getStringList("location.disabled-worlds");
+            if (values.isEmpty()) {
+                values.addAll(def.getStringList("location.disabled-worlds"));
+            }
             filter.setLocationDisabledWorlds(new HashSet<>(values));
         }
-        if (contains("location.cooldown.cap-amount", config) && contains(config.getString("location.cooldown.duration"), config)) {
-            filter.setLocationCooldownCapAmount(config.getInt("location.cooldown.cap-amount"));
-            filter.setLocationCooldownDuration(config.getString("location.cooldown.duration"));
+        if (contains("location.cooldown.cap-amount", conf, def) && contains(conf.getString("location.cooldown.duration"), conf, def)) {
+            filter.setLocationCooldownCapAmount(conf.getInt("location.cooldown.cap-amount"));
+            filter.setLocationCooldownDuration(conf.getString("location.cooldown.duration"));
         }
 
         return filter;
     }
 
-    private boolean contains(String path, ConfigurationSection section) {
-        boolean inConfig = section.contains(path);
-        if (inConfig && !configPaths.contains(path)) { // todo improve warning adding eventIdentifier
-            coins.getConfigService().addWarning("Found '%s' in config where it is not supported.");
+    private boolean contains(String path, ConfigurationSection conf, ConfigurationSection def) {
+        if (!configPaths.contains(path)) { // if config path is not supported
+            if (conf.contains(path)) {
+                // todo improve warning adding eventIdentifier
+                coins.getConfigService().addWarning("Found '%s' in config where it is not supported.");
+            }
             return false;
         }
-        return inConfig;
+
+        return conf.contains(path) || def.contains(path);
     }
 
     private Set<NamespacedKey> toNamespacedKeys(List<String> values, String eventType) {

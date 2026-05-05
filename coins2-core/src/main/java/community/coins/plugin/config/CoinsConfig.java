@@ -226,7 +226,6 @@ public final class CoinsConfig implements FileConfig<DefinedCoin> {
                 return Optional.empty();
             }
 
-            // todo setCustomNameVisible shows defined_coin's Head even though custom name is set
             var skullMeta = coins.getItemParseApi().applyMetaFromTexture(meta, value, HEAD_UUID, coinName);
             if (skullMeta.isPresent()) {
                 stack.setItemMeta(skullMeta.get());

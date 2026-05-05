@@ -90,8 +90,9 @@ public final class DropsConfig implements FileConfig<DefinedDrop> {
 
             // get a filter config from the event type's filter contract
             ConfigurationSection filtersSection = drop.getConfigurationSection("filters"); // can be null!
+            ConfigurationSection defaultFilters = config.getConfigurationSection("default.filters");
             EventFilterConfig filterConfig = event.getFilterContract().getFilterConfig(
-                filtersSection, definedEvent.toLowerCase()
+                filtersSection, defaultFilters, definedEvent.toLowerCase()
             );
 
             // create a DefinedCoinDrop from the "coins" section

@@ -66,7 +66,8 @@ public final class CoinMeta {
             return false;
         }
 
-        // a coin always has a value (todo check the entire config on if this is implemented everywhere)
+        // a coin always has a value
+        // todo check if this is implemented everywhere
         return item.getItemMeta().getPersistentDataContainer().has(valueKey, PersistentDataType.DOUBLE);
     }
 

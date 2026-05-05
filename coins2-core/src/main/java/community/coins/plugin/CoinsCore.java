@@ -18,10 +18,6 @@ import community.coins.plugin.util.VersionCheck;
  * @since April 27, 2026
  */
 public abstract class CoinsCore extends BasicPlugin {
-    // todo RANDOM.nextInt(MONEY_TAKEN_FROM, MONEY_TAKEN_TO);
-    // todo RANDOM.nextInt(config.getDropMin(), config.getDropMax() + 1);
-    // todo basically EVERY LOGIC is through item's persistent data container
-
     @Override
     public void onEnable() {
         beforeCoreLoaded();
