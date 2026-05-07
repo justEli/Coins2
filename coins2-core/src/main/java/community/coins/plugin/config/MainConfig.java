@@ -45,12 +45,15 @@ public final class MainConfig extends BasicConfig {
             String configKey = configEntry.value();
             field.setAccessible(true);
 
-            if (configKey == null || !config.contains(configKey) && configEntry.required()) {
-                addWarn("Missing `%s`, using default.".formatted(configKey));
-                continue;
-            }
-
             try {
+                if (configKey == null || !config.contains(configKey)) {
+                    if (configEntry.required()) {
+                        String value = field.get(TYPE).toString();
+                        addWarn("Config is missing `%s`. Using its default value '%s' now.".formatted(configKey, value));
+                    }
+                    continue;
+                }
+
                 // get current/default value, for the type
                 var value = field.get(TYPE);
 

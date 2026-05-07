@@ -1,7 +1,6 @@
 package community.coins.plugin.economy;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.component.ComponentUtil;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.MessagePosition;
 import community.coins.plugin.economy.hook.VaultEconomyHook;
@@ -13,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -89,6 +89,10 @@ public final class EconomyService implements Listener {
 
     // <currency identifier, economy plugin name>
     private final Map<String, String> currencyToEconomyNames = new HashMap<>();
+
+    public Collection<String> getCurrencyIdentifiers() {
+        return currencyToEconomyNames.keySet();
+    }
 
     public void registerCurrency(DefinedCurrency currency, ConfigWarns.Named warns) {
         EconomyHook economy = currency.getEconomyHook();
@@ -168,7 +172,7 @@ public final class EconomyService implements Listener {
             pickupTimeCache.put(uuid, System.currentTimeMillis());
         }
 
-        Component component = ComponentUtil.replaceAmount(currency.getDepositMessage(), currency.formatAmount(displayAmount));
+        Component component = currency.getDepositMessage(displayAmount);
         coins.getComponentApi().sendMessage(player, currency.getDepositPosition(), component);
     }
 

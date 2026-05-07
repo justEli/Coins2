@@ -1,6 +1,7 @@
 package community.coins.plugin;
 
 import community.coins.plugin.api.BasicPlugin;
+import community.coins.plugin.command.CommandService;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.ConfigYml;
@@ -24,17 +25,17 @@ import community.coins.plugin.util.VersionCheck;
 public abstract class CoinsCore extends BasicPlugin {
     @Override
     public void onEnable() {
-        beforeCoreLoaded();
+        loadImplementations();
 
         // scheduler setup with folia and Bukkit support
         this.foliaScheduler = new FoliaScheduler(this);
 
-        // registering registrars of events
-        new PlayerPickupCoinRegistrar(this);
-
         // register all possible event types
+        this.commandService = new CommandService();
         this.eventTypeService = new EventTypeService(this);
         this.economyService = new EconomyService(this);
+
+        loadBasicFunctionality();
 
         // parse all configs
         this.configWarns = new ConfigWarns(this);
@@ -44,7 +45,8 @@ public abstract class CoinsCore extends BasicPlugin {
         // basic utilities
         this.persistentData = new PersistentData(this);
 
-        // some events
+        // registering registrars of events
+        new PlayerPickupCoinRegistrar(this);
         new PickupHandler(this);
 
         // get latest version
@@ -59,7 +61,7 @@ public abstract class CoinsCore extends BasicPlugin {
         new EntityDataHandler(this);
 
         // things to load after core enabled
-        afterCoreLoaded();
+        loadAfterCore();
     }
 
     @Override
@@ -71,12 +73,19 @@ public abstract class CoinsCore extends BasicPlugin {
     }
 
     public void debug(String message) {
-        getLogger().warning("(Debug @ %d) %s".formatted(System.currentTimeMillis(), message));
+        if (ConfigYml.DEBUG_LOGGING) {
+            getLogger().warning("(Debug @ %d) %s".formatted(System.currentTimeMillis(), message));
+        }
     }
 
     private ConfigWarns configWarns;
     public ConfigWarns getConfigWarns() {
         return configWarns;
+    }
+
+    private CommandService commandService;
+    public CommandService getCommandService() {
+        return commandService;
     }
 
     private EconomyService economyService;
@@ -114,6 +123,7 @@ public abstract class CoinsCore extends BasicPlugin {
         return versionCheck;
     }
 
-    public abstract void beforeCoreLoaded();
-    public abstract void afterCoreLoaded();
+    public abstract void loadImplementations();
+    public abstract void loadBasicFunctionality();
+    public abstract void loadAfterCore();
 }

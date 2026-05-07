@@ -10,6 +10,7 @@
 # --- by JustEli --- https://plugin.coins.community/discord --- #
 
 default:
+  format: '<#6DD47E>{amount}{symbol}' # renders as '1.23¢' in specified color
   deposit:
     message: '<#148C30>↑ <#6DD47E>{format}'
     position: 'actionbar'
@@ -23,7 +24,7 @@ currencies:
     name:
       singular: 'Coin'
       plural: 'Coins'
-    format: '{amount}{symbol}' # renders as '1.23¢'
+    format: '<#6DD47E>{amount}{symbol}'
     deposit:
-      message: '<#148C30>↑ <#6DD47E>{format}'
+      message: '<#148C30>↑ {format}'
       position: 'actionbar'

@@ -9,3 +9,8 @@
 #   ░░░░░░░░░   ░░░░░░  ░░░░░░ ░░░ ░░░░░░ ░░░░░     ░░░░░░░░░░  #
 # --- by JustEli --- https://plugin.coins.community/discord --- #
 
+commands:
+  'coins': # id of the logic
+    labels: ['coins', 'coin']
+    permission: 'coins.command.coins'
+    enabled: true

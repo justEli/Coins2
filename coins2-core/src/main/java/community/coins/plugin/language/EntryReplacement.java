@@ -22,12 +22,20 @@ public final class EntryReplacement {
         this.color = color;
     }
 
+    public Filled filled(Component component) {
+        return new Filled(component);
+    }
+
     public Filled filled(Object replacement) {
         return new Filled(replacement);
     }
 
     public class Filled {
         private final Component replacement;
+        public Filled(Component component) {
+            this.replacement = component;
+        }
+
         public Filled(Object replacement) {
             this.replacement = Component.text(replacement.toString(), color);
         }

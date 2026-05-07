@@ -10,9 +10,10 @@
 # --- by JustEli --- https://plugin.coins.community/discord --- #
 
 # Defining and configuring the following parts can be done in a different config:
+#  - currencies.yml -> Defined currencies
 #  - coins.yml      -> Different coin variants
-#  - commands.yml   -> All possible commands
 #  - drops.yml      -> Events to drop coins
+#  - commands.yml   -> All possible commands
 
 # Language to use for all messages of the plugin. All available languages can be found in
 #  the folder 'locale' of the plugin folder. Or create your own in the format 'xx-YY'.

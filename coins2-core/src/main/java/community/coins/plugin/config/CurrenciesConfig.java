@@ -27,8 +27,8 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
         String defaultSymbol = config.getString("default.symbol", "¢");
         String defaultSingularName = config.getString("default.name.singular", "Coin");
         String defaultPluralName = config.getString("default.name.plural", "Coins");
-        String defaultFormat = config.getString("default.format", "{amount}{symbol}");
-        String defaultDepositMessage = config.getString("default.deposit.message", "<#148C30>↑ <#6DD47E>{format}");
+        String defaultFormat = config.getString("default.format", "<#6DD47E>{amount}{symbol}");
+        String defaultDepositMessage = config.getString("default.deposit.message", "<#148C30>↑ {format}");
         String defaultDepositPosition = config.getString("default.deposit.position", "actionbar");
 
         ConfigurationSection currenciesSection = config.getConfigurationSection("currencies");
@@ -60,13 +60,13 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
                 continue;
             }
 
-            int decimals = section.getInt("default.decimals", defaultDecimals);
-            String symbol = section.getString("default.symbol", defaultSymbol);
-            String singularName = section.getString("default.name.singular", defaultSingularName);
-            String pluralName = section.getString("default.name.plural", defaultPluralName);
-            String format = section.getString("default.format", defaultFormat);
-            String depositMessage = section.getString("default.deposit.message", defaultDepositMessage);
-            String depositPosition = section.getString("default.deposit.position", defaultDepositPosition);
+            int decimals = section.getInt("decimals", defaultDecimals);
+            String symbol = section.getString("symbol", defaultSymbol);
+            String singularName = section.getString("name.singular", defaultSingularName);
+            String pluralName = section.getString("name.plural", defaultPluralName);
+            String format = section.getString("format", defaultFormat);
+            String depositMessage = section.getString("deposit.message", defaultDepositMessage);
+            String depositPosition = section.getString("deposit.position", defaultDepositPosition);
             MessagePosition position = Util.getEnum(MessagePosition.class, depositPosition);
 
             String id = name.toLowerCase();

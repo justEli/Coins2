@@ -15,6 +15,7 @@ public final class ConfigService {
     private final CurrenciesConfig currenciesConfig;
     private final CoinsConfig coinsConfig;
     private final DropsConfig dropsConfig;
+    private final CommandsConfig commandsConfig;
     private final LanguageParser languageParser;
 
     // coin types (and event types) are pretty stand-alone, they don't depend on other features
@@ -27,6 +28,7 @@ public final class ConfigService {
         this.currenciesConfig = new CurrenciesConfig(coins, this);
         this.coinsConfig = new CoinsConfig(coins, this);
         this.dropsConfig = new DropsConfig(coins, this);
+        this.commandsConfig = new CommandsConfig(coins, this);
         this.languageParser = new LanguageParser(coins);
 
         reload();
@@ -34,16 +36,8 @@ public final class ConfigService {
 
     // different configs
 
-    public CurrenciesConfig getCurrencyConfig() {
-        return currenciesConfig;
-    }
-
     public CoinsConfig getCoinsConfig() {
         return coinsConfig;
-    }
-
-    public DropsConfig getDropsConfig() {
-        return dropsConfig;
     }
 
     public void reload() {
@@ -53,6 +47,7 @@ public final class ConfigService {
         currenciesConfig.parseAndReload();
         coinsConfig.parseAndReload();
         dropsConfig.parseAndReload();
+        commandsConfig.parseAndReload();
         languageParser.reloadLanguage();
 
         int size = coins.getConfigWarns().getWarnings();

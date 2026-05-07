@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,5 +82,14 @@ public final class Util {
 
     public static double toRoundedMoneyDecimals(double value, int decimals) {
         return BigDecimal.valueOf(value).setScale(decimals, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public static OptionalDouble parseDouble(String number) {
+        try {
+            return OptionalDouble.of(Double.parseDouble(number.replaceAll("[<>\\[\\]]", "")));
+        }
+        catch (NumberFormatException exception) {
+            return OptionalDouble.empty();
+        }
     }
 }

@@ -5,7 +5,7 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.api.ComponentApi;
 import community.coins.plugin.api.ItemParseApi;
 import community.coins.plugin.api.PluginAttributes;
-import community.coins.plugin.paper.commands.TestLogic;
+import community.coins.plugin.paper.command.CoinsCommand;
 import community.coins.plugin.paper.implement.ComponentApiPaper;
 import community.coins.plugin.paper.implement.ItemParseApiPaper;
 import community.coins.plugin.paper.implement.PluginAttributesPaper;
@@ -27,7 +27,7 @@ public final class CoinsPaper extends CoinsCore {
     private PluginAttributes pluginAttributes;
 
     @Override
-    public void beforeCoreLoaded() {
+    public void loadImplementations() {
         this.componentApi = new ComponentApiPaper();
         this.itemParseApi = new ItemParseApiPaper(this);
         this.pluginAttributes = new PluginAttributesPaper(this);
@@ -38,8 +38,13 @@ public final class CoinsPaper extends CoinsCore {
     }
 
     @Override
-    public void afterCoreLoaded() {
-        new TestLogic(this);
+    public void loadBasicFunctionality() {
+        new CoinsCommand(this);
+    }
+
+    @Override
+    public void loadAfterCore() {
+
     }
 
     public void registerCommand(LiteralCommandNode<CommandSourceStack> node, String description, Collection<String> aliases) {

@@ -10,4 +10,7 @@ public final class ConfigYml {
 
     @ConfigEntry("notify-on-update")
     public static boolean NOTIFY_ON_UPDATE = true;
+
+    @ConfigEntry(value = "debug-logging", required = false)
+    public static Boolean DEBUG_LOGGING = false;
 }

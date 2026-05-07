@@ -19,6 +19,7 @@ public final class DefinedCurrency {
     private final DecimalFormat decimalFormat;
     private final String singularName;
     private final String pluralName;
+    private final Component formatMessage;
     private final Component depositMessage;
     private final MessagePosition depositPosition;
 
@@ -29,8 +30,9 @@ public final class DefinedCurrency {
         this.decimalFormat = new DecimalFormat("#,##0." + "0".repeat(decimals));
         this.singularName = singularName;
         this.pluralName = pluralName;
-        var formatSymbol = format.replace("{symbol}", symbol);
-        this.depositMessage = ComponentUtil.parse(depositMessage.replace("{format}", formatSymbol));
+        String formatWithSymbol = format.replace("{symbol}", symbol);
+        this.formatMessage = ComponentUtil.parse(formatWithSymbol);
+        this.depositMessage = ComponentUtil.parse(depositMessage.replace("{format}", formatWithSymbol));
         this.depositPosition = depositPosition;
     }
 
@@ -58,11 +60,19 @@ public final class DefinedCurrency {
         return depositMessage;
     }
 
+    public Component getDepositMessage(double amount) {
+        return ComponentUtil.replaceAmount(depositMessage, formatAmount(amount));
+    }
+
     public MessagePosition getDepositPosition() {
         return depositPosition;
     }
 
     public String formatAmount(double amount) {
         return decimalFormat.format(amount);
+    }
+
+    public Component getFormatMessage(double amount) {
+        return ComponentUtil.replaceAmount(formatMessage, formatAmount(amount));
     }
 }

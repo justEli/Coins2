@@ -4,12 +4,12 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.api.ComponentApi;
 import community.coins.plugin.api.ItemParseApi;
 import community.coins.plugin.api.PluginAttributes;
+import community.coins.plugin.spigot.command.CoinsCommand;
 import community.coins.plugin.spigot.implement.ComponentApiSpigot;
 import community.coins.plugin.spigot.implement.ItemParseApiSpigot;
 import community.coins.plugin.spigot.implement.PluginAttributesSpigot;
 import community.coins.plugin.spigot.registrar.AdvancementDisplayRegistrar;
 import community.coins.plugin.spigot.registrar.PickupItemRegistrar;
-import community.coins.plugin.spigot.test.TestLogic;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,7 +22,7 @@ public final class CoinsSpigot extends CoinsCore {
     private PluginAttributes pluginAttributes;
 
     @Override
-    public void beforeCoreLoaded() {
+    public void loadImplementations() {
         this.componentApi = new ComponentApiSpigot(this);
         this.itemParseApi = new ItemParseApiSpigot(this);
         this.pluginAttributes = new PluginAttributesSpigot(this);
@@ -33,8 +33,13 @@ public final class CoinsSpigot extends CoinsCore {
     }
 
     @Override
-    public void afterCoreLoaded() {
-        new TestLogic(this);
+    public void loadBasicFunctionality() {
+        new CoinsCommand(this);
+    }
+
+    @Override
+    public void loadAfterCore() {
+
     }
 
     @Override
