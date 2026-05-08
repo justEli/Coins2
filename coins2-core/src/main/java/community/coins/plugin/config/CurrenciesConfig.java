@@ -38,7 +38,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
         }
 
         // first clear all currencies before registering all the configured ones
-        coins.getEconomyService().clearAllCurrencies();
+        coins.getEconomyService().clearRegisteredCurrencies();
 
         Map<String, DefinedCurrency> configured = new HashMap<>();
         for (String name : currenciesSection.getKeys(false)) {

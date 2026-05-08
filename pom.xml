@@ -19,7 +19,7 @@
 
     <properties>
         <!-- plugin details -->
-        <project.name>CommunityCoins</project.name>
+        <project.name>Coins</project.name>
         <revision>2.0</revision>
 
         <maven.compiler.source>25</maven.compiler.source>

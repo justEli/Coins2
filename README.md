@@ -1,1 +1,1 @@
-# Coins2
+# Coins²

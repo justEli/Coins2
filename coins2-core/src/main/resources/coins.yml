@@ -21,8 +21,8 @@ default:
   name:
     singular: '<#F9CE64>Coin'
     plural: '<#F9CE64>Coins'
-    immutable: true # keep the name of the coin unchanged (no anvil modification)
   currency: 'vault_balance' # from currencies.yml
+  immutable: true # keep the coin unchanged (no anvil/craft modification)
   meta:
     enchanted: false
     glow-color: 'none' # named text color, i.e. green, light_purple

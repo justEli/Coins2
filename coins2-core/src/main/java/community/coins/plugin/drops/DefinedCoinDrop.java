@@ -62,7 +62,9 @@ public final class DefinedCoinDrop {
             }
 
             total += chance;
-            coinChances.put(total, new AmountedCoin(min, max, definedCoin.get()));
+
+            int decimals = definedCoin.get().getCurrency().getDecimals();
+            coinChances.put(total, new AmountedCoin(min, max, decimals, definedCoin.get()));
         }
 
         if (total > 1) {

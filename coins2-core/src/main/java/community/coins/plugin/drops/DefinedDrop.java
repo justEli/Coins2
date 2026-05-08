@@ -63,8 +63,11 @@ public final class DefinedDrop {
         // create coin
         ItemStack coin = amountedCoin.get().getCoin().getItemStackClone();
         ItemMeta meta = coin.getItemMeta();
-        // todo fix; set to appropriate decimals
-        double value = Util.toRoundedMoneyDecimals(min == max? min : RANDOM.nextDouble(min, max), 2);
+
+        double value = Util.toRoundedMoneyDecimals(
+            min == max? min : RANDOM.nextDouble(min, max),
+            amountedCoin.get().getDecimals()
+        );
 
         coins.getCoinService().getCoinMeta().setCoinValue(meta, value);
         coin.setItemMeta(meta);

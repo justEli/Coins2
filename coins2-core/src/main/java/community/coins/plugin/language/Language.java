@@ -6,7 +6,7 @@ package community.coins.plugin.language;
  */
 public final class Language {
     @LanguageEntry("command.coins.reload.success")
-    public static FillEntry RELOAD_SUCCESS = new FillEntry("Config of <coins>Coins</coins> has been reloaded in {duration}ms.");
+    public static FillEntry RELOAD_SUCCESS = new FillEntry("Config of <coins>Coins²</coins> has been reloaded in {duration}ms.");
 
     @LanguageEntry("command.players_only")
     public static FormatEntry PLAYERS_ONLY = new FormatEntry("<error>This command can only be performed by players in-game.");
@@ -15,7 +15,7 @@ public final class Language {
     public static FillEntry COIN_NOT_FOUND = new FillEntry("<error>Cannot find a defined coin by identifier '{identifier}'.");
 
     @LanguageEntry("command.coins.give.success")
-    public static FillEntry GIVE_SUCCESS = new FillEntry("Added a worthless coin of '{identifier}' to your inventory.");
+    public static FillEntry GIVE_SUCCESS = new FillEntry("Added a coin of '{identifier}' without value to your inventory.");
 
     @LanguageEntry("command.coins.setvalue.hold")
     public static FormatEntry HOLD_A_COIN = new FormatEntry("<error>Please hold a coin in your main hand to set a value.");

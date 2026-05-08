@@ -82,7 +82,7 @@ public final class EconomyService implements Listener {
 
     // registering currencies
 
-    public void clearAllCurrencies() {
+    public void clearRegisteredCurrencies() {
         currencyToEconomyNames.clear();
         economyHooks.values().forEach(EconomyHook::clearCurrencies);
     }
@@ -173,7 +173,7 @@ public final class EconomyService implements Listener {
         }
 
         Component component = currency.getDepositMessage(displayAmount);
-        coins.getComponentApi().sendMessage(player, currency.getDepositPosition(), component);
+        coins.sendMessage(player, currency.getDepositPosition(), component);
     }
 
     // clear cache of showing deposits

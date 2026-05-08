@@ -28,7 +28,6 @@ import java.util.UUID;
  * @since April 28, 2026
  */
 public final class CoinsConfig extends FileConfig<DefinedCoin> {
-    // todo change immutable in config from name.immutable to just immutable (its not only name)
     public CoinsConfig(CoinsCore coins, ConfigService service) {
         super(coins, service, "coins.yml");
     }
@@ -43,7 +42,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
         Optional<ItemStack> defaultItem = getItemValue(config.getConfigurationSection("default"), null, "defined_coin");
         String defaultSingularName = config.getString("default.name.singular", "Coin");
         String defaultPluralName = config.getString("default.name.plural", "Coins");
-        boolean defaultImmutable = config.getBoolean("default.name.immutable", true);
+        boolean defaultImmutable = config.getBoolean("default.immutable", true);
         boolean defaultEnchanted = config.getBoolean("default.meta.enchanted", false);
         List<String> defaultItemModel = config.getStringList("default.meta.model-strings");
         List<String> defaultLore = config.getStringList("default.meta.lore");
@@ -89,7 +88,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
 
             String singularName = section.getString("name.singular", defaultSingularName);
             String pluralName = section.getString("name.plural", defaultPluralName);
-            boolean immutable = section.getBoolean("name.immutable", defaultImmutable);
+            boolean immutable = section.getBoolean("immutable", defaultImmutable);
             boolean enchanted = section.getBoolean("meta.enchanted", defaultEnchanted);
             List<String> itemModel = section.getStringList("meta.model-strings");
             if (itemModel.isEmpty()) {
@@ -174,7 +173,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
             }
 
             itemStack.setItemMeta(meta);
-            configured.put(id, new DefinedCoin(id, itemStack, singularNameComponent, pluralNameComponent));
+            configured.put(id, new DefinedCoin(id, itemStack, singularNameComponent, pluralNameComponent, currency.get()));
         }
 
         putDefinedItems(configured, "coin", "coins");

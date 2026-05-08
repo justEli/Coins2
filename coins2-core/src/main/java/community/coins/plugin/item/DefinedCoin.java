@@ -1,6 +1,7 @@
 package community.coins.plugin.item;
 
 import community.coins.plugin.component.ComponentUtil;
+import community.coins.plugin.economy.DefinedCurrency;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
@@ -15,12 +16,14 @@ public final class DefinedCoin {
     private final ItemStack itemStack;
     private final Component singularName;
     private final Component pluralName;
+    private final DefinedCurrency currency;
 
-    public DefinedCoin(String id, ItemStack itemStack, Component singularName, Component pluralName) {
+    public DefinedCoin(String id, ItemStack itemStack, Component singularName, Component pluralName, DefinedCurrency currency) {
         this.id = id;
         this.itemStack = itemStack;
         this.singularName = singularName;
         this.pluralName = pluralName;
+        this.currency = currency;
     }
 
     public ItemStack getItemStackClone() {
@@ -37,6 +40,10 @@ public final class DefinedCoin {
 
     public Component getPluralName() {
         return pluralName;
+    }
+
+    public DefinedCurrency getCurrency() {
+        return currency;
     }
 
     @Override

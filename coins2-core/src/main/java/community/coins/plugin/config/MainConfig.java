@@ -1,23 +1,10 @@
 package community.coins.plugin.config;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.component.ComponentUtil;
-import community.coins.plugin.util.Util;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Material;
-import org.bukkit.Registry;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NullMarked;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Eli
@@ -60,12 +47,6 @@ public final class MainConfig extends BasicConfig {
                 // handling different types
                 var updatedValue = switch (value) {
                     case String _ -> config.getString(configKey);
-                    case List<?> _ -> config.getStringList(configKey);
-                    case Set<?> _ -> getStringSet(config, configKey);
-                    case Component _ -> ComponentUtil.parse(config.getString(configKey));
-                    case ItemStack _ -> coins.getItemParseApi().getFromItemType(config.getString(configKey)).orElse(null);
-                    case Material _ -> Util.getType(config.getString(configKey), Registry.MATERIAL).orElse(null);
-                    case TextColor _ -> getTextColor(config, configKey);
                     case Long _ -> config.getLong(configKey);
                     case Integer _ -> config.getInt(configKey);
                     case Double _ -> config.getDouble(configKey);
@@ -84,22 +65,5 @@ public final class MainConfig extends BasicConfig {
                 addWarn("Invalid value for `%s`, using default.".formatted(configKey));
             }
         }
-    }
-
-    public static TextColor getTextColor(FileConfiguration config, String key) {
-        var color = config.getString(key);
-        if (color == null) {
-            return null;
-        }
-        return TextColor.fromHexString(color);
-    }
-
-    public static Set<String> getStringSet(YamlConfiguration config, String key) {
-        return new HashSet<>(config.getStringList(key));
-    }
-
-    @NullMarked
-    public static <T extends Enum<T>> @Nullable T getEnum(Class<T> type, YamlConfiguration config, String key) {
-        return Util.getEnum(type, config.getString(key));
     }
 }
