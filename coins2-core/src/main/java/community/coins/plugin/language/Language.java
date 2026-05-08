@@ -5,6 +5,8 @@ package community.coins.plugin.language;
  * @since April 27, 2026
  */
 public final class Language {
+    // also update en-US.json in locale
+
     @LanguageEntry("command.coins.reload.success")
     public static FillEntry RELOAD_SUCCESS = new FillEntry("Config of <coins>Coins²</coins> has been reloaded in {duration}ms.");
 

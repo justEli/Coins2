@@ -1,0 +1,11 @@
+{
+  "command.coins.reload.success": "Config of <coins>Coins²</coins> has been reloaded in {duration}ms.",
+  "command.players_only": "<error>This command can only be performed by players in-game.",
+  "command.coin_not_found": "<error>Cannot find a defined coin by identifier '{identifier}'.",
+  "command.coins.give.success": "Added a coin of '{identifier}' without value to your inventory.",
+  "command.coins.setvalue.hold": "<error>Please hold a coin in your main hand to set a value.",
+  "command.coins.setvalue.success": "The value of this coin has been set to {format}.",
+  "command.currency_not_found": "<error>Cannot find a defined currency by identifier '{identifier}'.",
+  "command.full_inventory": "<error>Cannot perform this action because your inventory is full.",
+  "word.value": "value"
+}

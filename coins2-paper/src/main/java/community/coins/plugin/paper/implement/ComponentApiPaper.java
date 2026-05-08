@@ -1,6 +1,6 @@
 package community.coins.plugin.paper.implement;
 
-import community.coins.plugin.api.ComponentApi;
+import community.coins.plugin.platform.ComponentApi;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

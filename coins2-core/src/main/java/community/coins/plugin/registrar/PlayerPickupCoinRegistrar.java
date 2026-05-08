@@ -26,7 +26,7 @@ public final class PlayerPickupCoinRegistrar implements Listener {
     @EventHandler(ignoreCancelled = true)
     void onPlayerPickupEvent(PlayerPickupEvent event) {
         var item = event.getItem();
-        if (!coins.getCoinService().getCoinMeta().isCoin(item.getItemStack())) {
+        if (!coins.getCoinMeta().isCoin(item.getItemStack())) {
             return; // do nothing because it's not a coin
         }
 

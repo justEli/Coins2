@@ -19,6 +19,8 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
         super(coins, service, "currencies.yml");
     }
 
+    public static boolean USING_VAULT_CURRENCY = false;
+
     @Override
     public void parseAndReload() {
         var config = getOrCreateConfig();
@@ -33,7 +35,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
 
         ConfigurationSection currenciesSection = config.getConfigurationSection("currencies");
         if (currenciesSection == null) {
-            addWarn("There are no defined currencies in the config, `currencies` section missing.");
+            addWarn("Cannot register currencies because section for defining currencies is missing.");
             return;
         }
 
@@ -44,20 +46,25 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
         for (String name : currenciesSection.getKeys(false)) {
             ConfigurationSection section = currenciesSection.getConfigurationSection(name);
             if (section == null) {
-                coins.debug("Skipping currency config entry for '%s', as nothing is configured.".formatted(name));
                 continue;
             }
 
+            String id = Util.toIdentifier(name);
             String economyName = section.getString("economy");
             if (economyName == null) {
-                addWarn("No plugin provided for currency '%s'.".formatted(name));
+                addWarn("Cannot register currency '%s' because no economy or plugin is provided.".formatted(id));
                 continue;
             }
 
             Optional<EconomyHook> economy = coins.getEconomyService().getEconomy(economyName);
             if (economy.isEmpty()) {
-                addWarn("No supported plugin '%s' found for currency '%s' at `economy`.".formatted(economyName, name));
+                addWarn("Cannot register currency '%s' because economy '%s' is not supported.".formatted(id, economyName));
                 continue;
+            }
+
+            // small bStats metric here
+            switch (economyName) {
+                case "Vault" -> USING_VAULT_CURRENCY = true;
             }
 
             int decimals = section.getInt("decimals", defaultDecimals);
@@ -69,15 +76,14 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
             String depositPosition = section.getString("deposit.position", defaultDepositPosition);
             MessagePosition position = Util.getEnum(MessagePosition.class, depositPosition);
 
-            String id = name.toLowerCase();
             DefinedCurrency definedCurrency = new DefinedCurrency(
                 id, economy.get(), decimals, symbol, singularName, pluralName, format, depositMessage, position
             );
 
             // register the currency for the given plugin/economy
-            coins.getEconomyService().registerCurrency(definedCurrency, configWarns);
-
-            configured.put(id, definedCurrency);
+            if (coins.getEconomyService().registerCurrency(definedCurrency, configWarns)) {
+                configured.put(id, definedCurrency);
+            }
         }
 
         putDefinedItems(configured, "currency", "currencies");

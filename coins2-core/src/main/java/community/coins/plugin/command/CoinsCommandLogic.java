@@ -66,7 +66,7 @@ public abstract class CoinsCommandLogic extends CommandLogic {
         }
 
         ItemStack stack = player.getInventory().getItemInMainHand();
-        if (coins.getCoinService().getCoinMeta().getCoinCurrency(stack).isEmpty()) {
+        if (coins.getCoinMeta().getCoinCurrency(stack).isEmpty()) {
             coins.sendMessage(sender, Language.HOLD_A_COIN);
             return;
         }
@@ -78,8 +78,8 @@ public abstract class CoinsCommandLogic extends CommandLogic {
         }
 
         ItemMeta meta = stack.getItemMeta();
-        coins.getCoinService().getCoinMeta().setCoinCurrency(meta, currency.get());
-        coins.getCoinService().getCoinMeta().setCoinValue(meta, Util.toRoundedMoneyDecimals(value, currency.get().getDecimals()));
+        coins.getCoinMeta().setCoinCurrency(meta, currency.get());
+        coins.getCoinMeta().setCoinValue(meta, Util.toRoundedMoneyDecimals(value, currency.get().getDecimals()));
         stack.setItemMeta(meta);
 
         coins.sendMessage(

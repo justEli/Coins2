@@ -10,6 +10,7 @@ public final class DefinedCommand {
     private final String identifier;
     private final String label;
 
+    // not used right now, but can be used for unregistering commands when possible
     public DefinedCommand(String identifier, List<String> labels) {
         this.identifier = identifier.toLowerCase();
         this.label = labels.getFirst();

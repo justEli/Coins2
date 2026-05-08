@@ -1,4 +1,4 @@
-package community.coins.plugin.api;
+package community.coins.plugin.platform;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;

@@ -3,7 +3,7 @@ package community.coins.plugin.event;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -12,6 +12,7 @@ import java.util.UUID;
  * @author Eli
  * @since April 14, 2026
  */
+@NullMarked
 public final class BalanceChangeEvent extends Event implements Cancellable {
     private final UUID uuid;
     private final BigDecimal transactionAmount;
@@ -52,7 +53,7 @@ public final class BalanceChangeEvent extends Event implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     @Override
-    public @NotNull HandlerList getHandlers() {
+    public HandlerList getHandlers() {
         return HANDLER_LIST;
     }
 

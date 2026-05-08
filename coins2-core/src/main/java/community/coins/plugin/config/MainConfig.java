@@ -36,7 +36,7 @@ public final class MainConfig extends BasicConfig {
                 if (configKey == null || !config.contains(configKey)) {
                     if (configEntry.required()) {
                         String value = field.get(TYPE).toString();
-                        addWarn("Config is missing `%s`. Using its default value '%s' now.".formatted(configKey, value));
+                        addWarn("Config is missing `%s`, now using its default value '%s'.".formatted(configKey, value));
                     }
                     continue;
                 }
@@ -54,7 +54,7 @@ public final class MainConfig extends BasicConfig {
                 };
 
                 if (updatedValue == null) {
-                    addWarn("Invalid value for `%s`, using default.".formatted(configKey));
+                    addWarn("Config has invalid value for `%s`, now using its default value.".formatted(configKey));
                     return;
                 }
 
@@ -62,7 +62,7 @@ public final class MainConfig extends BasicConfig {
                 field.set(TYPE, updatedValue);
             }
             catch (Throwable throwable) {
-                addWarn("Invalid value for `%s`, using default.".formatted(configKey));
+                addWarn("Config has invalid value for `%s`, now using its default value.".formatted(configKey));
             }
         }
     }

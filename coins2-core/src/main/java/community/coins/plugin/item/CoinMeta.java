@@ -51,17 +51,17 @@ public final class CoinMeta {
             this.scoreboard = manager.getMainScoreboard();
         }
 
-        this.valueKey = NamespacedKey.fromString("value", coins);
-        this.currencyKey = NamespacedKey.fromString("currency", coins);
-        this.withdrawnKey = NamespacedKey.fromString("withdrawn", coins);
-        this.uniqueKey = NamespacedKey.fromString("unique", coins);
-        this.glowKey = NamespacedKey.fromString("glow", coins);
-        this.hologramKey = NamespacedKey.fromString("hologram", coins);
-        this.noHopperKey = NamespacedKey.fromString("no_hopper", coins);
-        this.immutableKey = NamespacedKey.fromString("immutable", coins);
-        this.soundKey = NamespacedKey.fromString("sound", coins);
-        this.volumeKey = NamespacedKey.fromString("volume", coins);
-        this.pitchKey = NamespacedKey.fromString("pitch", coins);
+        this.valueKey = new NamespacedKey(coins, "value");
+        this.currencyKey = new NamespacedKey(coins, "currency");
+        this.withdrawnKey = new NamespacedKey(coins, "withdrawn");
+        this.uniqueKey = new NamespacedKey(coins, "unique");
+        this.glowKey = new NamespacedKey(coins, "glow");
+        this.hologramKey = new NamespacedKey(coins, "hologram");
+        this.noHopperKey = new NamespacedKey(coins, "no_hopper");
+        this.immutableKey = new NamespacedKey(coins, "immutable");
+        this.soundKey = new NamespacedKey(coins, "sound");
+        this.volumeKey = new NamespacedKey(coins, "volume");
+        this.pitchKey = new NamespacedKey(coins, "pitch");
 
         coins.addShutdownTask(() -> scoreboard.getTeams().forEach(team -> {
             if (team.getName().startsWith(TEAM_PREFIX)) {
@@ -120,12 +120,7 @@ public final class CoinMeta {
             return Optional.empty();
         }
 
-        Optional<String> currencyName = getCoinCurrency(item);
-        if (currencyName.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return coins.getEconomyService().getCurrency(currencyName.get());
+        return getCoinCurrency(item).flatMap(name -> coins.getEconomyService().getCurrency(name));
     }
 
     // coin withdrawal

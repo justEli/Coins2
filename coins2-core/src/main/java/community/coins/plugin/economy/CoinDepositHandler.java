@@ -32,13 +32,13 @@ public final class CoinDepositHandler implements Listener {
 
     // todo keep in mind to change this when physical coins become a thing
     // immediately deposit money when a dropped coin is clicked in an inventory
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     void onInventoryClickEvent(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
 
-        if (!coins.getCoinService().getCoinMeta().isCoin(event.getCurrentItem())) {
+        if (!coins.getCoinMeta().isCoin(event.getCurrentItem())) {
             return; // do nothing because it's not a coin
         }
 

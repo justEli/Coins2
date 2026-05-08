@@ -6,8 +6,8 @@ import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +16,7 @@ import java.util.Map;
  * @author Eli
  * @since April 23, 2026
  */
+@NullMarked
 public final class ColorResolver implements TagResolver {
     private static final Map<String, TextColor> KEYS = new HashMap<>();
 
@@ -56,7 +57,7 @@ public final class ColorResolver implements TagResolver {
     }
 
     @Override
-    public @Nullable Tag resolve(@NotNull String name, @NotNull ArgumentQueue arguments, @NotNull Context ctx) throws ParsingException {
+    public @Nullable Tag resolve(String name, ArgumentQueue arguments, Context ctx) throws ParsingException {
         if (KEYS.containsKey(name)) {
             return Tag.styling(KEYS.get(name));
         }
@@ -65,7 +66,7 @@ public final class ColorResolver implements TagResolver {
     }
 
     @Override
-    public boolean has(@NotNull String name) {
+    public boolean has(String name) {
         return KEYS.containsKey(name);
     }
 }

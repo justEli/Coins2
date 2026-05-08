@@ -9,7 +9,7 @@ import com.google.gson.JsonParser;
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.ConfigYml;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
  * @author Eli
  * @since April 27, 2026
  */
+@NullMarked
 public final class LanguageParser {
     private final CoinsCore coins;
     private final ConfigWarns.Named configWarns;
@@ -62,7 +63,7 @@ public final class LanguageParser {
             }
             else {
                 configWarns.warn("""
-                    Found an invalid locale '%s' in the config at `locale`. Change this to '%s'."""
+                    Found an invalid locale '%s' in the config. Change this to '%s'."""
                     .formatted(ConfigYml.LOCALE, corrected)
                 );
                 ConfigYml.LOCALE = corrected;
@@ -134,7 +135,7 @@ public final class LanguageParser {
         }
     }
 
-    private static @NotNull String toValidLocale(@NotNull String locale) {
+    private static String toValidLocale(String locale) {
         var parts = locale.split("[ -_]");
         if (parts.length == 1) {
             String modified = parts[0].toLowerCase();

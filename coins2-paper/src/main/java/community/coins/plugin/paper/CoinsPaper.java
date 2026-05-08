@@ -2,9 +2,9 @@ package community.coins.plugin.paper;
 
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.api.ComponentApi;
-import community.coins.plugin.api.ItemParseApi;
-import community.coins.plugin.api.PluginAttributes;
+import community.coins.plugin.platform.ComponentApi;
+import community.coins.plugin.platform.ItemParseApi;
+import community.coins.plugin.platform.PluginAttributes;
 import community.coins.plugin.paper.command.CoinsCommand;
 import community.coins.plugin.paper.implement.ComponentApiPaper;
 import community.coins.plugin.paper.implement.ItemParseApiPaper;

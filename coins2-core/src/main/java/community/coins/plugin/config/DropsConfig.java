@@ -5,6 +5,7 @@ import community.coins.plugin.drops.DefinedCoinDrop;
 import community.coins.plugin.drops.DefinedDrop;
 import community.coins.plugin.type.filter.EventFilterConfig;
 import community.coins.plugin.type.registrar.EventType;
+import community.coins.plugin.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
@@ -36,9 +37,9 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
     public void parseAndReload() {
         var config = getOrCreateConfig();
 
-        var dropsSection = config.getConfigurationSection("drops");
+        ConfigurationSection dropsSection = config.getConfigurationSection("drops");
         if (dropsSection == null) {
-            addWarn("There are no defined drops in the config, `drops` section missing.");
+            addWarn("Cannot register drops because section for defining drops is missing.");
             return;
         }
 
@@ -49,13 +50,6 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
         for (String name : dropsSection.getKeys(false)) {
             ConfigurationSection section = dropsSection.getConfigurationSection(name);
             if (section == null) {
-                coins.debug("Skipping drops config entry for '%s', as nothing is configured.".formatted(name));
-                continue; // almost impossible i believe
-            }
-
-            String definedEvent = section.getString("event"); // predefined event in the plugin
-            if (definedEvent == null) {
-                addWarn("No event type found for drop '%s'.".formatted(name));
                 continue;
             }
 
@@ -65,22 +59,28 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
                 continue; // drop is not enabled
             }
 
+            String id = Util.toIdentifier(name);
+            String definedEvent = section.getString("event"); // predefined event in the plugin
+            if (definedEvent == null) {
+                addWarn("Cannot register drop '%s' because event type was not provided.".formatted(id));
+                continue;
+            }
+
             Optional<EventType> eventType = coins.getEventTypeService().getEventType(definedEvent.toLowerCase());
             if (eventType.isEmpty()) {
                 addWarn("""
-                    Invalid event type '%s' found for drop '%s' at `event`. Supported types are: %s"""
+                    Cannot register drop '%s' because '%s' is an unknown event type. Supported types are: %s"""
                     .formatted(definedEvent, name, coins.getEventTypeService().getEventTypeNames())
                 );
                 continue;
             }
 
             EventType event = eventType.get();
-            String id = name.toLowerCase();
 
             // get a filter config from the event type's filter contract
             ConfigurationSection filtersSection = section.getConfigurationSection("filters"); // can be null!
             ConfigurationSection defaultFilters = config.getConfigurationSection("default.filters"); // can be null!
-            EventFilterConfig filterConfig = event.getFilterContract().createFilterConfig(filtersSection, defaultFilters, configWarns);
+            EventFilterConfig filterConfig = event.getFilterContract().createFilterConfig(filtersSection, defaultFilters, id, configWarns);
 
             // create a DefinedCoinDrop from the "coins" section
             ConfigurationSection coinsSection = section.getConfigurationSection("coins");
@@ -88,7 +88,7 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
                 continue;
             }
 
-            DefinedCoinDrop definedCoinDrop = new DefinedCoinDrop(service, configWarns, coinsSection);
+            DefinedCoinDrop definedCoinDrop = new DefinedCoinDrop(service, configWarns, coinsSection, id);
 
             // now we have a DefinedDrop with EventType, EventFilterConfig and DefinedCoinDrop
             DefinedDrop definedDrop = new DefinedDrop(id, filterConfig, definedCoinDrop);

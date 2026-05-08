@@ -24,15 +24,15 @@ public final class CoinBehaviorHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     void onItemSpawnEvent(ItemSpawnEvent event) {
         var item = event.getEntity();
-        coins.getCoinService().getCoinMeta().applyGlowIfPresent(item);
-        coins.getCoinService().getCoinMeta().applyHologramIfPresent(item);
-        coins.getCoinService().getCoinMeta().applyUniqueIfPresent(item);
+        coins.getCoinMeta().applyGlowIfPresent(item);
+        coins.getCoinMeta().applyHologramIfPresent(item);
+        coins.getCoinMeta().applyUniqueIfPresent(item);
     }
 
     // remove the uniqueness of the coin, so it can stack in the inventory again
     @EventHandler(ignoreCancelled = true)
     void onEntityPickupItemEvent(EntityPickupItemEvent event) {
-        coins.getCoinService().getCoinMeta().removeUniqueIfPresent(event.getItem());
+        coins.getCoinMeta().removeUniqueIfPresent(event.getItem());
     }
 
     // prevent coins from being picked up by hoppers if configured that way
@@ -42,7 +42,7 @@ public final class CoinBehaviorHandler implements Listener {
             return;
         }
 
-        if (coins.getCoinService().getCoinMeta().isNoHopperPickup(event.getItem())) {
+        if (coins.getCoinMeta().isNoHopperPickup(event.getItem())) {
             event.setCancelled(true);
         }
     }

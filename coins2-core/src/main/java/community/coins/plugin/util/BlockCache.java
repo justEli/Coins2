@@ -17,7 +17,6 @@ public final class BlockCache {
     private final AtomicInteger amount = new AtomicInteger(0);
     private final AtomicLong lastTime = new AtomicLong(0);
 
-
     public int getAndIncrement() {
         lastTime.set(System.currentTimeMillis());
         return amount.getAndIncrement();

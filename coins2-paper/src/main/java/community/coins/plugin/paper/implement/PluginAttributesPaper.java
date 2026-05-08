@@ -1,7 +1,7 @@
 package community.coins.plugin.paper.implement;
 
-import community.coins.plugin.api.BasicPlugin;
-import community.coins.plugin.api.PluginAttributes;
+import community.coins.plugin.CoinsCore;
+import community.coins.plugin.platform.PluginAttributes;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -10,30 +10,30 @@ import org.jspecify.annotations.NullMarked;
  */
 @NullMarked
 public final class PluginAttributesPaper implements PluginAttributes {
-    public final BasicPlugin plugin;
-    public PluginAttributesPaper(BasicPlugin plugin) {
-        this.plugin = plugin;
+    public final CoinsCore coins;
+    public PluginAttributesPaper(CoinsCore coins) {
+        this.coins = coins;
     }
 
     @Override
     public String getVersion() {
-        return plugin.getPluginMeta().getVersion();
+        return coins.getPluginMeta().getVersion();
     }
 
     @Override
     public String getName() {
-        return plugin.getPluginMeta().getName();
+        return coins.getPluginMeta().getName();
     }
 
     @Override
     public String getUrl() {
-        var website = plugin.getPluginMeta().getWebsite();
+        var website = coins.getPluginMeta().getWebsite();
         return website == null? "" : website;
     }
 
     @Override
     public String getDescription() {
-        var description = plugin.getPluginMeta().getDescription();
+        var description = coins.getPluginMeta().getDescription();
         return description == null? "" : description;
     }
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 public abstract class EconomyHook implements EconomyAction {
     private final String name;
     public EconomyHook(EconomyService service, String name) {
-        this.name = name; // not an identifier, but a case-sensitive name
+        this.name = name; // not an identifier, but a case-sensitive (plugin) name
 
         // register this currency to Coins' economy service
         service.registerEconomy(this);

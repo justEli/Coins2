@@ -4,6 +4,7 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.component.ComponentUtil;
 import community.coins.plugin.economy.DefinedCurrency;
 import community.coins.plugin.item.DefinedCoin;
+import community.coins.plugin.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -38,7 +39,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
     public void parseAndReload() {
         var config = getOrCreateConfig();
 
-        String defaultCurrency = config.getString("default.currency", "vault_balance"); // maybe to 'physical' when available
+        String defaultCurrency = config.getString("default.currency", "vault_balance"); // default 'physical' when available
         Optional<ItemStack> defaultItem = getItemValue(config.getConfigurationSection("default"), null, "defined_coin");
         String defaultSingularName = config.getString("default.name.singular", "Coin");
         String defaultPluralName = config.getString("default.name.plural", "Coins");
@@ -54,9 +55,9 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
         double defaultDepositVolume = config.getDouble("default.deposit.volume", .5);
         double defaultDepositPitch = config.getDouble("default.deposit.pitch", .3);
 
-        var coinsSection = config.getConfigurationSection("coins");
+        ConfigurationSection coinsSection = config.getConfigurationSection("coins");
         if (coinsSection == null) {
-            addWarn("There are no defined coins in the config, `coins` section missing.");
+            addWarn("Cannot register coins because section for defining coins is missing.");
             return;
         }
 
@@ -67,22 +68,22 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
                 continue;
             }
 
-            String id = name.toLowerCase();
+            String id = Util.toIdentifier(name);
             if (id.isEmpty() || configured.containsKey(id)) {
-                addWarn("Found already defined coin with id '%s'. Cannot define multiple coins with the same id.".formatted(id));
+                addWarn("Cannot register multiple coins with the same identifier '%s'.".formatted(id));
                 continue;
             }
 
             Optional<ItemStack> item = getItemValue(section, defaultItem.orElse(null), id);
             if (item.isEmpty()) {
-                addWarn("Item type not found for coin '%s'.".formatted(name));
+                addWarn("Cannot register coin '%s' because item type or value is invalid.".formatted(id));
                 continue;
             }
 
             String currencyName = section.getString("currency", defaultCurrency);
             Optional<DefinedCurrency> currency = coins.getEconomyService().getCurrency(currencyName);
             if (currency.isEmpty()) {
-                addWarn("Currency '%s' not found for coin '%s'.".formatted(currencyName, name));
+                addWarn("Cannot register coin '%s' because currency '%s' does not exist.".formatted(id, currencyName));
                 continue;
             }
 
@@ -113,15 +114,15 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
             ItemMeta meta = itemStack.getItemMeta();
 
             if (meta == null) {
-                addWarn("Invalid item found for coin '%s'.".formatted(name));
+                addWarn("Cannot register coin '%s' because item type or value is invalid.".formatted(id));
                 continue;
             }
 
             coins.getComponentApi().setDisplayName(meta, singularNameComponent);
-            coins.getCoinService().getCoinMeta().setCoinCurrency(meta, currency.get());
+            coins.getCoinMeta().setCoinCurrency(meta, currency.get());
 
             if (immutable) {
-                coins.getCoinService().getCoinMeta().setImmutableProperty(meta, true);
+                coins.getCoinMeta().setImmutableProperty(meta, true);
             }
 
             if (enchanted) {
@@ -148,28 +149,28 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
 
             if (glowColor != null && !glowColor.equalsIgnoreCase("none") && !glowColor.equalsIgnoreCase("false")) {
                 try {
-                    var color = NamedTextColor.NAMES.valueOrThrow(glowColor);
-                    coins.getCoinService().getCoinMeta().setGlowProperty(meta, color);
+                    NamedTextColor color = NamedTextColor.NAMES.valueOrThrow(glowColor);
+                    coins.getCoinMeta().setGlowProperty(meta, color);
                 }
                 catch (NoSuchElementException exception) {
-                    addWarn("Invalid named color found for coin '%s' at `%s`.".formatted(name, "glow-color"));
+                    addWarn("Cannot set glow color for coin '%s' because color '%s' is invalid.".formatted(id, glowColor));
                 }
             }
 
             if (hologram) {
-                coins.getCoinService().getCoinMeta().setHologramProperty(meta, true);
+                coins.getCoinMeta().setHologramProperty(meta, true);
             }
 
             if (!itemMerge) {
-                coins.getCoinService().getCoinMeta().setUniqueProperty(meta, true);
+                coins.getCoinMeta().setUniqueProperty(meta, true);
             }
 
             if (!hopperPickup) {
-                coins.getCoinService().getCoinMeta().setNoHopperPickupProperty(meta, true);
+                coins.getCoinMeta().setNoHopperPickupProperty(meta, true);
             }
 
             if (depositSound != null) {
-                coins.getCoinService().getCoinMeta().setSoundProperty(meta, depositSound, depositVolume, depositPitch);
+                coins.getCoinMeta().setSoundProperty(meta, depositSound, depositVolume, depositPitch);
             }
 
             itemStack.setItemMeta(meta);

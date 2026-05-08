@@ -1,6 +1,5 @@
 package community.coins.plugin.item;
 
-import community.coins.plugin.component.ComponentUtil;
 import community.coins.plugin.economy.DefinedCurrency;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
@@ -44,12 +43,5 @@ public final class DefinedCoin {
 
     public DefinedCurrency getCurrency() {
         return currency;
-    }
-
-    @Override
-    public String toString() {
-        return "DefinedCoin[id=%s, material=%s, singularName=%s, pluralName=%s]".formatted(
-            id, itemStack.getType(), ComponentUtil.toStripped(singularName), ComponentUtil.toStripped(pluralName)
-        );
     }
 }

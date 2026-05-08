@@ -1,9 +1,9 @@
 package community.coins.plugin.spigot;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.api.ComponentApi;
-import community.coins.plugin.api.ItemParseApi;
-import community.coins.plugin.api.PluginAttributes;
+import community.coins.plugin.platform.ComponentApi;
+import community.coins.plugin.platform.ItemParseApi;
+import community.coins.plugin.platform.PluginAttributes;
 import community.coins.plugin.spigot.command.CoinsCommand;
 import community.coins.plugin.spigot.implement.ComponentApiSpigot;
 import community.coins.plugin.spigot.implement.ItemParseApiSpigot;

@@ -31,7 +31,7 @@ public final class Util {
         return Optional.ofNullable(registry.get(key));
     }
 
-    public static String toCapitalized(String message) {
+    public static String toCapitalized(@Nullable String message) {
         return (message == null || message.isEmpty())? "" : message.substring(0, 1).toUpperCase() + message.substring(1).toLowerCase();
     }
 
@@ -91,5 +91,9 @@ public final class Util {
         catch (NumberFormatException exception) {
             return OptionalDouble.empty();
         }
+    }
+
+    public static String toIdentifier(String value) {
+        return value.toLowerCase().replaceAll("[^a-z0-9]+", " ").trim().replace(" ", "_");
     }
 }

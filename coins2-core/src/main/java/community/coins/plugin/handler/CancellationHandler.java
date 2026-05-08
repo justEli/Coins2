@@ -31,7 +31,7 @@ public final class CancellationHandler implements Listener {
         }
 
         Item item = event.getItem();
-        if (!coins.getCoinService().getCoinMeta().isCoin(item.getItemStack())) {
+        if (!coins.getCoinMeta().isCoin(item.getItemStack())) {
             return;
         }
 
@@ -50,7 +50,7 @@ public final class CancellationHandler implements Listener {
         if (item == null) {
             return false;
         }
-        return coins.getCoinService().getCoinMeta().isImmutableName(item);
+        return coins.getCoinMeta().isImmutableName(item);
     }
 
     @EventHandler(ignoreCancelled = true)

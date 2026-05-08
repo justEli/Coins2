@@ -4,7 +4,7 @@ import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.item.DefinedCoin;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.NavigableMap;
@@ -17,16 +17,17 @@ import java.util.TreeMap;
  * @author Eli
  * @since May 04, 2026
  */
+@NullMarked
 public final class DefinedCoinDrop {
     private final NavigableMap<Double, AmountedCoin> coinChances = new TreeMap<>();
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
-    public DefinedCoinDrop(ConfigService service, ConfigWarns.Named warns, @NotNull ConfigurationSection coinsSection) {
-        double total = 0.;
+    public DefinedCoinDrop(ConfigService service, ConfigWarns.Named warns, ConfigurationSection coinsSection, String dropId) {
+        double total = 0;
         for (String coinName : coinsSection.getKeys(false)) {
             Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefinedItem(coinName);
             if (definedCoin.isEmpty()) {
-                warns.warn("No coin found with name " + coinName);
+                warns.warn("Cannot add coin '%s' for drop '%s' because coin is not defined.".formatted(coinName, dropId));
                 continue;
             }
 
@@ -37,6 +38,7 @@ public final class DefinedCoinDrop {
 
             double chance = section.getDouble("chance", 1);
             if (chance <= 0 || chance > 1) {
+                warns.warn("Cannot add coin '%s' for drop '%s' because chance is not between 0.00 and 1.00.".formatted(coinName, dropId));
                 continue;
             }
 
@@ -68,7 +70,10 @@ public final class DefinedCoinDrop {
         }
 
         if (total > 1) {
-            warns.warn("The total chance has exceeded 100% (more than 1.00).");
+            warns.warn("""
+                Total coin drop chance for drop '%s' is higher than 1.00 (100%%), which can lead to unexpected drop behavior."""
+                .formatted(dropId)
+            );
         }
     }
 
@@ -88,6 +93,6 @@ public final class DefinedCoinDrop {
             return Optional.empty(); // leftover probability
         }
 
-        return Optional.ofNullable(coin.getValue());
+        return Optional.of(coin.getValue());
     }
 }

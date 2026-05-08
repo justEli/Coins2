@@ -2,6 +2,7 @@ package community.coins.plugin.drops;
 
 import community.coins.plugin.type.filter.EventFilterForm;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  * @author Eli
  * @since May 04, 2026
  */
+@NullMarked
 public final class CoinDropAction {
     private final DefinedDrop definedDrop;
     private final EventFilterForm filter;

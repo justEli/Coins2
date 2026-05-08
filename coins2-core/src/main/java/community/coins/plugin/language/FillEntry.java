@@ -1,6 +1,7 @@
 package community.coins.plugin.language;
 
 import net.kyori.adventure.text.Component;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  * @author Eli
  * @since April 24, 2026
  */
+@NullMarked
 public final class FillEntry extends FormatEntry {
     public FillEntry(String message) {
         super(message);

@@ -4,6 +4,7 @@ import community.coins.plugin.CoinsCore;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataType;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Optional;
 
@@ -11,13 +12,14 @@ import java.util.Optional;
  * @author Eli
  * @since April 28, 2026
  */
+@NullMarked
 public final class PersistentData {
     private final NamespacedKey transformedKey; // stores the type of transformed entity
     private final NamespacedKey playerDamageKey; // total damage done by a player
 
     public PersistentData(CoinsCore coins) {
-        this.transformedKey = NamespacedKey.fromString("entity_transformed", coins);
-        this.playerDamageKey = NamespacedKey.fromString("player_damage", coins);
+        this.transformedKey = new NamespacedKey(coins, "entity_transformed");
+        this.playerDamageKey = new NamespacedKey(coins, "player_damage");
     }
 
     // entities

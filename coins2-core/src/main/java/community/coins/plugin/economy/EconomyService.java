@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.logging.Level;
  * @author Eli
  * @since May 05, 2026
  */
+@NullMarked
 public final class EconomyService implements Listener {
     private final CoinsCore coins;
     public EconomyService(CoinsCore coins) {
@@ -94,15 +96,19 @@ public final class EconomyService implements Listener {
         return currencyToEconomyNames.keySet();
     }
 
-    public void registerCurrency(DefinedCurrency currency, ConfigWarns.Named warns) {
+    public boolean registerCurrency(DefinedCurrency currency, ConfigWarns.Named warns) {
         EconomyHook economy = currency.getEconomyHook();
         if (!economy.isMultiCurrency() && economy.getAmountOfCurrencies() > 0) {
-            warns.warn("Found multiple currencies for a plugin that only supports one currency.");
-            return;
+            warns.warn("""
+                Cannot register currency '%s' for plugin '%s' that only supports one currency."""
+                .formatted(currency.getIdentifier(), currency.getEconomyHook().getName())
+            );
+            return false;
         }
 
         economy.addCurrency(currency);
         currencyToEconomyNames.put(currency.getIdentifier(), economy.getName());
+        return true;
     }
 
     public Optional<DefinedCurrency> getCurrency(String currency) {
@@ -121,7 +127,7 @@ public final class EconomyService implements Listener {
     /// deposit the coin into the right currency and value, including deposit message and pickup sound
     /// @return true if successful deposit of coin
     public boolean depositCoin(Player player, ItemStack coin) {
-        Optional<DefinedCurrency> currency = coins.getCoinService().getCoinMeta().getCoinDefinedCurrency(coin);
+        Optional<DefinedCurrency> currency = coins.getCoinMeta().getCoinDefinedCurrency(coin);
         if (currency.isEmpty()) {
             coins.getLogger().warning("""
                 Attached currency to coin with item type '%s' was not found. Consider to add it to 'currencies.yml' again."""
@@ -130,7 +136,7 @@ public final class EconomyService implements Listener {
             return false;
         }
 
-        OptionalDouble value = coins.getCoinService().getCoinMeta().getCoinValue(coin);
+        OptionalDouble value = coins.getCoinMeta().getCoinValue(coin);
         if (value.isEmpty()) {
             return false;
         }
@@ -138,7 +144,7 @@ public final class EconomyService implements Listener {
         coins.getEconomyService().submitTransaction(currency.get(), transaction -> {
             if (transaction.deposit(player.getUniqueId(), value.getAsDouble())) {
                 sendDepositMessage(currency.get(), player, value.getAsDouble());
-                coins.getCoinService().getCoinMeta().playSound(player, coin);
+                coins.getCoinMeta().playSound(player, coin);
             }
         });
         return true;

@@ -2,6 +2,7 @@ package community.coins.plugin.config;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.command.DefinedCommand;
+import community.coins.plugin.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
     @Override
     public void parseAndReload() {
         if (registered.getAndSet(true)) {
-            coins.log(Level.INFO, "Commands cannot be reloaded. Please reboot the server to apply changes.");
+            coins.log(Level.INFO, "Commands cannot be reloaded, so please reboot to apply command changes.");
             return;
         }
 
@@ -32,7 +33,7 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
 
         ConfigurationSection commandsSection = config.getConfigurationSection("commands");
         if (commandsSection == null) {
-            addWarn("There are no defined commands in the config, `commands` section missing.");
+            addWarn("Cannot register commands because section for defining commands is missing.");
             return;
         }
 
@@ -40,7 +41,6 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
         for (String name : commandsSection.getKeys(false)) {
             ConfigurationSection section = commandsSection.getConfigurationSection(name);
             if (section == null) {
-                coins.debug("Skipping command config entry for '%s', as nothing is configured.".formatted(name));
                 continue;
             }
 
@@ -48,13 +48,13 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
                 continue;
             }
 
-            String id = name.toLowerCase();
+            String id = Util.toIdentifier(name);
             List<String> labels = section.getStringList("labels");
             String permission = section.getString("permission", "coins.command");
 
             boolean registered = coins.getCommandService().implementCommand(id, labels, permission);
             if (!registered) {
-                configWarns.warn("Cannot register command with unknown command logic '%s'.".formatted(id));
+                configWarns.warn("Cannot register command '%s' because this command logic does not exist.".formatted(id));
                 continue;
             }
 

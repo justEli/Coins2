@@ -1,7 +1,7 @@
 package community.coins.plugin.spigot.implement;
 
-import community.coins.plugin.api.BasicPlugin;
-import community.coins.plugin.api.ItemParseApi;
+import community.coins.plugin.CoinsCore;
+import community.coins.plugin.platform.ItemParseApi;
 import community.coins.plugin.util.Util;
 import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
@@ -20,9 +20,9 @@ import java.util.UUID;
  */
 @NullMarked
 public final class ItemParseApiSpigot extends ItemParseApi {
-    public final BasicPlugin plugin;
-    public ItemParseApiSpigot(BasicPlugin plugin) {
-        this.plugin = plugin;
+    public final CoinsCore coins;
+    public ItemParseApiSpigot(CoinsCore coins) {
+        this.coins = coins;
     }
 
     @Override
@@ -32,7 +32,7 @@ public final class ItemParseApiSpigot extends ItemParseApi {
             return Optional.empty();
         }
 
-        var profile = plugin.getServer().createPlayerProfile(uuid, name);
+        var profile = coins.getServer().createPlayerProfile(uuid, name);
         try {
             profile.getTextures().setSkin(URI.create(url.get()).toURL());
         }

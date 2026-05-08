@@ -9,6 +9,7 @@ import community.coins.plugin.util.Util;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Eli
  * @since May 01, 2026
  */
+@NullMarked
 public final class DefinedDrop {
     private final String identifier;
     private final EventFilterConfig eventFilterConfig;
@@ -42,8 +44,8 @@ public final class DefinedDrop {
         return eventFilterConfig;
     }
 
+    // todo implement
     public DepositType getDepositType() {
-        // todo implement
         return DepositType.DROP;
     }
 
@@ -53,28 +55,27 @@ public final class DefinedDrop {
             return Optional.empty(); // chance didn't allow it
         }
 
-        double min = amountedCoin.get().getMinValue();
-        double max = amountedCoin.get().getMaxValue();
+        double min = amountedCoin.get().minValue();
+        double max = amountedCoin.get().maxValue();
 
         // todo drop-each-coin can be programmed here (currently always only 1 in list)
 
         List<ItemStack> items = new ArrayList<>();
 
         // create coin
-        ItemStack coin = amountedCoin.get().getCoin().getItemStackClone();
+        ItemStack coin = amountedCoin.get().coin().getItemStackClone();
         ItemMeta meta = coin.getItemMeta();
 
         double value = Util.toRoundedMoneyDecimals(
             min == max? min : RANDOM.nextDouble(min, max),
-            amountedCoin.get().getDecimals()
+            amountedCoin.get().decimals()
         );
 
-        coins.getCoinService().getCoinMeta().setCoinValue(meta, value);
+        coins.getCoinMeta().setCoinValue(meta, value);
         coin.setItemMeta(meta);
 
         // add coin to drop action
         items.add(coin);
-
         return Optional.of(new CoinDropAction(this, form, items));
     }
 

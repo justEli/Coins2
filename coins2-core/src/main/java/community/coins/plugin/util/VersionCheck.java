@@ -1,7 +1,7 @@
 package community.coins.plugin.util;
 
 import com.google.gson.JsonParser;
-import community.coins.plugin.api.BasicPlugin;
+import community.coins.plugin.CoinsCore;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,13 +16,13 @@ import java.util.logging.Level;
  * @since February 04, 2022 (creation)
  */
 public final class VersionCheck {
-    private final BasicPlugin plugin;
-    public VersionCheck(BasicPlugin plugin) {
-        this.plugin = plugin;
+    private final CoinsCore coins;
+    public VersionCheck(CoinsCore coins) {
+        this.coins = coins;
     }
 
     public void findLatestVersion(boolean printToConsole) {
-        Optional<ReleaseVersion> version = findLatestVersion(plugin.getAttributes().getRepository());
+        Optional<ReleaseVersion> version = findLatestVersion(coins.getAttributes().getRepository());
         if (version.isEmpty()) {
             return;
         }
@@ -32,22 +32,22 @@ public final class VersionCheck {
             return;
         }
 
-        var pluginVersion = plugin.getAttributes().getVersion();
+        var pluginVersion = coins.getAttributes().getVersion();
         if (!pluginVersion.equals(latestVersion.tag()) && !latestVersion.preRelease()) {
-            plugin.log(Level.WARNING, BasicPlugin.LINE);
-            plugin.log(Level.WARNING, """
+            coins.log(Level.WARNING, CoinsCore.LINE);
+            coins.log(Level.WARNING, """
                 Detected an outdated version of %s (%s is installed).
                 The latest version is %s, released on %s.
                 Download: %s"""
                 .formatted(
-                    plugin.getAttributes().getName(),
+                    coins.getAttributes().getName(),
                     pluginVersion,
                     latestVersion.tag(),
                     latestVersion.date(),
-                    plugin.getAttributes().getUrl()
+                    coins.getAttributes().getUrl()
                 )
             );
-            plugin.log(Level.WARNING, BasicPlugin.LINE);
+            coins.log(Level.WARNING, CoinsCore.LINE);
         }
     }
 
