@@ -3,7 +3,6 @@ package community.coins.plugin.type.registrar;
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.type.EventTypeService;
 import community.coins.plugin.type.event.AdvancementDisplayEvent;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
@@ -26,10 +25,6 @@ public final class AdvancementDoneType extends EventType {
     @EventHandler
     void onPlayerAdvancementDoneEvent(AdvancementDisplayEvent event) {
         Player player = event.getPlayer();
-        if (player.getGameMode() != GameMode.SURVIVAL) {
-            return;
-        }
-
         var filter = createFilter()
             .withInitiatorEntity(player)
             .withTargetType(event.getAdvancement())

@@ -2,7 +2,6 @@ package community.coins.plugin.type.registrar;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.type.EventTypeService;
-import org.bukkit.GameMode;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,10 +24,6 @@ public final class RecipeUnlockType extends EventType {
     @EventHandler(ignoreCancelled = true)
     void onPlayerAdvancementDoneEvent(PlayerAdvancementDoneEvent event) {
         Player player = event.getPlayer();
-        if (player.getGameMode() != GameMode.SURVIVAL) {
-            return;
-        }
-
         Advancement advancement = event.getAdvancement();
         if (!advancement.getCriteria().contains("has_the_recipe")) {
             return;

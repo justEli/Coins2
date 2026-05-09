@@ -9,8 +9,14 @@
 #   ░░░░░░░░░   ░░░░░░  ░░░░░░ ░░░ ░░░░░░ ░░░░░     ░░░░░░░░░░  #
 # --- by JustEli --- https://plugin.coins.community/discord --- #
 
+# Commands of the plugin can be customized down here. There is currently only one command
+#  that can be configured.
 commands:
-  'coins': # id of the logic
-    labels: ['coins', 'coin']
-    permission: 'coins.command.coins'
+  # Identifier of the logic to implement.
+  'coins':
+    # Enable or disable this specific command.
     enabled: true
+    # Command labels to set for this command, so that it works using /coins or /coin.
+    labels: ['coins', 'coin']
+    # Permission that is required to run and use this command.
+    permission: 'coins.command.coins'

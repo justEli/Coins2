@@ -9,22 +9,40 @@
 #   ░░░░░░░░░   ░░░░░░  ░░░░░░ ░░░ ░░░░░░ ░░░░░     ░░░░░░░░░░  #
 # --- by JustEli --- https://plugin.coins.community/discord --- #
 
+# Default settings when a value has not been set for a specific currency.
 default:
-  format: '<#6DD47E>{amount}{symbol}' # renders as '1.23¢' in specified color
+  # Displayed format of the currency. Supports coloring in minimessage format. The default
+  #  value renders as '1.23¢' in specified color #6DD47E, when decimals is set to 2. The
+  #  placeholder {amount} will be replaced by the value, and {symbol} will be replaced by
+  #  the currency symbol configured down this config.
+  format: '<#6DD47E>{amount}{symbol}'
   deposit:
+    # Message to display when coins of this currency are deposited. Supports coloring in
+    #  minimessage format. The position to show this message at can be 'actionbar',
+    #  'subtitle', 'title', or 'chat'.
     message: '<#148C30>↑ <#6DD47E>{format}'
     position: 'actionbar'
 
-# currently only supporting Vault
 currencies:
-  'vault_balance': # id; changing this identifier will make existing coins not able to be picked up
-    economy: 'Vault' # the plugin (case-sensitive) can be multiple currencies if supported
+  # The identifier of the currency. This will be applied to the value of coins. Changing
+  #  this identifier makes it impossible to pick up already existing coins with this
+  #  currency.
+  'vault_balance':
+    # The economy, or really the plugin to use. This economy name is case-sensitive. Only
+    #  Vault is currently supported. Some plugins allow for multiple currencies.
+    economy: 'Vault'
+    # Amount of decimal points to render values for this currency. Decimals set to 2 will
+    #  render as 1.23.
     decimals: 2
+    # Currency symbol for this currency. Can be used as a placeholder by using {symbol}.
     symbol: '¢'
+    # The singular and plural names of this currency.
     name:
       singular: 'Coin'
       plural: 'Coins'
+    # See comments at the 'default' section for explanation. The default values for
+    #  'format' and 'deposit' are being overridden right here.
     format: '<#6DD47E>{amount}{symbol}'
     deposit:
       message: '<#148C30>↑ {format}'
-      position: 'actionbar' # 'actionbar', 'title', 'subtitle' or 'chat'
+      position: 'actionbar'

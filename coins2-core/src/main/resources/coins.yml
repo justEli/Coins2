@@ -9,56 +9,77 @@
 #   ░░░░░░░░░   ░░░░░░  ░░░░░░ ░░░ ░░░░░░ ░░░░░     ░░░░░░░░░░  #
 # --- by JustEli --- https://plugin.coins.community/discord --- #
 
-# Different coin variants can be configured in this config. These coins are the basis for
-#  all kind of aspects. One place to use these defined coins is in drops.yml.
+# Different coin variants can be configured in this config. These coins are the base for
+#  some aspects. One place to use these defined coins is in drops.yml.
 
 # Default settings for a coin when the value has not been set. These describe the
-#  characteristics of the coin as an item stack.
+#  characteristics of the coin as an item stack. It is possible to add and override any of
+#  these values at different coin variants down the config at 'coins'.
 default:
   item:
-    type: 'material' # or 'player_head'
-    value: 'minecraft:gold_nugget' # texture when 'player_head'
+    # Type of the item can be 'material' or 'player_head'.
+    type: 'material'
+    # Namespaced identifier of an item type, or the texture value of a player head. Item
+    #  types can be found at the suggestions of /give. Texture values can be found on
+    #  websites like https://minecraft-heads.com.
+    value: 'minecraft:gold_nugget'
+  # Set the singular and plural name of the coin. Supports coloring in minimessage format.
   name:
     singular: '<#F9CE64>Coin'
     plural: '<#F9CE64>Coins'
-  currency: 'vault_balance' # from currencies.yml
-  immutable: true # keep the coin unchanged (no anvil/craft modification)
+  # Currency identifier to use for this coin, as defined in currencies.yml.
+  currency: 'vault_balance'
+  # Don't allow coin modifications by crafting, anvil, etc.
+  immutable: true
   meta:
+    # Add an enchanted effect to the coin.
     enchanted: false
-    glow-color: 'none' # named text color, i.e. green, light_purple
+    # Add a glow effect to the item when it is on the ground. This allows the coin to be
+    #  seen through blocks. Use a named text color, i.e. 'green', 'light_purple', etc.
+    glow-color: 'none'
+    # Show a hologram above the coin when it is dropped on the ground.
     hologram: false
-    model-strings: ['coin'] # adds "minecraft:custom_model_data": {strings: ["coin"]}
-    lore: [] # avoid italic with <italic:false>
+    # Custom model data strings are used for resource packs. This example adds
+    #  "minecraft:custom_model_data": {strings: ["coin"]} to the NBT of the item.
+    model-strings: ['coin']
+    # Lore tooltip lines for the coin. Supports coloring in minimessage format. Italic
+    #  lore can be avoided by using <italic:false>.
+    lore: []
   behavior:
-    item-merge: false # coins to merge when on the ground (of same value only)
+    # Set coins of the same value to merge when on the ground.
+    item-merge: false
+    # Prevent hoppers from picking up dropped coins.
     hopper-pickup: false
   deposit:
+    # Sound to play when the coin is deposited. Sound types can be found at the
+    #  suggestions of /playsound, but can also be custom when using a resource pack. Note
+    #  that the sound is set into the item, so when the sound is changed, old coins still
+    #  have the old sound attached to them.
     sound: 'minecraft:item.armor.equip_gold'
     volume: 0.50
     pitch: 0.30
 
-# defining different coins, and override default values, mostly used for 'item' and 'name'
+# Define different coins here. The values that are set will override the default values.
+#  The most common values to override are the item type and name. See above here for
+#  explanation of all the different settings.
 coins:
-  'enchanted_gold_coin':
+  'enchanted_gold_coin': # identifier of this coin
     item: 'minecraft:gold_nugget'
     name:
       singular: '<#F9CE64>Coin of Gold'
       plural: '<#F9CE64>Coins of Gold'
     meta:
       enchanted: true
-
   'gold_coin':
     item: 'minecraft:gold_nugget'
     name:
       singular: '<#F9CE64>Coin of Gold'
       plural: '<#F9CE64>Coins of Gold'
-
   'silver_coin':
     item: 'minecraft:iron_nugget'
     name:
       singular: '<#D2D2D2>Coin of Silver'
       plural: '<#D2D2D2>Coins of Silver'
-
   'bronze_coin':
     item: 'minecraft:copper_nugget'
     name:
@@ -66,7 +87,6 @@ coins:
       plural: '<#E68D3F>Coins of Bronze'
     behavior:
       item-merge: true
-
   'sun_coin':
     item: 'minecraft:sunflower'
     name:
@@ -77,7 +97,6 @@ coins:
       glow-color: 'gold'
     deposit:
       sound: 'minecraft:entity.experience_orb.pickup'
-
   'bag_of_coins':
     item:
       type: 'player_head'

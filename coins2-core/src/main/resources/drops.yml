@@ -9,29 +9,57 @@
 #   ░░░░░░░░░   ░░░░░░  ░░░░░░ ░░░ ░░░░░░ ░░░░░     ░░░░░░░░░░  #
 # --- by JustEli --- https://plugin.coins.community/discord --- #
 
-# https://github.com/justEli/Coins2/wiki/Defining-drop-filters
+# Different drop types can be configured in this config. These define when coins should be
+#  dropped. There are predefined event types for this, including the possibility to filter
+#  these events. Every drop has an event type it depends on, i.e. "advancement_done".
+#  Multiple drops can be registered per event type. Filters can be used after this,
+#  essentially modifying an existing event to fit your needs. Every predefined event
+#  supports a set of filters. After everything has been filtered, there's a section that
+#  defines what coins should be dropped, and what their chances are to be dropped. Note
+#  that this config is very dynamic! You can simply remove or add your own drop types.
+# More info: https://github.com/justEli/Coins2/wiki/Defining-drop-filters
+
+# Default settings for a drop type when the value has not been set. It is only applied to
+#  those drops where the event type supports it.
 default:
   filters:
     location:
+      # Worlds that are disabled by default. This setting can be completely overridden
+      #  by adding it to the specific drop type.
       disabled-worlds: []
 
-# define events with selectors and filters to use in 'drops'
-# every predefined event supports a set of filters
-# essentially modifying an existing event with filters to fit your needs
 drops:
-  'advancement_done': # the id of the event, can be anything you want
-    event: 'advancement_done' # the event to use for this drop
+  # Identifier of the drop type; this can be anything you want.
+  'advancement_done':
+    # Then we pick an event type to depend on for this drop type. There are a set of event
+    #  types that this plugin supports. For example, "advancement_done" is triggered when
+    #  a player completes an advancement.
+    event: 'advancement_done'
+    # This drop type does not have any filters by default, 'filters:' is missing. So
+    # finally, the coins to drop are defined.
     coins:
-      'bag_of_coins': # coins id as defined in coins.yml
+      # Coin identifier 'bag_of_coins' as defined in coins.yml.
+      'bag_of_coins':
+        # Dropped coin's value will be random between 50 and 100. This can also be a whole
+        #  number by setting it as 'value: 50'.
         value: [50, 100]
+        # Chance to drop this coin is 100%.
         chance: 1.00
-  'valueable_ore_break':
+  'valuable_ore_break':
     event: 'block_break'
+    # Used filters for this drop type. This filter has an initiator, a target, and a
+    #  location. The initiator is the trigger for the event to occur. The target for this
+    #  event type is simply the mined block.
     filters:
       initiator:
+        # Only allow players to be the initiator of this drop type.
         type: ['minecraft:player']
       target:
+        # Allow the mined block to be of exactly the same type as the item it drops. This
+        #  means that coins won't drop if Silk Touch is used if set to false.
         allow-same-block: false
+        # All the block types that are allowed to be mined for the coins to drop. This
+        #  can be left away or left empty to allow any block type.
         type:
           - 'minecraft:diamond_ore'
           - 'minecraft:deepslate_diamond_ore'
@@ -42,13 +70,17 @@ drops:
           - 'minecraft:deepslate_gold_ore'
           - 'minecraft:nether_gold_ore'
     coins:
+      # There is a 5% chance to drop an enchanted gold coin, 70% chance to drop a gold
+      #  coin, and 25% chance to drop nothing, as that is the remaining chance.
       'enchanted_gold_coin':
-        value: [20, 30]
-        chance: 0.05
+        value: [20, 30] # random value between 20 and 30
+        chance: 0.05 # 5% chance
       'gold_coin':
-        value: [12, 20]
-        chance: 0.70
+        value: [12, 20] # random value between 12 and 20
+        chance: 0.70 # 70% chance
   'common_ore_break':
+    # Another drop type is configured here, but then for less valuable ores, but using
+    #  the same event type as "valueable_ore_break".
     event: 'block_break'
     filters:
       initiator:
@@ -72,14 +104,16 @@ drops:
         value: [12, 20]
         chance: 0.10
       'silver_coin':
-        value: [5, 12]
-        chance: 0.50
+        value: [5, 12] # random value between 5 and 12
+        chance: 0.50 # 50% chance
   'mining_block_break':
     event: 'block_break'
     filters:
       initiator:
         type: ['minecraft:player']
-        permission: 'coins.drops.mining_block_break' # can remove to allow by default
+        # This drop type requires the player to have this permission. It can also be
+        #  removed to allow it for everyone by default.
+        permission: 'coins.drops.mining_block_break'
       target:
         allow-same-block: true
         type:
@@ -99,27 +133,37 @@ drops:
     enabled: false
     filters:
       initiator:
+        # This drop type is specifically made for endermen that break a block. It is
+        #  disabled by default, as per 'enabled: false'. When enabled, it drops a glowing
+        #  coin with a chance of 2% when an enderman picks up a block. Could be a fun
+        #  addition!
         type: ['minecraft:enderman']
     coins:
       'sun_coin':
         value: [30, 50]
         chance: 0.02
   'player_crop_harvest':
+    # This event type is for full-grown crops that get broken.
     event: 'crop_harvest'
     filters:
       initiator:
+        # Players are the only allowed initiator for this drop type. Villagers can also
+        #  be the initiator; see the drop type below this one.
         type: ['minecraft:player']
       location:
+        # Set the maximum amount of coin drops per block location in a specific time. This
+        #  can be useful to prevent spamming of growing crops with bone meal, breaking and
+        #  repeat, using some sort of autoclickers.
         cooldown:
-          cap-amount: 1
-          duration: '6h'
+          cap-amount: 1 # allow once per
+          duration: '6h' # 6 hours
     coins:
       'bronze_coin':
-        value: 1
-        chance: 0.33
+        value: [1, 5]
+        chance: 0.50
   'villager_crop_harvest':
     event: 'crop_harvest'
-    enabled: false
+    enabled: false # not enabled by default
     filters:
       initiator:
         type: ['minecraft:villager']
@@ -158,14 +202,20 @@ drops:
     event: 'entity_death'
     filters:
       initiator:
-        type: ['minecraft:player']
+        type: ['minecraft:player'] # player kills
       target:
+        # This will only allow hostile mobs to drop coins that are not from spawners nor
+        #  from slime splits. The exclamation mark excludes the category.
         category: ['hostile', '!from_spawner', '!from_split']
-        min-player-damage: 0.80
+        # The minimum percentage of damage that needs to come from a player for the target
+        #  entity to drop coins.
+        min-player-damage: 0.80 # at least 80% of damage must come from players
       location:
+        # Set the maximum amount of coin drops per block location in a specific time. This
+        #  can be useful to prevent overuse of grinders.
         cooldown:
-          cap-amount: 1
-          duration: '2h'
+          cap-amount: 1 # allow once per
+          duration: '2h' # 2 hours
     coins:
       'enchanted_gold_coin':
         value: [20, 30]
@@ -185,6 +235,8 @@ drops:
       initiator:
         type: ['minecraft:player']
       target:
+        # This will only allow passive mobs to drop coins that are not from spawners. The
+        #  exclamation mark excludes the category.
         category: ['passive', '!from_spawner']
         min-player-damage: 0.70
       location:
@@ -203,9 +255,9 @@ drops:
     filters:
       initiator:
         type: ['minecraft:player']
-        permission: 'coins.drops.spawner_entity_kill'
+        permission: 'coins.drops.spawner_entity_kill' # requires this permission
       target:
-        category: ['from_spawner']
+        category: ['from_spawner'] # only mobs from spawners
         min-player-damage: 0.90
       location:
         cooldown:
@@ -263,7 +315,7 @@ drops:
   'potion_brew':
     event: 'potion_brew'
     enabled: false
-    filters: # initiator player not supported (yet)
+    filters:
       location:
         cooldown:
           cap-amount: 1
@@ -272,7 +324,9 @@ drops:
       'bronze_coin':
         value: [1, 5]
         chance: 0.40
-  'recipe_unlock': # fired for every new item, i.e. 16 times for unlocking wool
+  'recipe_unlock':
+    # Recipe unlocks are triggered for every new item that can be crafted. So for example,
+    #  this is usually triggered 16 times for unlocking wool.
     event: 'recipe_unlock'
     coins:
       'bronze_coin':
