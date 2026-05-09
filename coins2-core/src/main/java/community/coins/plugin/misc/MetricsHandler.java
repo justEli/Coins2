@@ -1,4 +1,4 @@
-package community.coins.plugin.metrics;
+package community.coins.plugin.misc;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.config.ConfigYml;
@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Eli
  * @since April 28, 2026
  */
-public final class Stats {
-    public Stats(CoinsCore coins) {
+public final class MetricsHandler {
+    public MetricsHandler(CoinsCore coins) {
         Metrics metrics = new Metrics(coins, 31200);
 
         // total configured items

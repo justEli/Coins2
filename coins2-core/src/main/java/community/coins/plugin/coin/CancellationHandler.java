@@ -1,4 +1,4 @@
-package community.coins.plugin.handler;
+package community.coins.plugin.coin;
 
 import community.coins.plugin.CoinsCore;
 import org.bukkit.entity.Item;

@@ -1,7 +1,7 @@
 package community.coins.plugin.spigot.command;
 
 import community.coins.plugin.command.CoinsCommandLogic;
-import community.coins.plugin.item.DefinedCoin;
+import community.coins.plugin.coin.DefinedCoin;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.spigot.CoinsSpigot;
 import community.coins.plugin.util.Util;

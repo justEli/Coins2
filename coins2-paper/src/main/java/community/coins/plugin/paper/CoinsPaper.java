@@ -2,13 +2,13 @@ package community.coins.plugin.paper;
 
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.platform.ComponentApi;
-import community.coins.plugin.platform.ItemParseApi;
-import community.coins.plugin.platform.PluginAttributes;
+import community.coins.plugin.api.ComponentApi;
+import community.coins.plugin.api.ItemParseApi;
+import community.coins.plugin.api.PluginAttributes;
 import community.coins.plugin.paper.command.CoinsCommand;
-import community.coins.plugin.paper.implement.ComponentApiPaper;
-import community.coins.plugin.paper.implement.ItemParseApiPaper;
-import community.coins.plugin.paper.implement.PluginAttributesPaper;
+import community.coins.plugin.paper.implement.ComponentApiImpl;
+import community.coins.plugin.paper.implement.ItemParseApiImpl;
+import community.coins.plugin.paper.implement.PluginAttributesImpl;
 import community.coins.plugin.paper.registrar.AdvancementDisplayRegistrar;
 import community.coins.plugin.paper.registrar.PickupItemRegistrar;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -28,9 +28,9 @@ public final class CoinsPaper extends CoinsCore {
 
     @Override
     public void loadImplementations() {
-        this.componentApi = new ComponentApiPaper();
-        this.itemParseApi = new ItemParseApiPaper(this);
-        this.pluginAttributes = new PluginAttributesPaper(this);
+        this.componentApi = new ComponentApiImpl();
+        this.itemParseApi = new ItemParseApiImpl(this);
+        this.pluginAttributes = new PluginAttributesImpl(this);
 
         // registering registrars of events
         new AdvancementDisplayRegistrar(this);
@@ -40,18 +40,6 @@ public final class CoinsPaper extends CoinsCore {
     @Override
     public void loadBasicFunctionality() {
         new CoinsCommand(this);
-    }
-
-    @Override
-    public void loadAfterCore() {
-
-    }
-
-    public void registerCommand(LiteralCommandNode<CommandSourceStack> node, String description, Collection<String> aliases) {
-        getLifecycleManager().registerEventHandler(
-            LifecycleEvents.COMMANDS,
-            event -> event.registrar().register(node, description, aliases)
-        );
     }
 
     @Override
@@ -67,5 +55,12 @@ public final class CoinsPaper extends CoinsCore {
     @Override
     public @NotNull PluginAttributes getAttributes() {
         return pluginAttributes;
+    }
+
+    public void registerCommand(LiteralCommandNode<CommandSourceStack> node, String description, Collection<String> aliases) {
+        getLifecycleManager().registerEventHandler(
+            LifecycleEvents.COMMANDS,
+            event -> event.registrar().register(node, description, aliases)
+        );
     }
 }

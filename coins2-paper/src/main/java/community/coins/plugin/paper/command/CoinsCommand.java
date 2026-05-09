@@ -4,7 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import community.coins.plugin.command.CoinsCommandLogic;
-import community.coins.plugin.item.DefinedCoin;
+import community.coins.plugin.coin.DefinedCoin;
 import community.coins.plugin.paper.CoinsPaper;
 import io.papermc.paper.command.brigadier.Commands;
 

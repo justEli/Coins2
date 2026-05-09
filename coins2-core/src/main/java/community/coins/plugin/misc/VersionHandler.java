@@ -1,7 +1,8 @@
-package community.coins.plugin.util;
+package community.coins.plugin.misc;
 
 import com.google.gson.JsonParser;
 import community.coins.plugin.CoinsCore;
+import community.coins.plugin.util.ReleaseVersion;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,9 +16,9 @@ import java.util.logging.Level;
  * @author Eli
  * @since February 04, 2022 (creation)
  */
-public final class VersionCheck {
+public final class VersionHandler {
     private final CoinsCore coins;
-    public VersionCheck(CoinsCore coins) {
+    public VersionHandler(CoinsCore coins) {
         this.coins = coins;
     }
 

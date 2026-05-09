@@ -1,13 +1,13 @@
 package community.coins.plugin.spigot;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.platform.ComponentApi;
-import community.coins.plugin.platform.ItemParseApi;
-import community.coins.plugin.platform.PluginAttributes;
+import community.coins.plugin.api.ComponentApi;
+import community.coins.plugin.api.ItemParseApi;
+import community.coins.plugin.api.PluginAttributes;
 import community.coins.plugin.spigot.command.CoinsCommand;
-import community.coins.plugin.spigot.implement.ComponentApiSpigot;
-import community.coins.plugin.spigot.implement.ItemParseApiSpigot;
-import community.coins.plugin.spigot.implement.PluginAttributesSpigot;
+import community.coins.plugin.spigot.implement.ComponentApiImpl;
+import community.coins.plugin.spigot.implement.ItemParseApiImpl;
+import community.coins.plugin.spigot.implement.PluginAttributesImpl;
 import community.coins.plugin.spigot.registrar.AdvancementDisplayRegistrar;
 import community.coins.plugin.spigot.registrar.PickupItemRegistrar;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +23,9 @@ public final class CoinsSpigot extends CoinsCore {
 
     @Override
     public void loadImplementations() {
-        this.componentApi = new ComponentApiSpigot(this);
-        this.itemParseApi = new ItemParseApiSpigot(this);
-        this.pluginAttributes = new PluginAttributesSpigot(this);
+        this.componentApi = new ComponentApiImpl(this);
+        this.itemParseApi = new ItemParseApiImpl(this);
+        this.pluginAttributes = new PluginAttributesImpl(this);
 
         // registering registrars of events
         new AdvancementDisplayRegistrar(this);
@@ -35,11 +35,6 @@ public final class CoinsSpigot extends CoinsCore {
     @Override
     public void loadBasicFunctionality() {
         new CoinsCommand(this);
-    }
-
-    @Override
-    public void loadAfterCore() {
-
     }
 
     @Override

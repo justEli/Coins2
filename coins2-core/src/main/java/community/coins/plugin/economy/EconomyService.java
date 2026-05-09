@@ -2,7 +2,7 @@ package community.coins.plugin.economy;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.config.ConfigWarns;
-import community.coins.plugin.config.MessagePosition;
+import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.economy.hook.VaultEconomyHook;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;

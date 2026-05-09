@@ -1,6 +1,7 @@
 package community.coins.plugin.drops;
 
 import community.coins.plugin.CoinsCore;
+import community.coins.plugin.economy.DepositType;
 import community.coins.plugin.type.filter.EventFilterConfig;
 import community.coins.plugin.type.filter.EventFilterForm;
 import community.coins.plugin.util.BlockCache;

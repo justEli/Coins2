@@ -1,7 +1,7 @@
-package community.coins.plugin.paper.implement;
+package community.coins.plugin.spigot.implement;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.platform.ItemParseApi;
+import community.coins.plugin.api.ItemParseApi;
 import community.coins.plugin.util.Util;
 import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
@@ -19,9 +19,9 @@ import java.util.UUID;
  * @since April 27, 2026
  */
 @NullMarked
-public final class ItemParseApiPaper extends ItemParseApi {
+public final class ItemParseApiImpl extends ItemParseApi {
     public final CoinsCore coins;
-    public ItemParseApiPaper(CoinsCore coins) {
+    public ItemParseApiImpl(CoinsCore coins) {
         this.coins = coins;
     }
 
@@ -32,22 +32,20 @@ public final class ItemParseApiPaper extends ItemParseApi {
             return Optional.empty();
         }
 
-        var profile = coins.getServer().createProfile(uuid, name);
+        var profile = coins.getServer().createPlayerProfile(uuid, name);
         try {
-            var textures = profile.getTextures();
-            textures.setSkin(URI.create(url.get()).toURL());
-            profile.setTextures(textures);
+            profile.getTextures().setSkin(URI.create(url.get()).toURL());
         }
         catch (MalformedURLException exception) {
             return Optional.empty();
         }
 
-        meta.setPlayerProfile(profile);
+        meta.setOwnerProfile(profile);
         return Optional.of(meta);
     }
 
     @Override
     public Optional<ItemStack> getFromItemType(@Nullable String itemType) {
-        return Util.getType(itemType, Registry.ITEM).map(item -> item.createItemStack(1));
+        return Util.getType(itemType, Registry.MATERIAL).map(ItemStack::new);
     }
 }

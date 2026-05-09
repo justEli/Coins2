@@ -3,7 +3,7 @@ package community.coins.plugin.type.registrar;
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.drops.CoinDropAction;
 import community.coins.plugin.drops.DefinedDrop;
-import community.coins.plugin.drops.DepositType;
+import community.coins.plugin.economy.DepositType;
 import community.coins.plugin.type.EventTypeService;
 import community.coins.plugin.type.filter.EventFilterForm;
 import community.coins.plugin.type.filter.FilterContract;

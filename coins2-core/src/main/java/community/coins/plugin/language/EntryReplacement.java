@@ -1,6 +1,6 @@
 package community.coins.plugin.language;
 
-import community.coins.plugin.component.ColorResolver;
+import community.coins.plugin.util.ColorResolver;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.jspecify.annotations.NullMarked;

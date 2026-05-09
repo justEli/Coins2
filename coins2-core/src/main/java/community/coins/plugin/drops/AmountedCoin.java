@@ -1,6 +1,6 @@
 package community.coins.plugin.drops;
 
-import community.coins.plugin.item.DefinedCoin;
+import community.coins.plugin.coin.DefinedCoin;
 
 /**
  * @author Eli

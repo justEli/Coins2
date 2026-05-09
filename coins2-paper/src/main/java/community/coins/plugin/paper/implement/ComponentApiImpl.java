@@ -1,6 +1,6 @@
 package community.coins.plugin.paper.implement;
 
-import community.coins.plugin.platform.ComponentApi;
+import community.coins.plugin.api.ComponentApi;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,7 +18,7 @@ import java.util.List;
  * @since April 30, 2026
  */
 @NullMarked
-public final class ComponentApiPaper implements ComponentApi {
+public final class ComponentApiImpl implements ComponentApi {
     @Override
     public void setDisplayName(ItemMeta meta, Component component) {
         meta.itemName(component);

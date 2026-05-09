@@ -1,4 +1,4 @@
-package community.coins.plugin.platform;
+package community.coins.plugin.api;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;

@@ -1,7 +1,7 @@
 package community.coins.plugin.economy;
 
-import community.coins.plugin.component.ComponentUtil;
-import community.coins.plugin.config.MessagePosition;
+import community.coins.plugin.util.ComponentUtil;
+import community.coins.plugin.util.MessagePosition;
 import net.kyori.adventure.text.Component;
 
 import java.text.DecimalFormat;

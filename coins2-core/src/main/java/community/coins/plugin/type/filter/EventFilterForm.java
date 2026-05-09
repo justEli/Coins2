@@ -1,7 +1,7 @@
 package community.coins.plugin.type.filter;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.data.TransformType;
+import community.coins.plugin.misc.TransformType;
 import community.coins.plugin.drops.DefinedDrop;
 import org.bukkit.Keyed;
 import org.bukkit.Location;

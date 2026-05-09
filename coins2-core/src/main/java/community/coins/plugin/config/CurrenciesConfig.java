@@ -3,6 +3,7 @@ package community.coins.plugin.config;
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.economy.DefinedCurrency;
 import community.coins.plugin.economy.EconomyHook;
+import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
 

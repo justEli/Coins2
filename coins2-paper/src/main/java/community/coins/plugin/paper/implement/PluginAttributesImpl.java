@@ -1,7 +1,7 @@
 package community.coins.plugin.paper.implement;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.platform.PluginAttributes;
+import community.coins.plugin.api.PluginAttributes;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -9,9 +9,9 @@ import org.jspecify.annotations.NullMarked;
  * @since April 27, 2026
  */
 @NullMarked
-public final class PluginAttributesPaper implements PluginAttributes {
+public final class PluginAttributesImpl implements PluginAttributes {
     public final CoinsCore coins;
-    public PluginAttributesPaper(CoinsCore coins) {
+    public PluginAttributesImpl(CoinsCore coins) {
         this.coins = coins;
     }
 

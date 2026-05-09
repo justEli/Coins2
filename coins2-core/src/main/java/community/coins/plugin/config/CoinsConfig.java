@@ -1,9 +1,9 @@
 package community.coins.plugin.config;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.component.ComponentUtil;
+import community.coins.plugin.util.ComponentUtil;
 import community.coins.plugin.economy.DefinedCurrency;
-import community.coins.plugin.item.DefinedCoin;
+import community.coins.plugin.coin.DefinedCoin;
 import community.coins.plugin.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

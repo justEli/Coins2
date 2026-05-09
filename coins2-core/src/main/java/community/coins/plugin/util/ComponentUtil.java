@@ -1,4 +1,4 @@
-package community.coins.plugin.component;
+package community.coins.plugin.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

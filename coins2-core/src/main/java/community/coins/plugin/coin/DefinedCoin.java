@@ -1,4 +1,4 @@
-package community.coins.plugin.item;
+package community.coins.plugin.coin;
 
 import community.coins.plugin.economy.DefinedCurrency;
 import net.kyori.adventure.text.Component;

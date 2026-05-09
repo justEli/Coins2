@@ -1,6 +1,6 @@
 package community.coins.plugin.spigot.implement;
 
-import community.coins.plugin.platform.ComponentApi;
+import community.coins.plugin.api.ComponentApi;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -22,9 +22,9 @@ import java.util.List;
  * @since April 30, 2026
  */
 @NullMarked
-public final class ComponentApiSpigot implements ComponentApi {
+public final class ComponentApiImpl implements ComponentApi {
     private final BukkitAudiences audiences;
-    public ComponentApiSpigot(Plugin plugin) {
+    public ComponentApiImpl(Plugin plugin) {
         this.audiences = BukkitAudiences.create(plugin);
     }
 

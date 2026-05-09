@@ -1,7 +1,6 @@
-package community.coins.plugin.handler;
+package community.coins.plugin.misc;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.data.TransformType;
 import community.coins.plugin.util.EntityUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

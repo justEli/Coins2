@@ -4,23 +4,23 @@ import community.coins.plugin.command.CommandService;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.ConfigYml;
-import community.coins.plugin.config.MessagePosition;
-import community.coins.plugin.data.PersistentData;
-import community.coins.plugin.economy.CoinDepositHandler;
+import community.coins.plugin.util.MessagePosition;
+import community.coins.plugin.misc.PersistentData;
+import community.coins.plugin.coin.CoinDepositHandler;
 import community.coins.plugin.economy.EconomyService;
 import community.coins.plugin.folialib.FoliaScheduler;
-import community.coins.plugin.handler.CancellationHandler;
-import community.coins.plugin.handler.CoinBehaviorHandler;
-import community.coins.plugin.handler.EntityDataHandler;
-import community.coins.plugin.item.CoinMeta;
+import community.coins.plugin.coin.CancellationHandler;
+import community.coins.plugin.coin.CoinBehaviorHandler;
+import community.coins.plugin.misc.EntityDataHandler;
+import community.coins.plugin.coin.CoinMeta;
 import community.coins.plugin.language.FormatEntry;
-import community.coins.plugin.metrics.Stats;
-import community.coins.plugin.platform.ComponentApi;
-import community.coins.plugin.platform.ItemParseApi;
-import community.coins.plugin.platform.PluginAttributes;
-import community.coins.plugin.registrar.PlayerPickupCoinRegistrar;
+import community.coins.plugin.misc.MetricsHandler;
+import community.coins.plugin.api.ComponentApi;
+import community.coins.plugin.api.ItemParseApi;
+import community.coins.plugin.api.PluginAttributes;
+import community.coins.plugin.coin.PlayerPickupCoinRegistrar;
 import community.coins.plugin.type.EventTypeService;
-import community.coins.plugin.util.VersionCheck;
+import community.coins.plugin.misc.VersionHandler;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -49,7 +49,10 @@ public abstract class CoinsCore extends JavaPlugin {
         // scheduler setup with folia and Bukkit support
         this.foliaScheduler = new FoliaScheduler(this);
 
-        // register all possible event types
+        // basic utilities
+        this.persistentData = new PersistentData(this);
+
+        // register basic services
         this.commandService = new CommandService();
         this.eventTypeService = new EventTypeService(this);
         this.economyService = new EconomyService(this);
@@ -61,26 +64,17 @@ public abstract class CoinsCore extends JavaPlugin {
         this.coinMeta = new CoinMeta(this);
         this.configService = new ConfigService(this);
 
-        // basic utilities
-        this.persistentData = new PersistentData(this);
-
-        // registering registrars of events
-        new PlayerPickupCoinRegistrar(this);
-        new CoinDepositHandler(this);
-
-        // get latest version
-        this.versionCheck = new VersionCheck(this);
-        VIRTUAL_EXECUTOR.submit(() -> versionCheck.findLatestVersion(ConfigYml.NOTIFY_ON_UPDATE));
-
-        this.stats = new Stats(this);
-
-        // some event handling
+        // register some events
         new CancellationHandler(this);
         new CoinBehaviorHandler(this);
+        new CoinDepositHandler(this);
+        new PlayerPickupCoinRegistrar(this);
         new EntityDataHandler(this);
 
-        // things to load after core enabled
-        loadAfterCore();
+        // version checking and register metrics
+        this.versionHandler = new VersionHandler(this);
+        VIRTUAL_EXECUTOR.submit(() -> versionHandler.findLatestVersion(ConfigYml.NOTIFY_ON_UPDATE));
+        this.metricsHandler = new MetricsHandler(this);
     }
 
     @Override
@@ -90,6 +84,8 @@ public abstract class CoinsCore extends JavaPlugin {
             catch (Exception _) {}
         }
     }
+
+    // basic plugin functionality
 
     public void parseEventHandlers(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
@@ -101,11 +97,19 @@ public abstract class CoinsCore extends JavaPlugin {
         shutdownTasks.add(task);
     }
 
-    public abstract ComponentApi getComponentApi();
+    // logging and messaging
 
-    public abstract ItemParseApi getItemParseApi();
+    public static final String LINE = "--------------------------------------------------------------------";
 
-    public abstract PluginAttributes getAttributes();
+    public void log(Level level, String message) {
+        getLogger().log(level, message);
+    }
+
+    public void debug(String message) {
+        if (ConfigYml.DEBUG_LOGGING) {
+            getLogger().warning("(Debug @ %d) %s".formatted(System.currentTimeMillis(), message));
+        }
+    }
 
     private static final Title.Times TITLE_DURATION = Title.Times.times(
         Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500)
@@ -129,22 +133,7 @@ public abstract class CoinsCore extends JavaPlugin {
         sendMessage(sender, entry.getComponent());
     }
 
-    public static final String LINE = "--------------------------------------------------------------------";
-
-    public void log(Level level, String message) {
-        getLogger().log(level, message);
-    }
-
-    public void debug(String message) {
-        if (ConfigYml.DEBUG_LOGGING) {
-            getLogger().warning("(Debug @ %d) %s".formatted(System.currentTimeMillis(), message));
-        }
-    }
-
-    private ConfigWarns configWarns;
-    public ConfigWarns getConfigWarns() {
-        return configWarns;
-    }
+    // services
 
     private CommandService commandService;
     public CommandService getCommandService() {
@@ -159,6 +148,18 @@ public abstract class CoinsCore extends JavaPlugin {
     private EventTypeService eventTypeService;
     public EventTypeService getEventTypeService() {
         return eventTypeService;
+    }
+
+    private ConfigService configService;
+    public ConfigService getConfigService() {
+        return configService;
+    }
+
+    // other handlers
+
+    private ConfigWarns configWarns;
+    public ConfigWarns getConfigWarns() {
+        return configWarns;
     }
 
     private PersistentData persistentData;
@@ -176,22 +177,25 @@ public abstract class CoinsCore extends JavaPlugin {
         return coinMeta;
     }
 
-    private ConfigService configService;
-    public ConfigService getConfigService() {
-        return configService;
+    private VersionHandler versionHandler;
+    public VersionHandler getVersion() {
+        return versionHandler;
     }
 
-    private VersionCheck versionCheck;
-    public VersionCheck getVersionCheck() {
-        return versionCheck;
+    private MetricsHandler metricsHandler;
+    public MetricsHandler getMetrics() {
+        return metricsHandler;
     }
 
-    private Stats stats;
-    public Stats getMetrics() {
-        return stats;
-    }
+    // implementation for different platforms
+
+    public abstract ComponentApi getComponentApi();
+
+    public abstract ItemParseApi getItemParseApi();
+
+    public abstract PluginAttributes getAttributes();
 
     public abstract void loadImplementations();
+
     public abstract void loadBasicFunctionality();
-    public abstract void loadAfterCore();
 }

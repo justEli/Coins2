@@ -1,4 +1,4 @@
-package community.coins.plugin.data;
+package community.coins.plugin.misc;
 
 import community.coins.plugin.CoinsCore;
 import org.bukkit.NamespacedKey;

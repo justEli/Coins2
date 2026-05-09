@@ -1,4 +1,4 @@
-package community.coins.plugin.platform;
+package community.coins.plugin.api;
 
 import org.jspecify.annotations.NullMarked;
 

@@ -1,4 +1,4 @@
-package community.coins.plugin.registrar;
+package community.coins.plugin.coin;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.event.PlayerPickupCoinEvent;

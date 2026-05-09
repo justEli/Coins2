@@ -1,4 +1,4 @@
-package community.coins.plugin.data;
+package community.coins.plugin.misc;
 
 import java.util.HashMap;
 import java.util.Map;

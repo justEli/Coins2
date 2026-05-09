@@ -1,4 +1,4 @@
-package community.coins.plugin.drops;
+package community.coins.plugin.economy;
 
 /**
  * @author Eli

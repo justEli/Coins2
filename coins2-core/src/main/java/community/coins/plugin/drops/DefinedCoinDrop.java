@@ -2,7 +2,7 @@ package community.coins.plugin.drops;
 
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
-import community.coins.plugin.item.DefinedCoin;
+import community.coins.plugin.coin.DefinedCoin;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jspecify.annotations.NullMarked;
 
