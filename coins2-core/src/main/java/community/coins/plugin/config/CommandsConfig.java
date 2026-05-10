@@ -50,11 +50,16 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
 
             String id = Util.toIdentifier(name);
             List<String> labels = section.getStringList("labels");
-            String permission = section.getString("permission", "coins.command");
+            String permission = section.getString("permission", "coins.command"); // todo no permission req if null
+
+            if (labels.isEmpty()) {
+                configWarns.warn("Cannot register command '%s' because there are no labels.".formatted(id));
+                continue;
+            }
 
             boolean registered = coins.getCommandService().implementCommand(id, labels, permission);
             if (!registered) {
-                configWarns.warn("Cannot register command '%s' because this command logic does not exist.".formatted(id));
+                configWarns.warn("Cannot register command '%s' because command logic does not exist.".formatted(id));
                 continue;
             }
 
