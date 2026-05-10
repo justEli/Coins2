@@ -40,7 +40,7 @@
         <versions.adventure>4.20.0</versions.adventure> <!-- used by paper 1.21.4 -->
 
         <!-- settings for (paper-)plugin.yml -->
-        <plugin.api-version>1.21.11</plugin.api-version>
+        <plugin.api-version>1.21.4</plugin.api-version>
 
         <!-- platform versions -->
         <version.spigot>26.1.2-R0.1-SNAPSHOT</version.spigot>
