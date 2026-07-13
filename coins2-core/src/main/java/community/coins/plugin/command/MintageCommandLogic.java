@@ -8,15 +8,12 @@ import community.coins.plugin.language.Language;
 import community.coins.plugin.util.Util;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.Vector;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Optional;
-import java.util.SplittableRandom;
 
 /**
  * @author Eli
@@ -31,8 +28,6 @@ public abstract class MintageCommandLogic extends CommandLogic {
     public String getDescription() {
         return "Command with tools for coins.";
     }
-
-    private static final SplittableRandom RANDOM = new SplittableRandom();
 
     private static final EntryReplacement FILL_DURATION = new EntryReplacement("duration");
     private static final EntryReplacement FILL_ID = new EntryReplacement("identifier");
@@ -136,26 +131,9 @@ public abstract class MintageCommandLogic extends CommandLogic {
         }
 
         value = Util.toRoundedMoneyDecimals(value, coin.get().getCurrency().getDecimals());
-        double updatedValue = value <= 0? 1D : value;
+        coins.getApi().dropCoins(coin.get(), location, radius, amount, value <= 0? 1D : value);
 
         String locationName = "x%.1f, y%.1f, z%.1f".formatted(location.getX(), location.getY(), location.getZ());
-
-        coins.getScheduler().runLocationTaskRepeated(location, amount, 1, () -> {
-            ItemStack itemStack = coin.get().getItemStackClone();
-            ItemMeta meta = itemStack.getItemMeta();
-            coins.getCoinMeta().setCoinValue(meta, updatedValue);
-            itemStack.setItemMeta(meta);
-
-            Item item = location.getWorld().dropItem(location, itemStack);
-
-            item.setPickupDelay(30);
-            item.setVelocity(new Vector(
-                (RANDOM.nextDouble() - 0.5) * radius / 10,
-                RANDOM.nextDouble() * radius / 5,
-                (RANDOM.nextDouble() - 0.5) * radius / 10
-            ));
-        });
-
         coins.sendMessage(sender, Language.DROP_DROPPING.with(
             FILL_AMOUNT.filled(amount),
             FILL_RADIUS.filled(radius),

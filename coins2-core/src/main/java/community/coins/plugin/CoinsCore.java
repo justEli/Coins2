@@ -4,6 +4,7 @@ import community.coins.plugin.command.CommandService;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.ConfigYml;
+import community.coins.plugin.misc.CoinsPublicApi;
 import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.misc.PersistentData;
 import community.coins.plugin.coin.CoinDepositHandler;
@@ -40,6 +41,9 @@ import java.util.logging.Level;
  * @since April 27, 2026
  */
 public abstract class CoinsCore extends JavaPlugin {
+    // todo
+    //  - fix balance cache of other plugin after /mint reload
+    //  - fix BalanceChangeEvent with wrong previous balance after /mint reload?
     private static final ExecutorService VIRTUAL_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
@@ -48,6 +52,7 @@ public abstract class CoinsCore extends JavaPlugin {
 
         // scheduler setup with folia and Bukkit support
         this.foliaScheduler = new FoliaScheduler(this);
+        this.coinsPublicApi = new CoinsPublicApi(this);
 
         // basic utilities
         this.persistentData = new PersistentData(this);
@@ -170,6 +175,12 @@ public abstract class CoinsCore extends JavaPlugin {
     private FoliaScheduler foliaScheduler;
     public FoliaScheduler getScheduler() {
         return foliaScheduler;
+    }
+
+    private CoinsPublicApi coinsPublicApi;
+    /// @since 2.3
+    public CoinsPublicApi getApi() {
+        return coinsPublicApi;
     }
 
     private CoinMeta coinMeta;
