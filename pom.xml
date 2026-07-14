@@ -24,7 +24,7 @@
     <properties>
         <!-- plugin details -->
         <project.name>Coins</project.name>
-        <revision>2.2</revision>
+        <revision>2.3</revision>
 
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
@@ -212,6 +212,28 @@
                         <id>flatten</id>
                         <phase>process-resources</phase>
                         <goals><goal>flatten</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>resourcepack</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>${maven.multiModuleProjectDirectory}/assembly/resourcepack.xml</descriptor>
+                            </descriptors>
+                            <finalName>resourcepack</finalName>
+                            <attach>false</attach>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
