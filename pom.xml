@@ -24,7 +24,7 @@
     <properties>
         <!-- plugin details -->
         <project.name>Coins</project.name>
-        <revision>2.3</revision>
+        <revision>2.4</revision>
 
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>

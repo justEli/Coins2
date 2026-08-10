@@ -3,6 +3,7 @@ package community.coins.plugin.type;
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.type.registrar.AdvancementDoneType;
 import community.coins.plugin.type.registrar.BlockBreakType;
+import community.coins.plugin.type.registrar.BlockPlaceType;
 import community.coins.plugin.type.registrar.CropHarvestType;
 import community.coins.plugin.type.registrar.EntityBreedType;
 import community.coins.plugin.type.registrar.EntityCatchType;
@@ -32,6 +33,7 @@ public final class EventTypeService {
 
         new AdvancementDoneType(coins, this);
         new BlockBreakType(coins, this);
+        new BlockPlaceType(coins, this);
         new CropHarvestType(coins, this);
         new EntityBreedType(coins, this);
         new EntityCatchType(coins, this);
