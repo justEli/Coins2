@@ -30,9 +30,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Eli
  * @since November 15, 2026
  */
-public abstract class WithdrawCommandLogic<T extends CoinsCore> extends CommandLogic<T> {
-    public WithdrawCommandLogic(T coins, CommandService service) {
-        super(coins, service, "withdraw");
+public abstract class WithdrawCommandLogic extends CommandLogic {
+    public WithdrawCommandLogic(CoinsCore coins, DefinedCommand defined) {
+        super(coins, defined);
     }
 
     protected static final EntryReplacement FILL_AMOUNT = new EntryReplacement("amount");
@@ -46,6 +46,7 @@ public abstract class WithdrawCommandLogic<T extends CoinsCore> extends CommandL
     private final AtomicBoolean allowDecimals = new AtomicBoolean(false);
     private final AtomicReference<Component> itemName =  new AtomicReference<>();
     private final TreeMap<Long, DefinedCoin> coinValues = new TreeMap<>();
+    private final Set<Action> depositActions = ConcurrentHashMap.newKeySet();
 
     @Override
     public boolean parseConfig(ConfigWarns.Named warns, ConfigurationSection section, ConfigService service) {
@@ -54,7 +55,7 @@ public abstract class WithdrawCommandLogic<T extends CoinsCore> extends CommandL
         for (String worldName : section.getStringList("disabled-worlds")) {
             var world = coins.getAttributes().getWorld(worldName);
             if (world == null) {
-                warns.warn("World '%s' to disable for command '%s' does not exist.".formatted(worldName, identifier));
+                warns.warn("World '%s' to disable for command '%s' does not exist.".formatted(worldName, defined.getName()));
                 continue;
             }
             disabledWorldUuids.add(world.getUID());
@@ -69,7 +70,7 @@ public abstract class WithdrawCommandLogic<T extends CoinsCore> extends CommandL
         // coins
         ConfigurationSection coinsSection = section.getConfigurationSection("coins");
         if (coinsSection == null) {
-            warns.warn("Cannot register command '%s' because there are no coins defined to give.".formatted(identifier));
+            warns.warn("Cannot register command '%s' because there are no coins defined to give.".formatted(defined.getName()));
             return false;
         }
 
@@ -77,7 +78,7 @@ public abstract class WithdrawCommandLogic<T extends CoinsCore> extends CommandL
         for (String coinName : coinsSection.getKeys(false)) {
             Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefinedItem(coinName);
             if (definedCoin.isEmpty()) {
-                warns.warn("Cannot add coin '%s' for command '%s' because coin is not defined.".formatted(coinName, identifier));
+                warns.warn("Cannot add coin '%s' for command '%s' because coin is not defined.".formatted(coinName, defined.getName()));
                 continue;
             }
 
@@ -86,19 +87,19 @@ public abstract class WithdrawCommandLogic<T extends CoinsCore> extends CommandL
         }
 
         if (coinValues.isEmpty()) {
-            warns.warn("Cannot register command '%s' because there are no coins defined to give.".formatted(identifier));
+            warns.warn("Cannot register command '%s' because there are no coins defined to give.".formatted(defined.getName()));
             return false;
         }
 
         // deposit-actions
-        coins.getGlobalState().getDepositActions().clear();
+        depositActions.clear();
         for (String actionString : section.getStringList("deposit-actions")) {
             try {
                 Action action = Action.valueOf(actionString.toUpperCase());
-                coins.getGlobalState().getDepositActions().add(action);
+                depositActions.add(action);
             }
             catch (IllegalArgumentException _) {
-                warns.warn("Deposit action '%s' to use for command '%s' does not exist.".formatted(actionString, identifier));
+                warns.warn("Deposit action '%s' to use for command '%s' does not exist.".formatted(actionString, defined.getName()));
             }
         }
 
@@ -157,7 +158,10 @@ public abstract class WithdrawCommandLogic<T extends CoinsCore> extends CommandL
         coins.getComponentApi().setDisplayName(meta, name);
         coins.getCoinMeta().setCoinValue(meta, value);
         coins.getCoinMeta().setWithdrawOwner(meta, player.getUniqueId());
-        coins.getCoinMeta().setNoHopperPickupProperty(meta, false); // always allow hopper pickup for withdrawn coins
+
+        // always allow hopper pickup for withdrawn coins
+        coins.getCoinMeta().setNoHopperPickupProperty(meta, false);
+        coins.getCoinMeta().setDepositActions(meta, depositActions);
 
         item.setItemMeta(meta);
         item.setAmount(amount);

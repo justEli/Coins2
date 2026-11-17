@@ -14,13 +14,15 @@ import io.papermc.paper.command.brigadier.Commands;
  * @author Eli
  * @since November 15, 2026
  */
-public final class WithdrawCommand extends WithdrawCommandLogic<CoinsPaper> {
-    public WithdrawCommand(CoinsPaper coins) {
-        super(coins, coins.getCommandService());
+public final class WithdrawCommand extends WithdrawCommandLogic {
+    private final CoinsPaper coins;
+    public WithdrawCommand(CoinsPaper coins, DefinedCommand defined) {
+        super(coins, defined);
+        this.coins = coins;
     }
 
     @Override
-    public void register(DefinedCommand defined) {
+    public void registerCommand() {
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(defined.getLabel());
 
         if (defined.getPermission() != null) {

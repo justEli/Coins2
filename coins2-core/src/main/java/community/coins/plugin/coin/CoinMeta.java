@@ -4,19 +4,25 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.economy.DefinedCurrency;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.util.TriState;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.ListPersistentDataType;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.Set;
 import java.util.SplittableRandom;
 import java.util.UUID;
 
@@ -38,6 +44,7 @@ public final class CoinMeta {
     private final NamespacedKey soundKey;
     private final NamespacedKey volumeKey;
     private final NamespacedKey pitchKey;
+    private final NamespacedKey depositActionsKey;
 
     private Scoreboard scoreboard;
     private static final String TEAM_PREFIX = "coins_glow_";
@@ -62,6 +69,7 @@ public final class CoinMeta {
         this.soundKey = new NamespacedKey(coins, "sound");
         this.volumeKey = new NamespacedKey(coins, "volume");
         this.pitchKey = new NamespacedKey(coins, "pitch");
+        this.depositActionsKey = new NamespacedKey(coins, "deposit_actions");
 
         coins.addShutdownTask(() -> scoreboard.getTeams().forEach(team -> {
             if (team.getName().startsWith(TEAM_PREFIX)) {
@@ -323,5 +331,26 @@ public final class CoinMeta {
             getMeta(coin, pitchKey, PersistentDataType.FLOAT).orElse(1F)
         );
         return true;
+    }
+
+    private static final ListPersistentDataType<String, String> STRING_LIST_TYPE =
+        PersistentDataType.LIST.listTypeFrom(PersistentDataType.STRING);
+
+    public void setDepositActions(ItemMeta meta, Set<Action> actions) {
+        List<String> stringActions = new ArrayList<>();
+        for (Action action : actions) {
+            stringActions.add(action.name());
+        }
+        applyMeta(meta, depositActionsKey, STRING_LIST_TYPE, stringActions);
+    }
+
+    /// @return NOT_SET if the item doesn't even have the key
+    public TriState containsDepositAction(ItemStack item, Action action) {
+        Optional<List<String>> types = getMeta(item, depositActionsKey, STRING_LIST_TYPE);
+        if (types.isEmpty()) {
+            return TriState.NOT_SET;
+        }
+
+        return TriState.byBoolean(types.get().contains(action.name()));
     }
 }

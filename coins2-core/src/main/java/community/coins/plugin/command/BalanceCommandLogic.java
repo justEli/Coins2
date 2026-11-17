@@ -22,19 +22,26 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Eli
  * @since May 21, 2026
  */
-public abstract class BalanceCommandLogic<T extends CoinsCore> extends CommandLogic<T> {
-    public BalanceCommandLogic(T coins, CommandService service) {
-        super(coins, service, "balance");
+public abstract class BalanceCommandLogic extends CommandLogic {
+    public BalanceCommandLogic(CoinsCore coins, DefinedCommand defined) {
+        super(coins, defined);
     }
 
     protected final AtomicReference<String> targetPermission = new AtomicReference<>();
+    protected final AtomicReference<DefinedCurrency> definedCurrency = new AtomicReference<>();
 
     private static final EntryReplacement FILL_ID = new EntryReplacement("identifier");
     private static final EntryReplacement FILL_CURRENCY = new EntryReplacement("currency");
     private static final EntryReplacement FILL_BALANCE = new EntryReplacement("balance");
     private static final EntryReplacement FILL_USERNAME = new EntryReplacement("username", ColorResolver.USER);
 
+    /// @param currencyId can also be null if the currency was configured in the config
     public void showBalance(CommandSender sender, @Nullable String currencyId, @Nullable BasicPlayer target) {
+        if (definedCurrency.get() != null) {
+            showBalance(sender, definedCurrency.get(), target);
+            return;
+        }
+
         if (currencyId == null) {
             if (coins.getConfigService().getCurrenciesConfig().getDefinedKeys().size() != 1) {
                 coins.sendMessage(sender, Language.BALANCE_PROVIDE_CURRENCY);
@@ -102,6 +109,17 @@ public abstract class BalanceCommandLogic<T extends CoinsCore> extends CommandLo
     public boolean parseConfig(ConfigWarns.Named warns, ConfigurationSection section, ConfigService service) {
         // this doesn't work after reload for Paper
         targetPermission.set(section.getString("target-permission", "coins.command.balance.others"));
+
+        String currencyName = section.getString("currency");
+        if (currencyName != null) {
+            Optional<DefinedCurrency> currency = service.getCurrenciesConfig().getDefinedItem(currencyName.toLowerCase());
+            if (currency.isEmpty()) {
+                warns.warn("Cannot register command '%s' because currency '%s' does not exist.".formatted(defined.getName(), currencyName));
+                return false;
+            }
+
+            definedCurrency.set(currency.get());
+        }
         return true;
     }
 }

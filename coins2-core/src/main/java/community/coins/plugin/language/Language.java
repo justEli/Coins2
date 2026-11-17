@@ -84,4 +84,7 @@ public final class Language {
 
     @LanguageEntry("word.world")
     public static WordEntry WORD_WORLD = new WordEntry("world");
+
+    @LanguageEntry("word.arguments")
+    public static WordEntry WORD_ARGUMENTS = new WordEntry("arguments");
 }

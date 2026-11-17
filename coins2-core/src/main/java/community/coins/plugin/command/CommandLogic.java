@@ -12,22 +12,17 @@ import java.util.function.Consumer;
  * @author Eli
  * @since May 07, 2026
  */
-public abstract class CommandLogic<T extends CoinsCore> {
-    protected final T coins;
-    protected final String identifier;
+public abstract class CommandLogic {
+    protected final CoinsCore coins;
+    protected final DefinedCommand defined;
 
-    public CommandLogic(T coins, CommandService service, String identifier) {
+    public CommandLogic(CoinsCore coins, DefinedCommand defined) {
         this.coins = coins;
-        this.identifier = identifier.toLowerCase();
-        service.registerLogic(this);
-    }
-
-    public String getIdentifier() {
-        return identifier;
+        this.defined = defined;
     }
 
     /// register the command implementation for the appropriate platform
-    public abstract void register(DefinedCommand defined);
+    public abstract void registerCommand();
 
     public abstract String getDescription();
 

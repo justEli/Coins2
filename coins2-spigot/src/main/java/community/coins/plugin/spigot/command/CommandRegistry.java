@@ -11,6 +11,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @author Eli
@@ -22,7 +23,7 @@ public final class CommandRegistry {
         this.coins = coins;
     }
 
-    public void registerCommand(DefinedCommand defined, SpigotCommand implemented) {
+    public void registerCommand(DefinedCommand defined, BiFunction<CommandSender, String[], Boolean> command0, BiFunction<CommandSender, String[], List<String>> completions, String description) {
         try {
             Field commandMapField = coins.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
@@ -32,7 +33,7 @@ public final class CommandRegistry {
                 @NullMarked
                 @Override
                 public boolean execute(CommandSender sender, String label, String[] args) {
-                    boolean success = implemented.handleCommand(sender, args);
+                    boolean success = command0.apply(sender, args);
                     if (!success) {
                         coins.sendMessage(sender, CommandService.getSimpleUsage(defined.getLabel()));
                     }
@@ -42,7 +43,7 @@ public final class CommandRegistry {
                 @NullMarked
                 @Override
                 public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-                    return implemented.handleCompletions(sender, args);
+                    return completions.apply(sender, args);
                 }
             };
 
@@ -54,7 +55,7 @@ public final class CommandRegistry {
                 command.setAliases(defined.getAliases());
             }
 
-            command.setDescription(implemented.getDescription());
+            command.setDescription(description);
             commandMap.register(coins.getDescription().getName(), command);
         }
         catch (Exception _) {}

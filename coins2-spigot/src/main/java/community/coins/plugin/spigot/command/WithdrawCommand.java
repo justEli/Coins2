@@ -11,56 +11,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.function.BiFunction;
 
 /**
  * @author Eli
  * @since November 15, 2026
  */
-public final class WithdrawCommand extends WithdrawCommandLogic<CoinsSpigot> implements SpigotCommand {
-    public WithdrawCommand(CoinsSpigot coins) {
-        super(coins, coins.getCommandService());
+public final class WithdrawCommand extends WithdrawCommandLogic {
+    private final CoinsSpigot coins;
+    public WithdrawCommand(CoinsSpigot coins, DefinedCommand defined) {
+        super(coins, defined);
+        this.coins = coins;
     }
 
     @Override
-    public void register(DefinedCommand defined) {
-        coins.registerCommand(defined, this);
-    }
+    public void registerCommand() {
+        BiFunction<CommandSender, String[], Boolean> command = (sender, args) -> {
+            if (args.length == 0) {
+                super.sendHelpMessage(sender);
+                return true;
+            }
 
-    @Override
-    public boolean handleCommand(CommandSender sender, String[] args) {
-        if (args.length == 0) {
-            super.sendHelpMessage(sender);
+            OptionalDouble value = Util.parseDouble(args[0]);
+            OptionalInt amount = args.length > 1? Util.parseInt(args[1]) : OptionalInt.of(1);
+
+            if (value.isEmpty()) {
+                coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_VALUE)));
+                return true;
+            }
+
+            if (amount.isEmpty()) {
+                coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_AMOUNT)));
+                return true;
+            }
+
+            super.withdrawCoins(sender, value.getAsDouble(), amount.getAsInt());
             return true;
-        }
+        };
 
-        OptionalDouble value = Util.parseDouble(args[0]);
-        OptionalInt amount = args.length > 1? Util.parseInt(args[1]) : OptionalInt.of(1);
+        BiFunction<CommandSender, String[], List<String>> completions = (_, args) -> {
+            List<String> suggestions = new ArrayList<>();
+            if (args.length <= 1) {
+                suggestions.add("<%s>".formatted(Language.WORD_VALUE));
+            }
+            else if (args.length == 2) {
+                suggestions.add("<%s>".formatted(Language.WORD_AMOUNT));
+            }
+            return suggestions;
+        };
 
-        if (value.isEmpty()) {
-            coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_VALUE)));
-            return true;
-        }
-
-        if (amount.isEmpty()) {
-            coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_AMOUNT)));
-            return true;
-        }
-
-        super.withdrawCoins(sender, value.getAsDouble(), amount.getAsInt());
-        return true;
-    }
-
-    @Override
-    public List<String> handleCompletions(CommandSender sender, String[] args) {
-        List<String> completions = new ArrayList<>();
-
-        if (args.length <= 1) {
-            completions.add("<%s>".formatted(Language.WORD_VALUE));
-        }
-        else if (args.length == 2) {
-            completions.add("<%s>".formatted(Language.WORD_AMOUNT));
-        }
-
-        return completions;
+        coins.getCommandRegistry().registerCommand(defined, command, completions, getDescription());
     }
 }

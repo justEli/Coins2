@@ -5,6 +5,9 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.api.ComponentApi;
 import community.coins.plugin.api.ItemParseApi;
 import community.coins.plugin.api.PluginAttributes;
+import community.coins.plugin.command.BalanceCommandIdentifier;
+import community.coins.plugin.command.MintageCommandIdentifier;
+import community.coins.plugin.command.WithdrawCommandIdentifier;
 import community.coins.plugin.paper.command.BalanceCommand;
 import community.coins.plugin.paper.command.MintageCommand;
 import community.coins.plugin.paper.command.WithdrawCommand;
@@ -41,9 +44,9 @@ public final class CoinsPaper extends CoinsCore {
 
     @Override
     public void loadCommands() {
-        new BalanceCommand(this);
-        new MintageCommand(this);
-        new WithdrawCommand(this);
+        new BalanceCommandIdentifier(this, defined -> new BalanceCommand(this, defined));
+        new MintageCommandIdentifier(this, defined -> new MintageCommand(this, defined));
+        new WithdrawCommandIdentifier(this, defined -> new WithdrawCommand(this, defined));
     }
 
     @Override

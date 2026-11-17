@@ -22,9 +22,9 @@ import java.util.Optional;
  * @author Eli
  * @since May 07, 2026
  */
-public abstract class MintageCommandLogic<T extends CoinsCore> extends CommandLogic<T> {
-    public MintageCommandLogic(T coins, CommandService service) {
-        super(coins, service, "mintage");
+public abstract class MintageCommandLogic extends CommandLogic {
+    public MintageCommandLogic(CoinsCore coins, DefinedCommand defined) {
+        super(coins, defined);
     }
 
     private static final EntryReplacement FILL_DURATION = new EntryReplacement("duration");

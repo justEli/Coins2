@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import community.coins.plugin.command.CommandLogic;
 import community.coins.plugin.command.CommandService;
 import community.coins.plugin.command.DefinedCommand;
 import community.coins.plugin.command.MintageCommandLogic;
@@ -23,13 +22,15 @@ import org.bukkit.entity.Player;
  * @author Eli
  * @since May 07, 2026
  */
-public final class MintageCommand extends MintageCommandLogic<CoinsPaper> {
-    public MintageCommand(CoinsPaper coins) {
-        super(coins, coins.getCommandService());
+public final class MintageCommand extends MintageCommandLogic {
+    private final CoinsPaper coins;
+    public MintageCommand(CoinsPaper coins, DefinedCommand defined) {
+        super(coins, defined);
+        this.coins = coins;
     }
 
     @Override
-    public void register(DefinedCommand defined) {
+    public void registerCommand() {
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(defined.getLabel());
 
         if (defined.getPermission() != null) {
@@ -60,7 +61,7 @@ public final class MintageCommand extends MintageCommandLogic<CoinsPaper> {
                     return Command.SINGLE_SUCCESS;
                 })
                 .suggests((_, builder) -> {
-                    CommandLogic.suggestStartsWith(
+                    suggestStartsWith(
                         coins.getConfigService().getCoinsConfig().getDefinedKeys(),
                         builder.getRemainingLowerCase(), builder::suggest
                     );
@@ -98,7 +99,7 @@ public final class MintageCommand extends MintageCommandLogic<CoinsPaper> {
                         })
                     )
                     .suggests((_, builder) -> {
-                        CommandLogic.suggestStartsWith(
+                        suggestStartsWith(
                             coins.getEconomyService().getCurrencyIdentifiers(),
                             builder.getRemainingLowerCase(), builder::suggest
                         );
@@ -115,7 +116,7 @@ public final class MintageCommand extends MintageCommandLogic<CoinsPaper> {
                 .then(
                     Commands.argument("coin_id", StringArgumentType.word())
                     .suggests((_, builder) -> {
-                        CommandLogic.suggestStartsWith(
+                        suggestStartsWith(
                             coins.getConfigService().getCoinsConfig().getDefinedKeys(),
                             builder.getRemainingLowerCase(), builder::suggest
                         );

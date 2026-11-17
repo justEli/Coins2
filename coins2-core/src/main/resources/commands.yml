@@ -9,28 +9,40 @@
 #   ░░░░░░░░░   ░░░░░░  ░░░░░░ ░░░ ░░░░░░ ░░░░░     ░░░░░░░░░░  #
 # ----- by JustEli ---- https://plugin.coins.community/v2 ----- #
 
-# Commands of the plugin can be customized here. Currently only one command can be
-#  configured.
+# Different commands of the plugin can be customized here. Every command has a 'logic'
+#  that they implement. It is possible to make multiple commands with the same logic. This
+#  can be useful for the /balance and /withdraw command, to support different currencies.
 commands:
-  # Identifier of the logic to implement.
   'mintage':
+    # Identifier of the logic to implement. This command uses the 'mintage' implementation
+    #  which includes the creation of coins, or to reload the plugin.
+    logic: 'mintage'
     # Enable or disable this specific command.
     enabled: true
     # Command labels to set for this command. Anything after the first label will be
-    #  aliases. By default, the command will be accessible with /mintage and /mint.
+    #  aliases. By default, this command will be accessible with /mintage and /mint.
     labels: ['mintage', 'mint']
     # Permission that is required to use this command.
     permission: 'coins.command.mintage'
   'balance':
-    # Command /balance is disabled by default, because it is usually handled by another
-    #  plugin by default.
+    logic: 'balance'
+    # This command is disabled by default, because it is often handled by another plugin.
     enabled: false
     labels: ['balance', 'money', 'coins']
     permission: 'coins.command.balance'
+    # The currency to implement this balance command for. If left away, a 'currency'
+    #  argument will be added to the command.
+    currency: 'vault'
     # The permission required to see the balance of other players.
     target-permission: 'coins.command.balance.others'
+  # This command allows players to withdraw their balance into a physical coin.
   'withdraw':
-    # This command allows players to withdraw their balance into a physical coin.
+    # The withdraw-logic can be used in multiple command definitions, i.e. to add a
+    #  command for withdrawing coins in another currency. For example, you could make a
+    #  /bag command that withdraws a specific currency to just "Bag of Coins". To do that,
+    #  copy this section, give it another name instead of 'withdraw', and change it to a
+    #  different label.
+    logic: 'withdraw'
     enabled: true
     # By default, /withdraw is the only command label.
     labels: ['withdraw']

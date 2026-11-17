@@ -4,7 +4,6 @@ import community.coins.plugin.command.CommandService;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.ConfigYml;
-import community.coins.plugin.config.GlobalStateConfig;
 import community.coins.plugin.misc.CoinsPublicApi;
 import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.misc.PersistentData;
@@ -42,7 +41,6 @@ import java.util.logging.Level;
  * @since April 27, 2026
  */
 public abstract class CoinsCore extends JavaPlugin {
-    // todo allow to register multiple withdraw commands (i.e. for currencies)
     // todo fix balance cache of other plugin after /mint reload
     // todo fix BalanceChangeEvent with wrong previous balance after /mint reload?
     // todo configurable colors for primary, var, error, etc.
@@ -63,7 +61,6 @@ public abstract class CoinsCore extends JavaPlugin {
 
         // basic utilities
         this.persistentData = new PersistentData(this);
-        this.globalState = new GlobalStateConfig();
 
         // register basic services
         this.commandService = new CommandService();
@@ -170,11 +167,6 @@ public abstract class CoinsCore extends JavaPlugin {
     }
 
     // other handlers
-
-    private GlobalStateConfig globalState;
-    public GlobalStateConfig getGlobalState() {
-        return globalState;
-    }
 
     private ConfigWarns configWarns;
     public ConfigWarns getConfigWarns() {

@@ -2,11 +2,13 @@ package community.coins.plugin.coin;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.event.PlayerPickupCoinEvent;
+import net.kyori.adventure.util.TriState;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -66,16 +68,20 @@ public final class CoinDepositHandler implements Listener {
     // deposit (withdrawn) coins when a player clicks it
     @EventHandler
     void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (!coins.getGlobalState().getDepositActions().contains(event.getAction())) {
-            return; // performed action is not registered for depositing
-        }
-
         if (coins.getCoinMeta().getWithdrawOwner(event.getItem()).isEmpty()) {
             return; // coin is not withdrawn
         }
 
         if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Container) {
             return; // make an exception for containers
+        }
+
+        TriState state = coins.getCoinMeta().containsDepositAction(event.getItem(), event.getAction());
+        if (state == TriState.FALSE) {
+            return; // performed action is not registered for depositing
+        }
+        else if (state == TriState.NOT_SET && event.getAction() != Action.RIGHT_CLICK_AIR) {
+            return; // some coins don't have a deposit action set; this still allows it for right-clicking air
         }
 
         event.setCancelled(true);

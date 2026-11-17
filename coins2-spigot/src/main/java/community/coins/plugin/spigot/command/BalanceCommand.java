@@ -1,7 +1,6 @@
 package community.coins.plugin.spigot.command;
 
 import community.coins.plugin.command.BalanceCommandLogic;
-import community.coins.plugin.command.CommandLogic;
 import community.coins.plugin.command.DefinedCommand;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.spigot.CoinsSpigot;
@@ -11,64 +10,71 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @author Eli
  * @since May 21, 2026
  */
-public final class BalanceCommand extends BalanceCommandLogic<CoinsSpigot> implements SpigotCommand {
-    public BalanceCommand(CoinsSpigot coins) {
-        super(coins, coins.getCommandService());
+public final class BalanceCommand extends BalanceCommandLogic {
+    private final CoinsSpigot coins;
+    public BalanceCommand(CoinsSpigot coins, DefinedCommand defined) {
+        super(coins, defined);
+        this.coins = coins;
     }
 
     @Override
-    public void register(DefinedCommand defined) {
-        coins.registerCommand(defined, this);
-    }
+    public void registerCommand() {
+        boolean hasCurrencyArgument = definedCurrency.get() == null;
 
-    @Override
-    public boolean handleCommand(CommandSender sender, String[] args) {
-        if (args.length == 0) {
-            super.showBalance(sender, null, null);
-            return true;
-        }
+        BiFunction<CommandSender, String[], Boolean> command = (sender, args) -> {
+            if (args.length == 0) {
+                super.showBalance(sender, null, null);
+                return true;
+            }
 
-        String currency = args[0].toLowerCase();
-        if (args.length == 1) {
-            super.showBalance(sender, currency, null);
-            return true;
-        }
-
-        if (!sender.hasPermission(targetPermission.get())) {
-            super.showBalance(sender, currency, null);
-            return true;
-        }
-
-        Player player = coins.getServer().getPlayer(args[1]);
-        if (player == null) {
-            coins.sendMessage(sender, Language.INVALID_PLAYER);
-            return true;
-        }
-
-        super.showBalance(sender, currency, new BasicPlayer(player.getUniqueId(), player.getName()));
-        return true;
-    }
-
-    @Override
-    public List<String> handleCompletions(CommandSender sender, String[] args) {
-        List<String> completions = new ArrayList<>();
-        if (args.length <= 1) {
-            String remaining = args.length == 1? args[0].toLowerCase() : "";
-            CommandLogic.suggestStartsWith(coins.getEconomyService().getCurrencyIdentifiers(), remaining, completions::add);
-        }
-        else if (args.length == 2 && sender.hasPermission(targetPermission.get())) {
-            String remaining = args[1].toLowerCase();
-            for (Player onlinePlayer : coins.getServer().getOnlinePlayers()) {
-                if (onlinePlayer.getName().toLowerCase().startsWith(remaining)) {
-                    completions.add(onlinePlayer.getName());
+            String currency = null;
+            if (hasCurrencyArgument) {
+                 currency = args[0].toLowerCase();
+                if (args.length == 1) {
+                    super.showBalance(sender, currency, null);
+                    return true;
                 }
             }
-        }
-        return completions;
+
+            if (!sender.hasPermission(targetPermission.get())) {
+                super.showBalance(sender, currency, null);
+                return true;
+            }
+
+            String inputPlayer = hasCurrencyArgument? args[1] : args[0];
+            Player player = coins.getServer().getPlayer(inputPlayer);
+            if (player == null) {
+                coins.sendMessage(sender, Language.INVALID_PLAYER);
+                return true;
+            }
+
+            super.showBalance(sender, currency, new BasicPlayer(player.getUniqueId(), player.getName()));
+            return true;
+        };
+
+        BiFunction<CommandSender, String[], List<String>> completions = (sender, args) -> {
+            List<String> suggestions = new ArrayList<>();
+            if (args.length <= 1 && hasCurrencyArgument) {
+                String remaining = args.length == 1? args[0].toLowerCase() : "";
+                suggestStartsWith(coins.getEconomyService().getCurrencyIdentifiers(), remaining, suggestions::add);
+            }
+            else if (sender.hasPermission(targetPermission.get()) && ((args.length == 2 && hasCurrencyArgument) || args.length <= 1)) {
+                String remaining = (hasCurrencyArgument? args[1] : args[0]).toLowerCase();
+                for (Player onlinePlayer : coins.getServer().getOnlinePlayers()) {
+                    if (onlinePlayer.getName().toLowerCase().startsWith(remaining)) {
+                        suggestions.add(onlinePlayer.getName());
+                    }
+                }
+            }
+            return suggestions;
+        };
+
+        coins.getCommandRegistry().registerCommand(defined, command, completions, getDescription());
     }
 }
