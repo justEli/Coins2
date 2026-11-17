@@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Eli
@@ -18,6 +19,8 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
     public CommandsConfig(CoinsCore coins, ConfigService service) {
         super(coins, service, "commands.yml");
     }
+
+    private final AtomicBoolean firstRun = new AtomicBoolean(true);
 
     @Override
     public void parseAndReload() {
@@ -57,7 +60,7 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
             DefinedCommand definedCommand = new DefinedCommand(id, labels, permission);
 
             // registering also parses other settings from the config for the specific command
-            RegisterResult result = coins.getCommandService().updateCommand(configWarns, definedCommand, section, service);
+            RegisterResult result = coins.getCommandService().updateCommand(configWarns, definedCommand, section, service, firstRun.get());
             if (result == RegisterResult.ALREADY_REGISTERED) {
                 info("Command labels and permissions for '%s' cannot be updated; reboot to apply command changes.".formatted(id));
             }
@@ -66,5 +69,6 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
         }
 
         putDefinedItems(configured, "command", "commands");
+        firstRun.set(false);
     }
 }

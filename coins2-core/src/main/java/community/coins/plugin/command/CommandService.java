@@ -35,7 +35,7 @@ public final class CommandService {
 
     /// used by commands.yml, this also parses the config values for this specific command (if any)
     /// @return if the command was not registered because the config didn't parse successfully
-    public RegisterResult updateCommand(ConfigWarns.Named warns, DefinedCommand defined, ConfigurationSection config, ConfigService service) {
+    public RegisterResult updateCommand(ConfigWarns.Named warns, DefinedCommand defined, ConfigurationSection config, ConfigService service, boolean firstRun) {
         CommandLogic<?> logic = commandLogics.get(defined.getIdentifier());
         if (logic == null) {
             return RegisterResult.NO_LOGIC;
@@ -46,7 +46,7 @@ public final class CommandService {
             return RegisterResult.CONFIG_FAIL;
         }
 
-        if (registeredIds.contains(defined.getIdentifier())) {
+        if (registeredIds.contains(defined.getIdentifier()) || !firstRun) {
             return RegisterResult.ALREADY_REGISTERED; // cannot register another time
         }
 
