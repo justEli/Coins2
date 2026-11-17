@@ -43,8 +43,20 @@ public final class Language {
     @LanguageEntry("command.balance.display")
     public static FillEntry BALANCE_DISPLAY = new FillEntry("Balance for currency '{currency}': {balance}");
 
+    @LanguageEntry("command.balance.display_others")
+    public static FillEntry BALANCE_DISPLAY_OTHERS = new FillEntry("Balance of {username} for currency '{currency}': {balance}");
+
     @LanguageEntry("command.balance.provide_currency")
     public static FormatEntry BALANCE_PROVIDE_CURRENCY = new FormatEntry("<error>Please provide a currency to get the balance for.");
+
+    @LanguageEntry("command.withdraw.maximum_amount")
+    public static FormatEntry WITHDRAW_MAX_AMOUNT = new FormatEntry("<error>Withdraw canceled because you cannot withdraw that much.");
+
+    @LanguageEntry("command.withdraw.give")
+    public static FillEntry WITHDRAW_GIVE = new FillEntry("Withdrew {amount}× {coin} for {price} as a physical coin.");
+
+    @LanguageEntry("command.invalid_player")
+    public static FormatEntry INVALID_PLAYER = new FormatEntry("<error>Cannot find a target player by provided input.");
 
     @LanguageEntry("command.invalid_number")
     public static FillEntry COMMAND_INVALID_NUMBER = new FillEntry("<error>Given input for '{type}' is an invalid number.");
@@ -53,7 +65,13 @@ public final class Language {
     public static FormatEntry COMMAND_INVALID_LOCATION = new FormatEntry("<error>Cannot find a location from given input.");
 
     @LanguageEntry("command.incomplete")
-    public static FormatEntry COMMAND_INCOMPLETE = new FormatEntry("<error>Cannot execute incomplete command.");
+    public static FillEntry COMMAND_INCOMPLETE = new FillEntry("<error>Incomplete command: Use {command}.");
+
+    @LanguageEntry("command.transaction_fail")
+    public static FormatEntry TRANSACTION_FAIL = new FormatEntry("<error>Transaction has been canceled by the economy provider.");
+
+    @LanguageEntry("command.disabled_world")
+    public static FormatEntry DISABLED_WORLD = new FormatEntry("<error>This action is disabled in your current world.");
 
     @LanguageEntry("word.value")
     public static WordEntry WORD_VALUE = new WordEntry("value");

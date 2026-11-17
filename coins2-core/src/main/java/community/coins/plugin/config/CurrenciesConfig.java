@@ -90,7 +90,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
 
         ConfigurationSection currenciesSection = config.getConfigurationSection("currencies");
         if (currenciesSection == null) {
-            addWarn("Cannot register currencies because section for defining currencies is missing.");
+            warn("Cannot register currencies because section for defining currencies is missing.");
             return;
         }
 
@@ -113,13 +113,13 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
             String id = Util.toIdentifier(name);
             String economyName = section.getString("economy");
             if (economyName == null) {
-                addWarn("Cannot register currency '%s' because no economy or plugin is provided.".formatted(id));
+                warn("Cannot register currency '%s' because no economy or plugin is provided.".formatted(id));
                 continue;
             }
 
             Optional<EconomyHook> plugin = coins.getEconomyService().getSupportedEconomy(economyName);
             if (plugin.isEmpty()) {
-                addWarn("Cannot register currency '%s', because '%s' is not a supported plugin.".formatted(id, economyName));
+                warn("Cannot register currency '%s', because '%s' is not a supported plugin.".formatted(id, economyName));
                 continue;
             }
 
@@ -136,7 +136,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
             MessagePosition position = Util.getEnum(MessagePosition.class, depositPosition);
             if (position == null) {
                 position = MessagePosition.ACTIONBAR;
-                addWarn("""
+                warn("""
                     Cannot set deposit message position for currency '%s' because '%s' is invalid."""
                     .formatted(id, depositPosition)
                 );
@@ -144,7 +144,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
 
             if (decimals > BalanceData.MAX_DECIMALS) {
                 decimals = BalanceData.MAX_DECIMALS;
-                addWarn("Using %d decimals for currency '%s' as this is the highest allowed amount of decimals."
+                warn("Using %d decimals for currency '%s' as this is the highest allowed amount of decimals."
                     .formatted(BalanceData.MAX_DECIMALS, id)
                 );
             }
@@ -155,7 +155,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
 
             if (integrationEnabled) {
                 if (!plugin.get().isIntegrationSupported()) {
-                    addWarn("Cannot add economy integration for currency '%s' because it is not supported for plugin '%s'."
+                    warn("Cannot add economy integration for currency '%s' because it is not supported for plugin '%s'."
                         .formatted(id, economyName)
                     );
                 }
@@ -168,7 +168,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
                             MetricsHandler.USING_SQL_STORAGE = true;
                         }
                         else {
-                            addWarn("Cannot register integration for currency '%s' because SQL storage is not configured.".formatted(id));
+                            warn("Cannot register integration for currency '%s' because SQL storage is not configured.".formatted(id));
                         }
                     }
                     else if ("file".equalsIgnoreCase(integrationStorage)) {
@@ -177,7 +177,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
                     }
 
                     if (storage == null) {
-                        addWarn("Cannot register integration for currency '%s' because storage '%s' is invalid."
+                        warn("Cannot register integration for currency '%s' because storage '%s' is invalid."
                             .formatted(id, integrationStorage)
                         );
                     }
@@ -199,7 +199,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
         putDefinedItems(configured, "currency", "currencies");
 
         if (configured.isEmpty()) {
-            addWarn("No currencies have been registered. This plugin needs at least one currency to function.");
+            warn("No currencies have been registered. This plugin needs at least one currency to function.");
         }
     }
 

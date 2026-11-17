@@ -51,7 +51,7 @@ currencies:
       # Setting from 'true' to 'false' requires a server restart, to give other plugins a
       #  chance to integrate the plugin.
       enabled: false
-      storage: 'file' # or 'sql'
+      storage: 'file' # 'file' or 'sql'
     # Amount of decimal points to render values for this currency. Decimals set to 2 will
     #  render as 1.23.
     decimals: 2

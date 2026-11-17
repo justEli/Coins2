@@ -18,6 +18,7 @@ import org.jspecify.annotations.NullMarked;
 public final class PlayerPickupCoinEvent extends Event implements Cancellable {
     private final Player player;
     private final Item item;
+    private boolean disallowed = true;
 
     public PlayerPickupCoinEvent(Player player, Item item) {
         this.player = player;
@@ -30,6 +31,15 @@ public final class PlayerPickupCoinEvent extends Event implements Cancellable {
 
     public Item getItem() {
         return item;
+    }
+
+    public void setPickupDisallowed(boolean disallowed) {
+        this.disallowed = disallowed;
+    }
+
+    /// pickup is disallowed by default, returning true
+    public boolean isPickupDisallowed() {
+        return disallowed;
     }
 
     // -- Cancellable --

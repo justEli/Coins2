@@ -39,7 +39,7 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
 
         ConfigurationSection dropsSection = config.getConfigurationSection("drops");
         if (dropsSection == null) {
-            addWarn("Cannot register drops because section for defining drops is missing.");
+            warn("Cannot register drops because section for defining drops is missing.");
             return;
         }
 
@@ -62,13 +62,13 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
             String id = Util.toIdentifier(name);
             String definedEvent = section.getString("event"); // predefined event in the plugin
             if (definedEvent == null) {
-                addWarn("Cannot register drop '%s' because event type was not provided.".formatted(id));
+                warn("Cannot register drop '%s' because event type was not provided.".formatted(id));
                 continue;
             }
 
             Optional<EventType> eventType = coins.getEventTypeService().getEventType(definedEvent.toLowerCase());
             if (eventType.isEmpty()) {
-                addWarn("""
+                warn("""
                     Cannot register drop '%s' because '%s' is an unknown event type. Supported types are: %s"""
                     .formatted(name, definedEvent, coins.getEventTypeService().getEventTypeNames())
                 );
@@ -85,7 +85,7 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
             // create a DefinedCoinDrop from the "coins" section
             ConfigurationSection coinsSection = section.getConfigurationSection("coins");
             if (coinsSection == null) {
-                addWarn("Cannot register drop '%s' because there are no coins attached to drop.".formatted(definedEvent));
+                warn("Cannot register drop '%s' because there are no coins attached to drop.".formatted(definedEvent));
                 continue;
             }
 

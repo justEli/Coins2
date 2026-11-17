@@ -32,7 +32,7 @@ public final class CropHarvestType extends EventType {
     @EventHandler(ignoreCancelled = true)
     void onBlockBreakEvent(BlockBreakEvent event) {
         var block = event.getBlock();
-        if (!isCrop(block)) {
+        if (!isFullGrownCrop(block)) {
             return;
         }
 
@@ -57,7 +57,7 @@ public final class CropHarvestType extends EventType {
         }
 
         var block = event.getBlock();
-        if (!isCrop(block)) {
+        if (!isFullGrownCrop(block)) {
             return;
         }
 
@@ -74,7 +74,7 @@ public final class CropHarvestType extends EventType {
         callEvent(filter, block);
     }
 
-    private static boolean isCrop(Block block) {
+    private static boolean isFullGrownCrop(Block block) {
         if (!(block.getState().getBlockData() instanceof Ageable ageable)) {
             return false;
         }

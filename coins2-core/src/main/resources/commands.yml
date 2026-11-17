@@ -27,3 +27,32 @@ commands:
     enabled: false
     labels: ['balance', 'money', 'coins']
     permission: 'coins.command.balance'
+    # The permission required to see the balance of other players.
+    target-permission: 'coins.command.balance.others'
+  'withdraw':
+    # This command allows players to withdraw their balance into a physical coin.
+    enabled: true
+    # By default, /withdraw is the only command label.
+    labels: ['withdraw']
+    permission: 'coins.command.withdraw'
+    # Multiple actions can be set to deposit a coin after withdraw. By default, players
+    #  can right-click air to exchange the coin for virtual currency again. Other options
+    #  can be added (or removed): left_click_block, right_click_block, or left_click_air.
+    deposit-actions: ['right_click_air']
+    # Worlds that this command should be disabled in.
+    disabled-worlds: []
+    # Whether withdrawn coins are always integer values (default), or that a decimal value
+    #  can be used up until the currency's allowed decimal points.
+    allow-decimals: false
+    # The name of the withdrawn coin. Replacements:
+    #  {value}         = The value of one coin.
+    #  {coin.name}     = The name of the coin item, including its colors.
+    #  {currency.name} = The (unformatted) currency name of the coin.
+    item-name: '<var>{value} {coin.name}'
+    # Coin identifiers can be used to set the appearance of the coin, depending on the
+    #  value. Value starts at 1, and the last item in the list is the maximum value that
+    #  can be withdrawn. By default, 10,000 is the maximum that can be withdrawn.
+    coins:
+      'bronze_coin': 1000
+      'silver_coin': 5000
+      'gold_coin': 10000

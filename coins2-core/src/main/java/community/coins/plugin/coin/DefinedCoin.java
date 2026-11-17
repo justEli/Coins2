@@ -17,6 +17,7 @@ public final class DefinedCoin {
     private final Component pluralName;
     private final DefinedCurrency currency;
 
+    /// @param id identifier of the coin, already formatted using {@code Util#toIdentifier}
     public DefinedCoin(String id, ItemStack itemStack, Component singularName, Component pluralName, DefinedCurrency currency) {
         this.id = id;
         this.itemStack = itemStack;

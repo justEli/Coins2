@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -104,5 +105,11 @@ public final class Util {
 
     public static String toIdentifier(String value) {
         return value.toLowerCase().replaceAll("[^a-z0-9]+", " ").trim().replace(" ", "_");
+    }
+
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.##");
+
+    public static String withSeparators(Number number) {
+        return DECIMAL_FORMAT.format(number);
     }
 }

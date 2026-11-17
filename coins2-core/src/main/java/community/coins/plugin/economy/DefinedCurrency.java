@@ -40,7 +40,7 @@ public final class DefinedCurrency {
         this.depositPosition = depositPosition;
     }
 
-    private String formatDecimals(double amount) {
+    public String getDecimalFormatted(double amount) {
         return decimalFormat.format(amount);
     }
 
@@ -69,7 +69,7 @@ public final class DefinedCurrency {
     }
 
     public Component getDepositMessage(double amount) {
-        return ComponentUtil.replaceAmount(depositMessage, formatDecimals(amount));
+        return ComponentUtil.replaceAmount(depositMessage, getDecimalFormatted(amount));
     }
 
     public MessagePosition getDepositPosition() {
@@ -77,13 +77,15 @@ public final class DefinedCurrency {
     }
 
     public Component getFormatMessage(double amount) {
-        return ComponentUtil.replaceAmount(formatMessage, formatDecimals(amount));
+        return ComponentUtil.replaceAmount(formatMessage, getDecimalFormatted(amount));
     }
 
+    /// @return getFormatMessage, but parsed to String
     public String format(double amount) {
         return ComponentUtil.toStripped(getFormatMessage(amount));
     }
 
+    /// may be executed async depending on the economy hook
     public void submitTransaction(Consumer<CurrencyAction> transaction) {
         transaction.accept(action);
     }

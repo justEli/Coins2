@@ -13,7 +13,7 @@ import java.util.SplittableRandom;
 import java.util.TreeMap;
 
 /**
- * the 'coins:' section in the drops.yml config
+ * handles mostly the 'coins' section in the drops.yml config
  * @author Eli
  * @since May 04, 2026
  */
@@ -22,31 +22,33 @@ public final class DefinedCoinDrop {
     private final NavigableMap<Double, AmountedCoin> coinChances = new TreeMap<>();
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
-    public DefinedCoinDrop(ConfigService service, ConfigWarns.Named warns, ConfigurationSection coinsSection, String dropId) {
+    /// @param section config section 'coins' within the configured drop
+    /// @param identifier identifier of the drop, already formatted using {@code Util#toIdentifier}
+    public DefinedCoinDrop(ConfigService service, ConfigWarns.Named warns, ConfigurationSection section, String identifier) {
         double total = 0;
-        for (String coinName : coinsSection.getKeys(false)) {
+        for (String coinName : section.getKeys(false)) {
             Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefinedItem(coinName);
             if (definedCoin.isEmpty()) {
-                warns.warn("Cannot add coin '%s' for drop '%s' because coin is not defined.".formatted(coinName, dropId));
+                warns.warn("Cannot add coin '%s' for drop '%s' because coin is not defined.".formatted(coinName, identifier));
                 continue;
             }
 
-            ConfigurationSection section = coinsSection.getConfigurationSection(coinName);
-            if (section == null) {
+            ConfigurationSection coinSection = section.getConfigurationSection(coinName);
+            if (coinSection == null) {
                 continue; // should be impossible
             }
 
-            double chance = section.getDouble("chance", 1);
+            double chance = coinSection.getDouble("chance", 1);
             if (chance <= 0 || chance > 1) {
-                warns.warn("Cannot add coin '%s' for drop '%s' because chance is not between 0.00 and 1.00.".formatted(coinName, dropId));
+                warns.warn("Cannot add coin '%s' for drop '%s' because chance is not between 0.00 and 1.00.".formatted(coinName, identifier));
                 continue;
             }
 
-            double min = section.getDouble("value", -1);
-            double max = section.getDouble("value", -1);
+            double min = coinSection.getDouble("value", -1);
+            double max = coinSection.getDouble("value", -1);
 
             if (min < 0 || max < 0) {
-                List<Double> values = section.getDoubleList("value");
+                List<Double> values = coinSection.getDoubleList("value");
                 if (values.size() == 2) {
                     min = Math.abs(values.get(0));
                     max = Math.abs(values.get(1));
@@ -73,7 +75,7 @@ public final class DefinedCoinDrop {
         if (total > 1) {
             warns.warn("""
                 Total coin drop chance for drop '%s' is higher than 1.00 (100%%), which can lead to unexpected drop behavior."""
-                .formatted(dropId)
+                .formatted(identifier)
             );
         }
     }

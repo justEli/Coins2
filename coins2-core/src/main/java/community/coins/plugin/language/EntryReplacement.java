@@ -1,6 +1,7 @@
 package community.coins.plugin.language;
 
 import community.coins.plugin.util.ColorResolver;
+import community.coins.plugin.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.jspecify.annotations.NullMarked;
@@ -29,7 +30,7 @@ public final class EntryReplacement {
     }
 
     public Filled filled(Object replacement) {
-        return new Filled(replacement);
+        return new Filled(replacement instanceof Number number? Util.withSeparators(number) : replacement);
     }
 
     public class Filled {

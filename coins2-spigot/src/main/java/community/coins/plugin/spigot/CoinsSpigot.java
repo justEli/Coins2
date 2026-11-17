@@ -4,8 +4,12 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.api.ComponentApi;
 import community.coins.plugin.api.ItemParseApi;
 import community.coins.plugin.api.PluginAttributes;
+import community.coins.plugin.command.DefinedCommand;
 import community.coins.plugin.spigot.command.BalanceCommand;
+import community.coins.plugin.spigot.command.CommandRegistry;
 import community.coins.plugin.spigot.command.MintageCommand;
+import community.coins.plugin.spigot.command.SpigotCommand;
+import community.coins.plugin.spigot.command.WithdrawCommand;
 import community.coins.plugin.spigot.implement.ComponentApiImpl;
 import community.coins.plugin.spigot.implement.ItemParseApiImpl;
 import community.coins.plugin.spigot.implement.PluginAttributesImpl;
@@ -18,12 +22,14 @@ import org.jetbrains.annotations.NotNull;
  * @since April 27, 2026
  */
 public final class CoinsSpigot extends CoinsCore {
+    private CommandRegistry commandRegistry;
     private ComponentApi componentApi;
     private ItemParseApi itemParseApi;
     private PluginAttributes pluginAttributes;
 
     @Override
     public void loadImplementations() {
+        this.commandRegistry = new CommandRegistry(this);
         this.componentApi = new ComponentApiImpl(this);
         this.itemParseApi = new ItemParseApiImpl(this);
         this.pluginAttributes = new PluginAttributesImpl(this);
@@ -34,9 +40,10 @@ public final class CoinsSpigot extends CoinsCore {
     }
 
     @Override
-    public void loadBasicFunctionality() {
+    public void loadCommands() {
         new BalanceCommand(this);
         new MintageCommand(this);
+        new WithdrawCommand(this);
     }
 
     @Override
@@ -52,5 +59,9 @@ public final class CoinsSpigot extends CoinsCore {
     @Override
     public @NotNull PluginAttributes getAttributes() {
         return pluginAttributes;
+    }
+
+    public void registerCommand(DefinedCommand defined, SpigotCommand implemented) {
+        commandRegistry.registerCommand(defined, implemented);
     }
 }

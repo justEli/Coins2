@@ -57,7 +57,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
 
         ConfigurationSection coinsSection = config.getConfigurationSection("coins");
         if (coinsSection == null) {
-            addWarn("Cannot register coins because section for defining coins is missing.");
+            warn("Cannot register coins because section for defining coins is missing.");
             return;
         }
 
@@ -70,20 +70,20 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
 
             String id = Util.toIdentifier(name);
             if (id.isEmpty() || configured.containsKey(id)) {
-                addWarn("Cannot register multiple coins with the same identifier '%s'.".formatted(id));
+                warn("Cannot register multiple coins with the same identifier '%s'.".formatted(id));
                 continue;
             }
 
             Optional<ItemStack> item = getItemValue(section, defaultItem.orElse(null), id);
             if (item.isEmpty()) {
-                addWarn("Cannot register coin '%s' because item type or value is invalid.".formatted(id));
+                warn("Cannot register coin '%s' because item type or value is invalid.".formatted(id));
                 continue;
             }
 
             String currencyName = section.getString("currency", defaultCurrency);
             Optional<DefinedCurrency> currency = coins.getEconomyService().getCurrency(currencyName);
             if (currency.isEmpty()) {
-                addWarn("Cannot register coin '%s' because currency '%s' does not exist.".formatted(id, currencyName));
+                warn("Cannot register coin '%s' because currency '%s' does not exist.".formatted(id, currencyName));
                 continue;
             }
 
@@ -114,7 +114,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
             ItemMeta meta = itemStack.getItemMeta();
 
             if (meta == null) {
-                addWarn("Cannot register coin '%s' because item type or value is invalid.".formatted(id));
+                warn("Cannot register coin '%s' because item type or value is invalid.".formatted(id));
                 continue;
             }
 
@@ -153,7 +153,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
                     coins.getCoinMeta().setGlowProperty(meta, color);
                 }
                 catch (NoSuchElementException exception) {
-                    addWarn("Cannot set glow color for coin '%s' because color '%s' is invalid.".formatted(id, glowColor));
+                    warn("Cannot set glow color for coin '%s' because color '%s' is invalid.".formatted(id, glowColor));
                 }
             }
 
@@ -193,7 +193,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
         }
 
         String type = section.getString("item.type");
-        String value = section.getString("item.value");
+        String value = section.getString("item.value"); // usually texture path
 
         if (type == null || value == null) {
             String material = section.getString("item");

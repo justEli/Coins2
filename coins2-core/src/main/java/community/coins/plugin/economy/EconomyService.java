@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class EconomyService implements Listener {
     private final CoinsCore coins;
-
     public EconomyService(CoinsCore coins) {
         this.coins = coins;
         coins.parseEventHandlers(this);
@@ -37,7 +36,6 @@ public final class EconomyService implements Listener {
 
     private void loadSupportedEconomies() {
         addSupportedPlugin(new VaultEconomyHook(coins, this));
-        // todo add a 'physical' economy/currency
     }
 
     // String = plugin's name (case-sensitive)
@@ -119,9 +117,10 @@ public final class EconomyService implements Listener {
     public boolean depositCoin(Player player, ItemStack coin) {
         Optional<DefinedCurrency> currency = coins.getCoinMeta().getCoinDefinedCurrency(coin);
         if (currency.isEmpty()) {
+            String notFoundCurrency = coins.getCoinMeta().getCoinCurrency(coin).orElse("unknown");
             coins.getLogger().warning("""
-                Attached currency to coin with item type '%s' was not found. Consider to add it to 'currencies.yml' again."""
-                .formatted(coin.getType().getKey())
+                Attached currency '%s' to coin with item type '%s' was not found. Consider to add it to 'currencies.yml' again."""
+                .formatted(notFoundCurrency, coin.getType().getKey())
             );
             return false;
         }

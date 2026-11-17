@@ -17,6 +17,25 @@ public final class FoliaScheduler {
         this.plugin = plugin;
     }
 
+    public void runEntityTask(Entity entity, Runnable runnable) {
+        if (PlatformUtil.isFolia()) {
+            if (plugin.getServer().isOwnedByCurrentRegion(entity)) {
+                runnable.run();
+            }
+            else {
+                entity.getScheduler().run(plugin, _ -> runnable.run(), runnable);
+            }
+        }
+        else {
+            if (plugin.getServer().isPrimaryThread()) {
+                runnable.run();
+            }
+            else {
+                plugin.getServer().getScheduler().runTask(plugin, runnable);
+            }
+        }
+    }
+
     public void runEntityTaskLater(Entity entity, long delayTicks, Runnable runnable) {
         if (PlatformUtil.isFolia()) {
             entity.getScheduler().runDelayed(plugin, task -> runnable.run(), runnable, delayTicks);

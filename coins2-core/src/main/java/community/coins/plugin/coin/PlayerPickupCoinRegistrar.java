@@ -30,9 +30,6 @@ public final class PlayerPickupCoinRegistrar implements Listener {
             return; // do nothing because it's not a coin
         }
 
-        // the event is always canceled for coins
-        event.setCancelled(true);
-
         // don't let players pick up coins that are already being handled or picked up
         if (item.getPickupDelay() > 0) {
             return;
@@ -46,8 +43,14 @@ public final class PlayerPickupCoinRegistrar implements Listener {
         PlayerPickupCoinEvent registerEvent = new PlayerPickupCoinEvent(event.getPlayer(), event.getItem());
         coins.getServer().getPluginManager().callEvent(registerEvent);
 
-        if (registerEvent.isCancelled()) {
-            // allow to pick up again as PlayerPickupCoinEvent was canceled
+        if (registerEvent.isPickupDisallowed()) {
+            // cancel if the pickup has been set to be disallowed
+            // i.e. withdrawn coins are still allowed to be picked up
+            event.setCancelled(true);
+        }
+
+        if (registerEvent.isCancelled() || !registerEvent.isPickupDisallowed()) {
+            // change back the owner (usually null) and remove pickup delay
             item.setPickupDelay(0);
             item.setOwner(previousOwner);
             return;

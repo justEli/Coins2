@@ -7,6 +7,7 @@ import community.coins.plugin.api.ItemParseApi;
 import community.coins.plugin.api.PluginAttributes;
 import community.coins.plugin.paper.command.BalanceCommand;
 import community.coins.plugin.paper.command.MintageCommand;
+import community.coins.plugin.paper.command.WithdrawCommand;
 import community.coins.plugin.paper.implement.ComponentApiImpl;
 import community.coins.plugin.paper.implement.ItemParseApiImpl;
 import community.coins.plugin.paper.implement.PluginAttributesImpl;
@@ -39,9 +40,10 @@ public final class CoinsPaper extends CoinsCore {
     }
 
     @Override
-    public void loadBasicFunctionality() {
+    public void loadCommands() {
         new BalanceCommand(this);
         new MintageCommand(this);
+        new WithdrawCommand(this);
     }
 
     @Override
@@ -60,9 +62,13 @@ public final class CoinsPaper extends CoinsCore {
     }
 
     public void registerCommand(LiteralCommandNode<CommandSourceStack> node, String description, Collection<String> aliases) {
-        getLifecycleManager().registerEventHandler(
-            LifecycleEvents.COMMANDS,
-            event -> event.registrar().register(node, description, aliases)
-        );
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            if (aliases.isEmpty()) {
+                event.registrar().register(node, description);
+                return;
+            }
+
+            event.registrar().register(node, description, aliases);
+        });
     }
 }

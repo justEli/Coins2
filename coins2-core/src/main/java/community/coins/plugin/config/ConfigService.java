@@ -74,9 +74,6 @@ public final class ConfigService {
             return;
         }
 
-        coins.log(Level.WARNING, """
-            Loaded the configs of Coins with %,d warnings. See above here for details."""
-            .formatted(size)
-        );
+        coins.log(Level.WARNING, "Loaded the configs of Coins with %,d warnings. See above here for details.".formatted(size));
     }
 }

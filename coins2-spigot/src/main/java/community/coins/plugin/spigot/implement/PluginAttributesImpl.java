@@ -2,7 +2,11 @@ package community.coins.plugin.spigot.implement;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.api.PluginAttributes;
+import org.bukkit.World;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * @author Eli
@@ -35,5 +39,20 @@ public final class PluginAttributesImpl implements PluginAttributes {
     public String getDescription() {
         var description = coins.getDescription().getDescription();
         return description == null? "" : description;
+    }
+
+    @Override
+    public @Nullable World getWorld(String identifier) {
+        var world = coins.getServer().getWorld(identifier);
+        if (world != null) {
+            return world;
+        }
+
+        try {
+            return coins.getServer().getWorld(UUID.fromString(identifier));
+        }
+        catch (IllegalArgumentException _) {
+            return null;
+        }
     }
 }

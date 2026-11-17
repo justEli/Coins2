@@ -4,6 +4,7 @@ import community.coins.plugin.command.CommandService;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.ConfigYml;
+import community.coins.plugin.config.GlobalStateConfig;
 import community.coins.plugin.misc.CoinsPublicApi;
 import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.misc.PersistentData;
@@ -41,9 +42,15 @@ import java.util.logging.Level;
  * @since April 27, 2026
  */
 public abstract class CoinsCore extends JavaPlugin {
-    // todo
-    //  - fix balance cache of other plugin after /mint reload
-    //  - fix BalanceChangeEvent with wrong previous balance after /mint reload?
+    // todo allow to register multiple withdraw commands (i.e. for currencies)
+    // todo fix balance cache of other plugin after /mint reload
+    // todo fix BalanceChangeEvent with wrong previous balance after /mint reload?
+    // todo configurable colors for primary, var, error, etc.
+    // todo add a 'physical' economy/currency (see EconomyService)
+    // todo create file if no cached content was found (FileStorage#modifyFile)
+    // todo drop-each-coin in DefinedDrop#generateCoinAction
+    // todo deposit-type see DefinedDrop#getDepositType
+
     private static final ExecutorService VIRTUAL_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
@@ -56,13 +63,15 @@ public abstract class CoinsCore extends JavaPlugin {
 
         // basic utilities
         this.persistentData = new PersistentData(this);
+        this.globalState = new GlobalStateConfig();
 
         // register basic services
         this.commandService = new CommandService();
         this.eventTypeService = new EventTypeService(this);
         this.economyService = new EconomyService(this);
 
-        loadBasicFunctionality();
+        // load commands before the config, so that the identifiers are registered
+        loadCommands();
 
         // parse all configs
         this.configWarns = new ConfigWarns(this);
@@ -162,6 +171,11 @@ public abstract class CoinsCore extends JavaPlugin {
 
     // other handlers
 
+    private GlobalStateConfig globalState;
+    public GlobalStateConfig getGlobalState() {
+        return globalState;
+    }
+
     private ConfigWarns configWarns;
     public ConfigWarns getConfigWarns() {
         return configWarns;
@@ -208,5 +222,5 @@ public abstract class CoinsCore extends JavaPlugin {
 
     public abstract void loadImplementations();
 
-    public abstract void loadBasicFunctionality();
+    public abstract void loadCommands();
 }

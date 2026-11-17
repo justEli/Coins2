@@ -4,6 +4,7 @@ import community.coins.plugin.CoinsCore;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.nio.file.Files;
+import java.util.logging.Level;
 
 /**
  * @author Eli
@@ -31,8 +32,12 @@ public abstract class BasicConfig {
         return YamlConfiguration.loadConfiguration(configFile.toFile());
     }
 
-    public void addWarn(String message) {
+    public void warn(String message) {
         configWarns.warn(message);
+    }
+
+    public void info(String message) {
+        coins.log(Level.INFO, "[%s]: %s".formatted(fileName, message));
     }
 
     public abstract void parseAndReload();

@@ -14,7 +14,6 @@ import org.bukkit.event.inventory.InventoryType;
  */
 public final class CoinBehaviorHandler implements Listener {
     private final CoinsCore coins;
-
     public CoinBehaviorHandler(CoinsCore coins) {
         this.coins = coins;
         coins.parseEventHandlers(this);
@@ -36,6 +35,7 @@ public final class CoinBehaviorHandler implements Listener {
     }
 
     // prevent coins from being picked up by hoppers if configured that way
+    // fyi: withdrawn coins always have this 'no_hopper' tag removed on creation
     @EventHandler(ignoreCancelled = true)
     void onInventoryPickupItemEvent(InventoryPickupItemEvent event) {
         if (event.getInventory().getType() != InventoryType.HOPPER) {

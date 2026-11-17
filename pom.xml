@@ -24,7 +24,7 @@
     <properties>
         <!-- plugin details -->
         <project.name>Coins</project.name>
-        <revision>2.4</revision>
+        <revision>b2.5</revision>
 
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
@@ -37,7 +37,7 @@
 
         <!-- in Spigot's plugin.yml -->
         <versions.adventure-platform-bukkit>4.4.1</versions.adventure-platform-bukkit>
-        <versions.adventure>4.20.0</versions.adventure> <!-- used by paper 1.21.4 -->
+        <versions.adventure>4.26.1</versions.adventure> <!-- 5.x doesn't work for 1.21.11 -->
 
         <!-- settings for (paper-)plugin.yml -->
         <plugin.api-version>1.21.4</plugin.api-version>

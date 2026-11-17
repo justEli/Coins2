@@ -115,7 +115,7 @@ public final class FileStorage implements CurrencyStorage {
         EXECUTOR_SERVICE.submit(() -> {
             FileConfiguration config = cachedContents.get(uuid);
             if (config == null) {
-                return; // todo maybe create file then
+                return; // todo create file
             }
 
             double current = config.getDouble(key);

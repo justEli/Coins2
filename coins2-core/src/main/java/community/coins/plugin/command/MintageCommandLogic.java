@@ -2,12 +2,15 @@ package community.coins.plugin.command;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.coin.DefinedCoin;
+import community.coins.plugin.config.ConfigService;
+import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.economy.DefinedCurrency;
 import community.coins.plugin.language.EntryReplacement;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.util.Util;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,14 +22,9 @@ import java.util.Optional;
  * @author Eli
  * @since May 07, 2026
  */
-public abstract class MintageCommandLogic extends CommandLogic {
-    public MintageCommandLogic(CoinsCore coins, CommandService service) {
+public abstract class MintageCommandLogic<T extends CoinsCore> extends CommandLogic<T> {
+    public MintageCommandLogic(T coins, CommandService service) {
         super(coins, service, "mintage");
-    }
-
-    @Override
-    public String getDescription() {
-        return "Command with tools for coins.";
     }
 
     private static final EntryReplacement FILL_DURATION = new EntryReplacement("duration");
@@ -139,5 +137,15 @@ public abstract class MintageCommandLogic extends CommandLogic {
             FILL_RADIUS.filled(radius),
             FILL_TARGET.filled(locationName)
         ));
+    }
+
+    @Override
+    public String getDescription() {
+        return "Command with tools for coins.";
+    }
+
+    @Override
+    public boolean parseConfig(ConfigWarns.Named warns, ConfigurationSection section, ConfigService service) {
+        return true; // no extra parsing for this command
     }
 }

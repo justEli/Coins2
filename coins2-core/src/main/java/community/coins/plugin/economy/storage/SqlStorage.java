@@ -32,17 +32,17 @@ public final class SqlStorage implements CurrencyStorage {
         this.currencyIdentifier = currencyIdentifier;
 
         new Query("""
-            CREATE TABLE IF NOT EXISTS coin_balances (\
+            CREATE TABLE IF NOT EXISTS coin_balances(\
             uuid CHAR(36) NOT NULL,\
             currency VARCHAR(50) NOT NULL,\
             balance DECIMAL(19, 6) NOT NULL DEFAULT 0,\
             queued_balance DECIMAL(19, 6) NOT NULL DEFAULT 0,\
             received_inactive DECIMAL(19, 6) NOT NULL DEFAULT 0,\
-            PRIMARY KEY (uuid, currency),\
-            INDEX (currency),\
-            INDEX (balance),\
-            INDEX (queued_balance),\
-            INDEX (received_inactive)\
+            PRIMARY KEY(uuid, currency),\
+            INDEX(currency),\
+            INDEX(balance),\
+            INDEX(queued_balance),\
+            INDEX(received_inactive)\
             )"""
         ).bind().executeUpdate();
     }
@@ -61,9 +61,7 @@ public final class SqlStorage implements CurrencyStorage {
                 }
 
                 UUID uuid = UUID.fromString(rawUuid);
-                balanceData.add(
-                    new BalanceData(uuid, data.getDouble("balance"), data.getDouble("received_inactive"))
-                );
+                balanceData.add(new BalanceData(uuid, data.getDouble("balance"), data.getDouble("received_inactive")));
             }
             balances.accept(balanceData);
         });
@@ -74,40 +72,45 @@ public final class SqlStorage implements CurrencyStorage {
 
     @Override
     public void createAccount(UUID uuid, double amount) {
-        // todo no need to run a query here when 'on duplicate key' is used
         createAccountQuery.bind(uuid, amount, currencyIdentifier).executeUpdate();
     }
 
-    // todo insert into ... on duplicate key
-    private final Query withdrawQuery =
-        new Query("UPDATE coin_balances SET balance = balance - ? WHERE uuid = ? AND currency = ?");
+    private final Query withdrawQuery = new Query("""
+        INSERT INTO coin_balances (uuid, currency, balance)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE balance = balance - ?"""
+    );
 
     @Override
     public void withdraw(UUID uuid, double amount) {
-        withdrawQuery.bind(amount, uuid, currencyIdentifier).executeUpdate();
+        withdrawQuery.bind(uuid, currencyIdentifier, -amount, amount).executeUpdate();
     }
 
-    // todo insert into ... on duplicate key
-    private final Query depositQuery =
-        new Query("UPDATE coin_balances SET balance = balance + ? WHERE uuid = ? AND currency = ?");
+    private final Query depositQuery = new Query("""
+        INSERT INTO coin_balances (uuid, currency, balance)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE balance = balance + ?"""
+    );
 
     @Override
     public void deposit(UUID uuid, double amount) {
-        depositQuery.bind(amount, uuid, currencyIdentifier).executeUpdate();
+        depositQuery.bind(uuid, currencyIdentifier, amount, amount).executeUpdate();
     }
 
-    // todo insert into ... on duplicate key
-    private final Query addInactiveCoinsQuery =
-        new Query("UPDATE coin_balances SET received_inactive = received_inactive + ? WHERE uuid = ? AND currency = ?");
+    private final Query addInactiveCoinsQuery = new Query("""
+        INSERT INTO coin_balances (uuid, currency, received_inactive)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE received_inactive = received_inactive + ?""");
 
     @Override
     public void addInactiveCoins(UUID uuid, double amount) {
-        addInactiveCoinsQuery.bind(amount, uuid, currencyIdentifier).executeUpdate();
+        addInactiveCoinsQuery.bind(uuid, currencyIdentifier, amount, amount).executeUpdate();
     }
 
-    // todo insert into ... on duplicate key
-    private final Query resetInactiveCoinsQuery =
-        new Query("UPDATE coin_balances SET received_inactive = 0 WHERE uuid = ? AND currency = ?");
+    private final Query resetInactiveCoinsQuery = new Query("""
+        INSERT INTO coin_balances (uuid, currency, received_inactive)
+        VALUES (?, ?, 0)
+        ON DUPLICATE KEY UPDATE received_inactive = 0""");
 
     @Override
     public void resetInactiveCoins(UUID uuid) {

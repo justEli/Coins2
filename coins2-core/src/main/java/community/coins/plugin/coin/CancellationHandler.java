@@ -1,16 +1,18 @@
 package community.coins.plugin.coin;
 
 import community.coins.plugin.CoinsCore;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +24,22 @@ public final class CancellationHandler implements Listener {
     private final CoinsCore coins;
     public CancellationHandler(CoinsCore coins) {
         this.coins = coins;
+        coins.parseEventHandlers(this);
+    }
+
+    // don't use or place a coin on a block
+    @EventHandler
+    void onPlayerInteractEvent(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        if (!coins.getCoinMeta().isCoin(event.getItem())) {
+            return;
+        }
+
+        event.setUseItemInHand(Event.Result.DENY);
+        event.setUseInteractedBlock(Event.Result.DENY);
     }
 
     @EventHandler
@@ -30,7 +48,7 @@ public final class CancellationHandler implements Listener {
             return; // already handled at other places
         }
 
-        Item item = event.getItem();
+        var item = event.getItem();
         if (!coins.getCoinMeta().isCoin(item.getItemStack())) {
             return;
         }
