@@ -14,9 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class MetricsHandler {
     public static boolean USING_ECONOMY_VAULT = false;
-    public static boolean USING_STORAGE_INTEGRATION = false;
-    public static boolean USING_FILE_STORAGE = false;
-    public static boolean USING_SQL_STORAGE = false;
+    public static String STORAGE_INTEGRATION = "none";
 
     public MetricsHandler(CoinsCore coins) {
         Metrics metrics = new Metrics(coins, 31200);
@@ -38,9 +36,7 @@ public final class MetricsHandler {
 
         // currencies.yml
         metrics.addCustomChart(new SimplePie("usingEconomyVault", () -> Boolean.toString(USING_ECONOMY_VAULT)));
-        metrics.addCustomChart(new SimplePie("usingStorageIntegration", () -> Boolean.toString(USING_STORAGE_INTEGRATION)));
-        metrics.addCustomChart(new SimplePie("usingFileStorage", () -> Boolean.toString(USING_FILE_STORAGE)));
-        metrics.addCustomChart(new SimplePie("usingSqlStorage", () -> Boolean.toString(USING_SQL_STORAGE)));
+        metrics.addCustomChart(new SimplePie("storageIntegration", () -> STORAGE_INTEGRATION));
 
         // in-game statistics
         metrics.addCustomChart(new SingleLineChart("totalCoinsCreated", () -> totalCoinsCreated.getAndSet(0)));

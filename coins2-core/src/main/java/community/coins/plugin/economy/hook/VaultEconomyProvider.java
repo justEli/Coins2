@@ -187,6 +187,7 @@ public final class VaultEconomyProvider implements Economy {
 
     public EconomyResponse withdraw(UUID uuid, double amount) {
         double balance = storage.getCachedBalance(uuid);
+        coins.debug("Withdraw: amount=%.2f, player=%s, previous_balance=%.2f".formatted(amount, uuid, balance));
         BalanceChangeEvent event = new BalanceChangeEvent(!coins.getServer().isPrimaryThread(), uuid, -amount, balance, currency);
 
         coins.getServer().getPluginManager().callEvent(event);
@@ -229,6 +230,7 @@ public final class VaultEconomyProvider implements Economy {
 
     public EconomyResponse deposit(UUID uuid, double amount) {
         double balance = storage.getCachedBalance(uuid);
+        coins.debug("Deposit: amount=%.2f, player=%s, previous_balance=%.2f".formatted(amount, uuid, balance));
         BalanceChangeEvent event = new BalanceChangeEvent(!coins.getServer().isPrimaryThread(), uuid, amount, balance, currency);
 
         coins.getServer().getPluginManager().callEvent(event);

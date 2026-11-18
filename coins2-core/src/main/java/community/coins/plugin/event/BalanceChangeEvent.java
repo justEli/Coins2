@@ -9,6 +9,7 @@ import org.jspecify.annotations.NullMarked;
 import java.util.UUID;
 
 /**
+ * Event that is called when this plugin handles the economy.
  * @author Eli
  * @since April 14, 2026
  */

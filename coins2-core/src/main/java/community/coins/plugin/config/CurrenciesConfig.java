@@ -99,9 +99,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
 
         // clear metrics
         MetricsHandler.USING_ECONOMY_VAULT = false;
-        MetricsHandler.USING_SQL_STORAGE = false;
-        MetricsHandler.USING_FILE_STORAGE = false;
-        MetricsHandler.USING_STORAGE_INTEGRATION = false;
+        MetricsHandler.STORAGE_INTEGRATION = "none";
 
         Map<String, DefinedCurrency> configured = new HashMap<>();
         for (String name : currenciesSection.getKeys(false)) {
@@ -165,7 +163,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
                     if ("sql".equalsIgnoreCase(integrationStorage)) {
                         if (sqlEnabled) {
                             storage = new SqlStorage(coins, service, definedCurrency.getIdentifier());
-                            MetricsHandler.USING_SQL_STORAGE = true;
+                            MetricsHandler.STORAGE_INTEGRATION = "sql";
                         }
                         else {
                             warn("Cannot register integration for currency '%s' because SQL storage is not configured.".formatted(id));
@@ -173,7 +171,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
                     }
                     else if ("file".equalsIgnoreCase(integrationStorage)) {
                         storage = new FileStorage(coins, definedCurrency.getIdentifier());
-                        MetricsHandler.USING_FILE_STORAGE = true;
+                        MetricsHandler.STORAGE_INTEGRATION = "file";
                     }
 
                     if (storage == null) {
@@ -185,7 +183,6 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
                         definedCurrency.getHook().registerIntegration(
                             configWarns, definedCurrency, new CurrencyBalanceStorage(coins, storage)
                         );
-                        MetricsHandler.USING_STORAGE_INTEGRATION = true;
                     }
                 }
             }
