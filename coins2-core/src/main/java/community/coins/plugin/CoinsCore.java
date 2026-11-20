@@ -51,7 +51,7 @@ public abstract class CoinsCore extends JavaPlugin {
     private static final ExecutorService VIRTUAL_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
-    public void onLoad() {
+    public void onEnable() {
         loadImplementations();
 
         // scheduler setup with folia and Bukkit support
@@ -60,10 +60,7 @@ public abstract class CoinsCore extends JavaPlugin {
 
         // basic utilities
         this.persistentData = new PersistentData(this);
-    }
 
-    @Override
-    public void onEnable() {
         loadRegistrars();
 
         // register basic services
