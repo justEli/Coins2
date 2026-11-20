@@ -2,6 +2,7 @@ package community.coins.plugin.config;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.language.LanguageParser;
+import community.coins.plugin.util.Filler;
 
 import java.util.logging.Level;
 
@@ -52,6 +53,8 @@ public final class ConfigService {
         coins.getConfigWarns().clearWarnings();
 
         mainConfig.parseAndReload();
+        Filler.create(); // recreate colored fillers
+
         currenciesConfig.parseAndReload();
 
         if (currenciesConfig.getDefinedKeys().isEmpty()) {

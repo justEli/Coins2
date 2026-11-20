@@ -25,3 +25,16 @@ locale: 'en-US'
 
 # Show a message on start-up when an update is available for the plugin.
 notify-on-update: true
+
+# The colors used in message components. The color can be used as tag: <primary>, <var>,
+#  <error>, <user>, <money>, <up> and <down>. Primary is used if no other color is
+#  specified, for example in the language file. Of course, any color can be used within
+#  components through <#hex>, but this option makes it more consistent.
+colors:
+  primary: '#FF7711'
+  var: '#FFCC88'
+  error: '#FF0000'
+  user: '#95A5A6'
+  money: '#6DD47E'
+  up: '#148C30'
+  down: '#BF1111'

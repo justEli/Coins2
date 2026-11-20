@@ -1,7 +1,9 @@
 package community.coins.plugin.config;
 
 import community.coins.plugin.CoinsCore;
-import org.bukkit.configuration.file.YamlConfiguration;
+import community.coins.plugin.util.ColorResolver;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -21,7 +23,7 @@ public final class MainConfig extends BasicConfig {
 
     @Override
     public void parseAndReload() {
-        YamlConfiguration config = getOrCreateConfig();
+        var config = getOrCreateConfig();
 
         for (Field field : TYPE.getDeclaredFields()) {
             if (!field.isAnnotationPresent(ConfigEntry.class) || !Modifier.isStatic(field.getModifiers())) {
@@ -64,6 +66,26 @@ public final class MainConfig extends BasicConfig {
             catch (Throwable throwable) {
                 warn("Config has invalid value for `%s`, now using its default value.".formatted(configKey));
             }
+        }
+
+        ConfigurationSection colors = config.getConfigurationSection("colors");
+        if (colors == null) {
+            return; // no colors section, that's ok
+        }
+
+        for (String tag : colors.getKeys(false)) {
+            String hexString = colors.getString(tag);
+            if (hexString == null) {
+                continue;
+            }
+
+            TextColor color = TextColor.fromCSSHexString(hexString);
+            if (color == null) {
+                warn("Failed to parse color '%s' for color '%s', this is an invalid HEX format.".formatted(hexString, tag));
+                continue;
+            }
+
+            ColorResolver.updateTag(tag, color);
         }
     }
 }

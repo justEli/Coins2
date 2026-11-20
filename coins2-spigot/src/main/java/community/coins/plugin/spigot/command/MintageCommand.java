@@ -4,6 +4,7 @@ import community.coins.plugin.command.DefinedCommand;
 import community.coins.plugin.command.MintageCommandLogic;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.spigot.CoinsSpigot;
+import community.coins.plugin.util.Filler;
 import community.coins.plugin.util.Util;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -79,19 +80,19 @@ public final class MintageCommand extends MintageCommandLogic {
                     String coinIdentifier = args[2];
                     OptionalInt amount = Util.parseInt(args[3]);
                     if (amount.isEmpty()) {
-                        coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_AMOUNT)));
+                        coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(Filler.TYPE.filled(Language.WORD_AMOUNT)));
                         return true;
                     }
 
                     OptionalInt radius = Util.parseInt(args[4]);
                     if (radius.isEmpty()) {
-                        coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_RADIUS)));
+                        coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(Filler.TYPE.filled(Language.WORD_RADIUS)));
                         return true;
                     }
 
                     OptionalInt value = Util.parseInt(args[5]);
                     if (value.isEmpty()) {
-                        coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_VALUE)));
+                        coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(Filler.TYPE.filled(Language.WORD_VALUE)));
                         return true;
                     }
 

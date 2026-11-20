@@ -42,7 +42,6 @@ import java.util.logging.Level;
  */
 public abstract class CoinsCore extends JavaPlugin {
     // todo move VaultEconomyProvider to onLoad?
-    // todo configurable colors for primary, var, error, etc.
     // todo add a 'physical' economy/currency (see EconomyService)
     // todo create file if no cached content was found (FileStorage#modifyFile)
     // todo drop-each-coin in DefinedDrop#generateCoinAction

@@ -13,4 +13,6 @@ public final class ConfigYml {
 
     @ConfigEntry(value = "debug-logging", required = false)
     public static boolean DEBUG_LOGGING = false;
+
+    // colors are handled in MainConfig class
 }

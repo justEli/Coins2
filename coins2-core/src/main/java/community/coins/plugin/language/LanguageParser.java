@@ -62,8 +62,7 @@ public final class LanguageParser {
                 ConfigYml.LOCALE = DEFAULT_LOCALE;
             }
             else {
-                configWarns.warn("""
-                    Found an invalid locale '%s' in the config. Change this to '%s'."""
+                configWarns.warn("Found an invalid locale '%s' in the config. Change this to '%s'."
                     .formatted(ConfigYml.LOCALE, corrected)
                 );
                 ConfigYml.LOCALE = corrected;

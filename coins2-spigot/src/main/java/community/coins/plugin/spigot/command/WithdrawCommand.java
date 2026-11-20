@@ -4,6 +4,7 @@ import community.coins.plugin.command.DefinedCommand;
 import community.coins.plugin.command.WithdrawCommandLogic;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.spigot.CoinsSpigot;
+import community.coins.plugin.util.Filler;
 import community.coins.plugin.util.Util;
 import org.bukkit.command.CommandSender;
 
@@ -36,12 +37,12 @@ public final class WithdrawCommand extends WithdrawCommandLogic {
             OptionalInt amount = args.length > 1? Util.parseInt(args[1]) : OptionalInt.of(1);
 
             if (value.isEmpty()) {
-                coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_VALUE)));
+                coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(Filler.TYPE.filled(Language.WORD_VALUE)));
                 return true;
             }
 
             if (amount.isEmpty()) {
-                coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(FILL_TYPE.filled(Language.WORD_AMOUNT)));
+                coins.sendMessage(sender, Language.COMMAND_INVALID_NUMBER.with(Filler.TYPE.filled(Language.WORD_AMOUNT)));
                 return true;
             }
 

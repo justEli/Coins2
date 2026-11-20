@@ -5,8 +5,8 @@ import community.coins.plugin.coin.DefinedCoin;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.economy.DefinedCurrency;
-import community.coins.plugin.language.EntryReplacement;
 import community.coins.plugin.language.Language;
+import community.coins.plugin.util.Filler;
 import community.coins.plugin.util.Util;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -27,22 +27,12 @@ public abstract class MintageCommandLogic extends CommandLogic {
         super(coins, defined);
     }
 
-    private static final EntryReplacement FILL_DURATION = new EntryReplacement("duration");
-    private static final EntryReplacement FILL_ID = new EntryReplacement("identifier");
-    private static final EntryReplacement FILL_FORMAT = new EntryReplacement("format");
-    protected static final EntryReplacement FILL_TYPE = new EntryReplacement("type");
-    private static final EntryReplacement.Filled FILL_MIN_1 = new EntryReplacement("min").filled(1);
-    private static final EntryReplacement FILL_MAX = new EntryReplacement("max");
-    private static final EntryReplacement FILL_AMOUNT = new EntryReplacement("amount");
-    private static final EntryReplacement FILL_RADIUS = new EntryReplacement("radius");
-    private static final EntryReplacement FILL_TARGET = new EntryReplacement("target");
-
     public void reload(CommandSender sender) {
         long millis = System.currentTimeMillis();
         coins.getConfigService().reload();
         long duration = System.currentTimeMillis() - millis;
 
-        coins.sendMessage(sender, Language.RELOAD_SUCCESS.with(FILL_DURATION.filled(duration)));
+        coins.sendMessage(sender, Language.RELOAD_SUCCESS.with(Filler.DURATION.filled(duration)));
     }
 
     public void giveCoin(CommandSender sender, String coinIdentifier, int amount) {
@@ -53,7 +43,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
 
         Optional<DefinedCoin> coin = coins.getConfigService().getCoinsConfig().getDefined(coinIdentifier);
         if (coin.isEmpty()) {
-            coins.sendMessage(sender, Language.COIN_NOT_FOUND.with(FILL_ID.filled(coinIdentifier)));
+            coins.sendMessage(sender, Language.COIN_NOT_FOUND.with(Filler.IDENTIFIER.filled(coinIdentifier)));
             return;
         }
 
@@ -64,7 +54,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
 
         if (amount < 1 || amount > 64) {
             coins.sendMessage(sender, Language.COMMAND_INVALID_RANGE.with(
-                FILL_TYPE.filled(Language.WORD_AMOUNT), FILL_MIN_1, FILL_MAX.filled(64)
+                Filler.TYPE.filled(Language.WORD_AMOUNT), Filler.MIN_1, Filler.MAX.filled(64)
             ));
             return;
         }
@@ -73,7 +63,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
         item.setAmount(amount);
 
         player.getInventory().addItem(item);
-        coins.sendMessage(sender, Language.GIVE_SUCCESS.with(FILL_ID.filled(coinIdentifier)));
+        coins.sendMessage(sender, Language.GIVE_SUCCESS.with(Filler.IDENTIFIER.filled(coinIdentifier)));
     }
 
     public void setCoinValue(CommandSender sender, String currencyName, double value) {
@@ -90,7 +80,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
 
         Optional<DefinedCurrency> currency = coins.getConfigService().getCurrenciesConfig().getDefined(currencyName);
         if (currency.isEmpty()) {
-            coins.sendMessage(sender, Language.CURRENCY_NOT_FOUND.with(FILL_ID.filled(currencyName)));
+            coins.sendMessage(sender, Language.CURRENCY_NOT_FOUND.with(Filler.IDENTIFIER.filled(currencyName)));
             return;
         }
 
@@ -99,7 +89,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
         coins.getCoinMeta().setCoinValue(meta, Util.toRoundedMoneyDecimals(value, currency.get().getDecimals()));
         stack.setItemMeta(meta);
 
-        coins.sendMessage(sender, Language.SET_VALUE_SUCCESS.with(FILL_FORMAT.filled(currency.get().getFormatMessage(value))));
+        coins.sendMessage(sender, Language.SET_VALUE_SUCCESS.with(Filler.FORMAT.filled(currency.get().getFormatMessage(value))));
     }
 
     @NullMarked
@@ -110,20 +100,20 @@ public abstract class MintageCommandLogic extends CommandLogic {
 
         Optional<DefinedCoin> coin = coins.getConfigService().getCoinsConfig().getDefined(coinIdentifier);
         if (coin.isEmpty()) {
-            coins.sendMessage(sender, Language.COIN_NOT_FOUND.with(FILL_ID.filled(coinIdentifier)));
+            coins.sendMessage(sender, Language.COIN_NOT_FOUND.with(Filler.IDENTIFIER.filled(coinIdentifier)));
             return;
         }
 
         if (amount <= 0 || amount > 1000) {
             coins.sendMessage(sender, Language.COMMAND_INVALID_RANGE.with(
-                FILL_TYPE.filled(Language.WORD_AMOUNT), FILL_MIN_1, FILL_MAX.filled(1000)
+                Filler.TYPE.filled(Language.WORD_AMOUNT), Filler.MIN_1, Filler.MAX.filled(1000)
             ));
             return;
         }
 
         if (radius < 1 || radius > 100) {
             coins.sendMessage(sender, Language.COMMAND_INVALID_RANGE.with(
-                FILL_TYPE.filled(Language.WORD_RADIUS), FILL_MIN_1, FILL_MAX.filled(100)
+                Filler.TYPE.filled(Language.WORD_RADIUS), Filler.MIN_1, Filler.MAX.filled(100)
             ));
             return;
         }
@@ -133,9 +123,9 @@ public abstract class MintageCommandLogic extends CommandLogic {
 
         String locationName = "x%.1f, y%.1f, z%.1f".formatted(location.getX(), location.getY(), location.getZ());
         coins.sendMessage(sender, Language.DROP_DROPPING.with(
-            FILL_AMOUNT.filled(amount),
-            FILL_RADIUS.filled(radius),
-            FILL_TARGET.filled(locationName)
+            Filler.AMOUNT.filled(amount),
+            Filler.RADIUS.filled(radius),
+            Filler.TARGET.filled(locationName)
         ));
     }
 

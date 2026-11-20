@@ -3,8 +3,8 @@ package community.coins.plugin.command;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.config.RegisterResult;
-import community.coins.plugin.language.EntryReplacement;
 import community.coins.plugin.language.Language;
+import community.coins.plugin.util.Filler;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jspecify.annotations.NullMarked;
@@ -59,11 +59,9 @@ public final class CommandService {
         return RegisterResult.REGISTERED;
     }
 
-    private static final EntryReplacement FILL_COMMAND = new EntryReplacement("command");
-
     public static Component getSimpleUsage(String label) {
         return Language.COMMAND_INCOMPLETE.with(
-            FILL_COMMAND.filled("/%s (%s)".formatted(label, Language.WORD_ARGUMENTS))
+            Filler.COMMAND.filled("/%s (%s)".formatted(label, Language.WORD_ARGUMENTS))
         );
     }
 }

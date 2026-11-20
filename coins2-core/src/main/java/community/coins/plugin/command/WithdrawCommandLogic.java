@@ -5,9 +5,9 @@ import community.coins.plugin.coin.DefinedCoin;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.economy.DefinedCurrency;
-import community.coins.plugin.language.EntryReplacement;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.util.ComponentUtil;
+import community.coins.plugin.util.Filler;
 import community.coins.plugin.util.Util;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
@@ -34,13 +34,6 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
     public WithdrawCommandLogic(CoinsCore coins, DefinedCommand defined) {
         super(coins, defined);
     }
-
-    protected static final EntryReplacement FILL_AMOUNT = new EntryReplacement("amount");
-    protected static final EntryReplacement FILL_TYPE = new EntryReplacement("type");
-    private static final EntryReplacement.Filled FILL_MIN_1 = new EntryReplacement("min").filled(1);
-    private static final EntryReplacement FILL_MAX = new EntryReplacement("max");
-    private static final EntryReplacement FILL_COIN = new EntryReplacement("coin");
-    private static final EntryReplacement FILL_PRICE = new EntryReplacement("price");
 
     private final Set<UUID> disabledWorldUuids = ConcurrentHashMap.newKeySet();
     private final AtomicBoolean allowDecimals = new AtomicBoolean(false);
@@ -106,11 +99,9 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
         return true;
     }
 
-    private static final EntryReplacement FILL_COMMAND = new EntryReplacement("command");
-
     public void sendHelpMessage(CommandSender sender) {
         coins.sendMessage(sender, Language.COMMAND_INCOMPLETE.with(
-            FILL_COMMAND.filled("/withdraw (%s) (%s)".formatted(Language.WORD_VALUE, Language.WORD_AMOUNT))
+            Filler.COMMAND.filled("/withdraw (%s) (%s)".formatted(Language.WORD_VALUE, Language.WORD_AMOUNT))
         ));
     }
 
@@ -131,7 +122,7 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
         if (entry == null || roundedValue <= 0) {
             long max = coinValues.lastKey(); // get the highest entry, which is the limit
             coins.sendMessage(sender, Language.COMMAND_INVALID_RANGE.with(
-                FILL_TYPE.filled(Language.WORD_VALUE), FILL_MIN_1, FILL_MAX.filled(max)
+                Filler.TYPE.filled(Language.WORD_VALUE), Filler.MIN_1, Filler.MAX.filled(max)
             ));
             return;
         }
@@ -145,7 +136,7 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
 
         if (meta == null || amount > 64) {
             coins.sendMessage(sender, Language.COMMAND_INVALID_RANGE.with(
-                FILL_TYPE.filled(Language.WORD_AMOUNT), FILL_MIN_1, FILL_MAX.filled(64)
+                Filler.TYPE.filled(Language.WORD_AMOUNT), Filler.MIN_1, Filler.MAX.filled(64)
             ));
             return;
         }
@@ -181,7 +172,7 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
             if (transaction.withdraw(player.getUniqueId(), cost)) {
                 coins.getScheduler().runEntityTask(player, () -> player.getInventory().addItem(item));
                 coins.sendMessage(sender, Language.WITHDRAW_GIVE.with(
-                    FILL_AMOUNT.filled(amount), FILL_COIN.filled(name), FILL_PRICE.filled(currency.getFormatMessage(cost))
+                    Filler.AMOUNT.filled(amount), Filler.COIN.filled(name), Filler.PRICE.filled(currency.getFormatMessage(cost))
                 ));
             }
             else {

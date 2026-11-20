@@ -4,10 +4,9 @@ import community.coins.plugin.CoinsCore;
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.economy.DefinedCurrency;
-import community.coins.plugin.language.EntryReplacement;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.util.BasicPlayer;
-import community.coins.plugin.util.ColorResolver;
+import community.coins.plugin.util.Filler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -30,11 +29,6 @@ public abstract class BalanceCommandLogic extends CommandLogic {
     protected final AtomicReference<String> targetPermission = new AtomicReference<>();
     protected final AtomicReference<DefinedCurrency> definedCurrency = new AtomicReference<>();
 
-    private static final EntryReplacement FILL_ID = new EntryReplacement("identifier");
-    private static final EntryReplacement FILL_CURRENCY = new EntryReplacement("currency");
-    private static final EntryReplacement FILL_BALANCE = new EntryReplacement("balance");
-    private static final EntryReplacement FILL_USERNAME = new EntryReplacement("username", ColorResolver.USER);
-
     /// @param currencyId can also be null if the currency was configured in the config
     public void showBalance(CommandSender sender, @Nullable String currencyId, @Nullable BasicPlayer target) {
         if (definedCurrency.get() != null) {
@@ -54,7 +48,7 @@ public abstract class BalanceCommandLogic extends CommandLogic {
 
         Optional<DefinedCurrency> currency = coins.getConfigService().getCurrenciesConfig().getDefined(currencyId);
         if (currency.isEmpty()) {
-            coins.sendMessage(sender, Language.CURRENCY_NOT_FOUND.with(FILL_ID.filled(currencyId)));
+            coins.sendMessage(sender, Language.CURRENCY_NOT_FOUND.with(Filler.IDENTIFIER.filled(currencyId)));
             return;
         }
 
@@ -86,15 +80,15 @@ public abstract class BalanceCommandLogic extends CommandLogic {
         currency.submitTransaction(transaction -> {
             if (sender.getName().equalsIgnoreCase(username)) {
                 coins.sendMessage(sender, Language.BALANCE_DISPLAY.with(
-                    FILL_CURRENCY.filled(currency.getPluralName()),
-                    FILL_BALANCE.filled(currency.getFormatMessage(transaction.getBalance(uuid)))
+                    Filler.CURRENCY.filled(currency.getPluralName()),
+                    Filler.BALANCE.filled(currency.getFormatMessage(transaction.getBalance(uuid)))
                 ));
             }
             else {
                 coins.sendMessage(sender, Language.BALANCE_DISPLAY_OTHERS.with(
-                    FILL_USERNAME.filled(username),
-                    FILL_CURRENCY.filled(currency.getPluralName()),
-                    FILL_BALANCE.filled(currency.getFormatMessage(transaction.getBalance(uuid)))
+                    Filler.USERNAME.filled(username),
+                    Filler.CURRENCY.filled(currency.getPluralName()),
+                    Filler.BALANCE.filled(currency.getFormatMessage(transaction.getBalance(uuid)))
                 ));
             }
         });
