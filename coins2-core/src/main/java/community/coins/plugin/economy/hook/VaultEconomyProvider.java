@@ -7,6 +7,7 @@ import community.coins.plugin.event.BalanceChangeEvent;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -31,6 +32,11 @@ public final class VaultEconomyProvider implements Economy {
         // DefinedCurrency is recreated every reload, its EconomyHook isn't, so get the storage from there.
         // CurrencyBalanceStorage is never recreated for a specific currency, but its CurrencyStorage can be updated (recreated)
         this.storage = currency.getHook().getCurrencyStorage(currency);
+    }
+
+    @ApiStatus.AvailableSince("2.2")
+    public CurrencyBalanceStorage getStorage() {
+        return storage;
     }
 
     private static final EconomyResponse UNKNOWN_PLAYER =
