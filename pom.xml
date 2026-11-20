@@ -43,8 +43,8 @@
         <plugin.api-version>1.21.4</plugin.api-version>
 
         <!-- platform versions -->
-        <version.spigot>26.1.2-R0.1-SNAPSHOT</version.spigot>
-        <version.paper>[26.1.2.build,)</version.paper>
+        <version.spigot>26.3-R0.1-SNAPSHOT</version.spigot>
+        <version.paper>[26.3.build,)</version.paper>
         <version.folia>1.21.11-R0.1-SNAPSHOT</version.folia>
     </properties>
 

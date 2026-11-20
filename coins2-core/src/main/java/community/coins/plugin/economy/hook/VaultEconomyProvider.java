@@ -18,13 +18,19 @@ import java.util.UUID;
  */
 public final class VaultEconomyProvider implements Economy {
     private final CoinsCore coins;
-    private final CurrencyBalanceStorage storage;
     private final DefinedCurrency currency;
 
-    public VaultEconomyProvider(CoinsCore coins, CurrencyBalanceStorage storage, DefinedCurrency currency) {
+    // just a reference to the hook's balance cache and storage
+    // its storage implementation (sql or file) can change on reload, but CurrencyBalanceStorage never changes
+    private final CurrencyBalanceStorage storage;
+
+    public VaultEconomyProvider(CoinsCore coins, DefinedCurrency currency) {
         this.coins = coins;
-        this.storage = storage;
         this.currency = currency;
+
+        // DefinedCurrency is recreated every reload, its EconomyHook isn't, so get the storage from there.
+        // CurrencyBalanceStorage is never recreated for a specific currency, but its CurrencyStorage can be updated (recreated)
+        this.storage = currency.getHook().getCurrencyStorage(currency);
     }
 
     private static final EconomyResponse UNKNOWN_PLAYER =
@@ -32,10 +38,6 @@ public final class VaultEconomyProvider implements Economy {
 
     private static final EconomyResponse NOT_SUPPORTED =
         new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Not supported");
-
-    public CurrencyBalanceStorage getStorage() {
-        return storage;
-    }
 
     private @Nullable UUID getUuid(@Nullable String username) {
         if (username == null) {

@@ -62,7 +62,7 @@ public final class BalanceCommand extends BalanceCommandLogic {
             List<String> suggestions = new ArrayList<>();
             if (args.length <= 1 && hasCurrencyArgument) {
                 String remaining = args.length == 1? args[0].toLowerCase() : "";
-                suggestStartsWith(coins.getEconomyService().getCurrencyIdentifiers(), remaining, suggestions::add);
+                suggestStartsWith(coins.getConfigService().getCurrenciesConfig().getDefinedKeys(), remaining, suggestions::add);
             }
             else if (sender.hasPermission(targetPermission.get()) && ((args.length == 2 && hasCurrencyArgument) || args.length <= 1)) {
                 String remaining = (hasCurrencyArgument? args[1] : args[0]).toLowerCase();

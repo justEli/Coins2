@@ -76,7 +76,7 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
 
         coinValues.clear();
         for (String coinName : coinsSection.getKeys(false)) {
-            Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefinedItem(coinName);
+            Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefined(coinName);
             if (definedCoin.isEmpty()) {
                 warns.warn("Cannot add coin '%s' for command '%s' because coin is not defined.".formatted(coinName, defined.getName()));
                 continue;

@@ -5,6 +5,8 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,5 +45,10 @@ public final class ComponentApiImpl implements ComponentApi {
     @Override
     public Audience getAudience(CommandSender sender) {
         return sender;
+    }
+
+    @Override
+    public NamespacedKey getKey(Keyed keyed) {
+        return keyed.getKey();
     }
 }

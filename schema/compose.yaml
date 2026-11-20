@@ -1,4 +1,5 @@
-# docker compose -p database-testing up --build -d
+# docker compose up mariadb --build -d
+# docker compose up mysql --build -d
 # docker exec -it mariadb mariadb -u root -pp4ssw0rd coins
 
 services:

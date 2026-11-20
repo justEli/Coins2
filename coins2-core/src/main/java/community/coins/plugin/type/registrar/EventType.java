@@ -51,6 +51,7 @@ public abstract class EventType implements Listener {
         service.registerEventType(this);
     }
 
+    // may seem duplicated from the registered drops at DropsConfig, but this only has the drops for this event type
     private final Map<String, DefinedDrop> registeredDrops = new ConcurrentHashMap<>();
 
     public void registerDrop(DefinedDrop drop) {

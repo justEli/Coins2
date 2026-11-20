@@ -1,6 +1,7 @@
 package community.coins.plugin.type.filter;
 
 import community.coins.plugin.CoinsCore;
+import community.coins.plugin.api.ComponentApi;
 import community.coins.plugin.misc.TransformType;
 import community.coins.plugin.drops.DefinedDrop;
 import org.bukkit.Keyed;
@@ -26,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * one of this object is created (and soon after removed) for every time an event is called
@@ -36,10 +36,12 @@ import java.util.stream.Collectors;
 public final class EventFilterForm {
     private final CoinsCore coins;
     private final String eventIdentifier;
+    private final ComponentApi api;
 
     public EventFilterForm(CoinsCore coins, String eventIdentifier) {
         this.coins = coins;
         this.eventIdentifier = eventIdentifier;
+        this.api = coins.getComponentApi();
     }
 
     // initiator
@@ -64,13 +66,17 @@ public final class EventFilterForm {
     // type: [diamond_ore, gold_ore]
     private NamespacedKey targetType;
     public EventFilterForm withTargetType(Keyed keyed) {
-        this.targetType = keyed.getKey();
+        this.targetType = api.getKey(keyed);
         return this;
     }
 
     private Set<NamespacedKey> targetTypes;
     public EventFilterForm withTargetType(Collection<Keyed> types) {
-        this.targetTypes = types.stream().map(Keyed::getKey).collect(Collectors.toSet());
+        Set<NamespacedKey> keys = new HashSet<>();
+        for (Keyed type : types) {
+            keys.add(api.getKey(type));
+        }
+        this.targetTypes = keys;
         return this;
     }
 
@@ -133,7 +139,7 @@ public final class EventFilterForm {
             // entities need to be of specific type, if type list is not empty
             Set<NamespacedKey> allowedTypes = config.getInitiatorType();
             if (allowedTypes != null && !allowedTypes.isEmpty()) {
-                NamespacedKey type = initiatorEntity.getType().getKey();
+                NamespacedKey type = api.getKey(initiatorEntity.getType());
                 if (!allowedTypes.contains(type)) {
                     coins.debug("Disallowed '%s' due to entity type '%s' not in allowed initiator types".formatted(
                         eventIdentifier, type
@@ -148,7 +154,7 @@ public final class EventFilterForm {
     private boolean isTargetAllowed(@NotNull EventFilterConfig config) {
         // quick hack for target entity and "target.type"
         if (targetType == null && targetEntity != null) {
-            this.targetType = targetEntity.getType().getKey();
+            this.targetType = api.getKey(targetEntity.getType());
         }
 
         // target type, handles: "target.type"
@@ -182,7 +188,7 @@ public final class EventFilterForm {
         Set<String> targetCategory = config.getTargetCategory();
         if (targetEntity != null && targetCategory != null && !isInCategory(targetEntity, targetCategory)) {
             coins.debug("Disallowed '%s' due to target entity '%s' not in category %s".formatted(
-                eventIdentifier, targetEntity.getType().getKey(), targetCategory.toString()
+                eventIdentifier, api.getKey(targetEntity.getType()), targetCategory.toString()
             ));
             return false;
         }

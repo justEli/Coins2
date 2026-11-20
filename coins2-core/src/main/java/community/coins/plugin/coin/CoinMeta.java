@@ -128,7 +128,7 @@ public final class CoinMeta {
             return Optional.empty();
         }
 
-        return getCoinCurrency(item).flatMap(name -> coins.getEconomyService().getCurrency(name));
+        return getCoinCurrency(item).flatMap(name -> coins.getConfigService().getCurrenciesConfig().getDefined(name));
     }
 
     // coin withdrawal

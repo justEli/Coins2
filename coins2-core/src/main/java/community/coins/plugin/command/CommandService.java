@@ -2,6 +2,7 @@ package community.coins.plugin.command;
 
 import community.coins.plugin.config.ConfigService;
 import community.coins.plugin.config.ConfigWarns;
+import community.coins.plugin.config.RegisterResult;
 import community.coins.plugin.language.EntryReplacement;
 import community.coins.plugin.language.Language;
 import net.kyori.adventure.text.Component;
@@ -37,7 +38,7 @@ public final class CommandService {
     public RegisterResult updateCommand(ConfigWarns.Named warns, DefinedCommand defined, ConfigurationSection config, ConfigService service, boolean firstRun) {
         CommandIdentifier<?> registered = commandIdentifiers.get(defined.getLogicIdentifier());
         if (registered == null) {
-            return RegisterResult.NO_LOGIC;
+            return RegisterResult.NOT_FOUND; // logic not found
         }
 
         // create the command object for the defined command name
@@ -46,7 +47,7 @@ public final class CommandService {
 
         // (re-)parse the config for this specific command
         if (!logic.parseConfig(warns, config, service)) {
-            return RegisterResult.CONFIG_FAIL;
+            return RegisterResult.FAIL; // config parsing failed
         }
 
         if (alreadyRegistered || !firstRun) {

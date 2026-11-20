@@ -1,6 +1,8 @@
 package community.coins.plugin.economy.storage;
 
 import community.coins.plugin.CoinsCore;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
@@ -14,21 +16,34 @@ import static community.coins.plugin.economy.storage.BalanceData.rounded;
  */
 public final class CurrencyBalanceStorage {
     private final CoinsCore coins;
-    private final CurrencyStorage storage;
+    private CurrencyStorage storage;
 
     private final Map<UUID, Double> balancesCache = new ConcurrentHashMap<>();
     private final Map<UUID, Double> offlineCoinsReceived = new ConcurrentHashMap<>();
 
-    public CurrencyBalanceStorage(CoinsCore coins, CurrencyStorage storage) {
+    /// always set a CurrencyStorage after creating this
+    public CurrencyBalanceStorage(CoinsCore coins) {
         this.coins = coins;
+    }
+
+    /// can be used after reload to set another storage handler. should be run after sql started to open a connection
+    public void updateStorageImplementation(@NotNull CurrencyStorage storage) {
         this.storage = storage;
 
         storage.loadBalances(balances -> {
+            balancesCache.clear();
+            offlineCoinsReceived.clear();
+
             for (BalanceData balance : balances) {
                 balancesCache.put(balance.uuid(), balance.balance());
                 offlineCoinsReceived.put(balance.uuid(), balance.receivedInactive());
             }
         });
+    }
+
+    /// @return only null if not set on startup, it's not used then either
+    public @Nullable CurrencyStorage getStorage() {
+        return storage;
     }
 
     public boolean hasExistingBalance(UUID uuid) {

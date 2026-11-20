@@ -3,6 +3,8 @@ package community.coins.plugin.api;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,4 +31,6 @@ public interface ComponentApi {
     void applyDisplayName(Item item);
 
     Audience getAudience(CommandSender sender);
+
+    NamespacedKey getKey(Keyed keyed);
 }

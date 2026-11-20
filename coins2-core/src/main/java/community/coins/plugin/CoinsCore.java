@@ -41,8 +41,7 @@ import java.util.logging.Level;
  * @since April 27, 2026
  */
 public abstract class CoinsCore extends JavaPlugin {
-    // todo fix balance cache of other plugin after /mint reload
-    // todo fix BalanceChangeEvent with wrong previous balance after /mint reload?
+    // todo move VaultEconomyProvider to onLoad?
     // todo configurable colors for primary, var, error, etc.
     // todo add a 'physical' economy/currency (see EconomyService)
     // todo create file if no cached content was found (FileStorage#modifyFile)
@@ -52,7 +51,7 @@ public abstract class CoinsCore extends JavaPlugin {
     private static final ExecutorService VIRTUAL_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         loadImplementations();
 
         // scheduler setup with folia and Bukkit support
@@ -61,6 +60,11 @@ public abstract class CoinsCore extends JavaPlugin {
 
         // basic utilities
         this.persistentData = new PersistentData(this);
+    }
+
+    @Override
+    public void onEnable() {
+        loadRegistrars();
 
         // register basic services
         this.commandService = new CommandService();
@@ -212,7 +216,12 @@ public abstract class CoinsCore extends JavaPlugin {
 
     public abstract PluginAttributes getAttributes();
 
+    /// simple api implementations, called within onLoad
     public abstract void loadImplementations();
 
+    /// registrars that require registering events, called within onEnable
+    public abstract void loadRegistrars();
+
+    /// command identifier registration, just before configs are loaded
     public abstract void loadCommands();
 }

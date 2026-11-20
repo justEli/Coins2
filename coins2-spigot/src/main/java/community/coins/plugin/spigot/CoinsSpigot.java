@@ -34,8 +34,10 @@ public final class CoinsSpigot extends CoinsCore {
         this.componentApi = new ComponentApiImpl(this);
         this.itemParseApi = new ItemParseApiImpl(this);
         this.pluginAttributes = new PluginAttributesImpl(this);
+    }
 
-        // registering registrars of events
+    @Override
+    public void loadRegistrars() {
         new AdvancementDisplayRegistrar(this);
         new PickupItemRegistrar(this);
     }

@@ -27,7 +27,7 @@ public final class DefinedCoinDrop {
     public DefinedCoinDrop(ConfigService service, ConfigWarns.Named warns, ConfigurationSection section, String identifier) {
         double total = 0;
         for (String coinName : section.getKeys(false)) {
-            Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefinedItem(coinName);
+            Optional<DefinedCoin> definedCoin = service.getCoinsConfig().getDefined(coinName);
             if (definedCoin.isEmpty()) {
                 warns.warn("Cannot add coin '%s' for drop '%s' because coin is not defined.".formatted(coinName, identifier));
                 continue;

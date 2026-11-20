@@ -1,7 +1,6 @@
 package community.coins.plugin.economy;
 
 import community.coins.plugin.CoinsCore;
-import community.coins.plugin.config.ConfigWarns;
 import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.economy.hook.VaultEconomyHook;
 import net.kyori.adventure.text.Component;
@@ -10,10 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,83 +27,20 @@ public final class EconomyService implements Listener {
     public EconomyService(CoinsCore coins) {
         this.coins = coins;
         coins.parseEventHandlers(this);
-    }
 
-    // supported economies
-
-    private void loadSupportedEconomies() {
-        addSupportedPlugin(new VaultEconomyHook(coins, this));
+        // add economy hooks that this plugin supports
+        addSupportedEconomy(new VaultEconomyHook(coins, this));
     }
 
     // String = plugin's name (case-sensitive)
-    private final Map<String, EconomyHook> economyHooks = new HashMap<>();
+    private final Map<String, EconomyHook> supportedEconomies = new HashMap<>();
 
-    private void addSupportedPlugin(EconomyHook hook) {
-        economyHooks.put(hook.getPluginName(), hook);
+    private void addSupportedEconomy(EconomyHook hook) {
+        supportedEconomies.put(hook.getPluginName(), hook);
     }
 
     public Optional<EconomyHook> getSupportedEconomy(String pluginName) {
-        return Optional.ofNullable(economyHooks.get(pluginName));
-    }
-
-    // registering currencies
-
-    private final Map<String, DefinedCurrency> currencies = new HashMap<>();
-    private final Map<String, Integer> pluginCurrenciesRegistered = new HashMap<>();
-
-    @NullMarked
-    public boolean registerCurrency(ConfigWarns.Named warns, DefinedCurrency currency) {
-        EconomyHook hook = currency.getHook();
-        String pluginName = currency.getHook().getPluginName();
-
-        if (!hook.isMultiCurrencySupported() && getAmountOfCurrencies(hook) > 0) {
-            warns.warn("""
-                Cannot register currency '%s' for plugin '%s' as it only supports one currency at most."""
-                .formatted(currency.getIdentifier(), pluginName)
-            );
-            return false;
-        }
-
-        // register the currency at the economy
-        boolean registered = hook.registerCurrency(warns, currency);
-        if (!registered) {
-            warns.warn("""
-                Cannot register currency '%s' because plugin '%s' is not properly installed, or is not supported."""
-                .formatted(currency.getIdentifier(), pluginName)
-            );
-            return false;
-        }
-
-        currencies.put(currency.getIdentifier(), currency); // save currency
-
-        // update counter
-        int amount = pluginCurrenciesRegistered.computeIfAbsent(pluginName, _ -> 0);
-        pluginCurrenciesRegistered.put(pluginName, amount + 1);
-        return true;
-    }
-
-    public Optional<DefinedCurrency> getCurrency(@NotNull String currency) {
-        return Optional.ofNullable(currencies.get(currency.toLowerCase()));
-    }
-
-    public int getAmountOfCurrencies(@NotNull EconomyHook plugin) {
-        return pluginCurrenciesRegistered.computeIfAbsent(plugin.getPluginName(), _ -> 0);
-    }
-
-    // this is always called just before currencies.yml is parsed (so on server start and /mintage reload)
-    public void clearEconomies() {
-        // clear currencies
-        currencies.clear();
-        pluginCurrenciesRegistered.clear();
-
-        // clear economies
-        economyHooks.values().forEach(EconomyHook::unregister);
-        economyHooks.clear();
-        loadSupportedEconomies();
-    }
-
-    public Collection<String> getCurrencyIdentifiers() {
-        return currencies.keySet();
+        return Optional.ofNullable(supportedEconomies.get(pluginName));
     }
 
     // coin deposits through coin items
@@ -120,7 +54,7 @@ public final class EconomyService implements Listener {
             String notFoundCurrency = coins.getCoinMeta().getCoinCurrency(coin).orElse("unknown");
             coins.getLogger().warning("""
                 Attached currency '%s' to coin with item type '%s' was not found. Consider to add it to 'currencies.yml' again."""
-                .formatted(notFoundCurrency, coin.getType().getKey())
+                .formatted(notFoundCurrency, coins.getComponentApi().getKey(coin.getType()))
             );
             return false;
         }

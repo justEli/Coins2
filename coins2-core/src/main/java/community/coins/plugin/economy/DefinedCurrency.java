@@ -27,7 +27,7 @@ public final class DefinedCurrency {
     private final Action action = new Action();
 
     public DefinedCurrency(String id, EconomyHook economyHook, int decimals, String symbol, String singularName, String pluralName, String format, String depositMessage, MessagePosition depositPosition) {
-        this.identifier = id.toLowerCase();
+        this.identifier = id; // already lowercase
         this.economyHook = economyHook;
         this.decimals = decimals;
         String decimalSuffix = decimals <= 0? "#" : "0".repeat(decimals);

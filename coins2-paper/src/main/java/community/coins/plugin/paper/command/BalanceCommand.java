@@ -50,7 +50,7 @@ public final class BalanceCommand extends BalanceCommandLogic {
             })
             .suggests((_, builder) -> {
                 suggestStartsWith(
-                    coins.getEconomyService().getCurrencyIdentifiers(),
+                    coins.getConfigService().getCurrenciesConfig().getDefinedKeys(),
                     builder.getRemainingLowerCase(), builder::suggest
                 );
 

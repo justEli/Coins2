@@ -138,7 +138,7 @@ public final class MintageCommand extends MintageCommandLogic {
             else if (args.length == 3) {
                 if (args[0].equalsIgnoreCase("value") && args[1].equalsIgnoreCase("set")) {
                     suggestStartsWith(
-                        coins.getEconomyService().getCurrencyIdentifiers(),
+                        coins.getConfigService().getCurrenciesConfig().getDefinedKeys(),
                         args[2].toLowerCase(), suggestions::add
                     );
                 }

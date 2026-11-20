@@ -51,7 +51,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
             return;
         }
 
-        Optional<DefinedCoin> coin = coins.getConfigService().getCoinsConfig().getDefinedItem(coinIdentifier);
+        Optional<DefinedCoin> coin = coins.getConfigService().getCoinsConfig().getDefined(coinIdentifier);
         if (coin.isEmpty()) {
             coins.sendMessage(sender, Language.COIN_NOT_FOUND.with(FILL_ID.filled(coinIdentifier)));
             return;
@@ -88,7 +88,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
             return;
         }
 
-        Optional<DefinedCurrency> currency = coins.getEconomyService().getCurrency(currencyName);
+        Optional<DefinedCurrency> currency = coins.getConfigService().getCurrenciesConfig().getDefined(currencyName);
         if (currency.isEmpty()) {
             coins.sendMessage(sender, Language.CURRENCY_NOT_FOUND.with(FILL_ID.filled(currencyName)));
             return;
@@ -108,7 +108,7 @@ public abstract class MintageCommandLogic extends CommandLogic {
             return;
         }
 
-        Optional<DefinedCoin> coin = coins.getConfigService().getCoinsConfig().getDefinedItem(coinIdentifier);
+        Optional<DefinedCoin> coin = coins.getConfigService().getCoinsConfig().getDefined(coinIdentifier);
         if (coin.isEmpty()) {
             coins.sendMessage(sender, Language.COIN_NOT_FOUND.with(FILL_ID.filled(coinIdentifier)));
             return;

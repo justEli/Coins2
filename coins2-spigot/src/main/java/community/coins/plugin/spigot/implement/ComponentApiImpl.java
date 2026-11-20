@@ -7,10 +7,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
+import org.bukkit.Keyed;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Translatable;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.registry.RegistryAware;
 import org.bukkit.scoreboard.Team;
 import org.jspecify.annotations.NullMarked;
 
@@ -70,5 +76,16 @@ public final class ComponentApiImpl implements ComponentApi {
     @Override
     public Audience getAudience(CommandSender sender) {
         return audiences.sender(sender);
+    }
+
+    // i don't understand spigot logic. keys can never be null unless "unknown", which never happens. but there's a whole
+    //  complicated mechanic built around it with RegistryAware and its isRegistered for god knows why
+    @Override
+    public NamespacedKey getKey(Keyed keyed) {
+        if (keyed instanceof RegistryAware registryAware && registryAware.isRegistered()) {
+            return registryAware.getKeyOrThrow();
+        }
+
+        return keyed.getKey();
     }
 }

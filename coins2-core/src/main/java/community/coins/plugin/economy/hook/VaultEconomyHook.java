@@ -2,10 +2,10 @@ package community.coins.plugin.economy.hook;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.config.ConfigWarns;
+import community.coins.plugin.config.RegisterResult;
 import community.coins.plugin.economy.DefinedCurrency;
 import community.coins.plugin.economy.EconomyHook;
 import community.coins.plugin.economy.EconomyService;
-import community.coins.plugin.economy.storage.CurrencyBalanceStorage;
 import community.coins.plugin.misc.MetricsHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
@@ -30,37 +30,39 @@ public final class VaultEconomyHook extends EconomyHook {
         super(coins, service, "Vault");
     }
 
+    // todo should this be moved to onLoad? Essentials does register(Economy.class, ..) there
     @Override
-    public boolean registerIntegration(ConfigWarns.Named warns, DefinedCurrency currency, CurrencyBalanceStorage storage) {
-        if (!isPluginEnabled()) {
-            return false;
-        }
-
+    protected RegisterResult registerProvider(ConfigWarns.Named warns, DefinedCurrency currency) {
         if (provider != null) {
-            return true;
+            // never re-create VaultEconomyProvider; plugins depend on the object that was first created
+            return RegisterResult.ALREADY_REGISTERED;
         }
 
-        // register as Vault economy service manager
-        // todo should this be moved to onLoad? Essentials does that
         try {
-            this.provider = new VaultEconomyProvider(coins, storage, currency);
+            // register as Vault economy service manager
+            this.provider = new VaultEconomyProvider(coins, currency);
             coins.getServer().getServicesManager().register(Economy.class, provider, coins, ServicePriority.Highest);
-            return true;
+            return RegisterResult.REGISTERED;
         }
-        catch (NullPointerException | NoClassDefFoundError _) {}
-        return false;
+        catch (NullPointerException | NoClassDefFoundError _) {
+            warns.warn("Cannot register integration for currency '%s' because plugin '%s' is not installed properly."
+                .formatted(currency.getIdentifier(), pluginName)
+            );
+        }
+        return RegisterResult.FAIL;
     }
 
     @Override
-    public boolean registerCurrency(ConfigWarns.Named warns, DefinedCurrency currency) {
+    public RegisterResult registerEconomy(ConfigWarns.Named warns, DefinedCurrency currency) {
         if (!isPluginEnabled()) {
-            warns.warn("Cannot register economy '%s' because the plugin is not installed.".formatted(name));
-            return false;
+            warns.warn("Cannot register economy '%s' because the plugin is not enabled or installed.".formatted(pluginName));
+            return RegisterResult.NOT_FOUND;
         }
 
         MetricsHandler.USING_ECONOMY_VAULT = true;
         if (economy != null) {
-            return true;
+            // plugin reload, so economy is already registered
+            return RegisterResult.ALREADY_REGISTERED;
         }
 
         try {
@@ -74,25 +76,17 @@ public final class VaultEconomyHook extends EconomyHook {
                     ? "currency '%s'".formatted(currency.getIdentifier())
                     : "plugin '%s'".formatted(pluginName);
 
-                coins.log(Level.INFO, "Using economy provider '%s', integrated by %s.".formatted(name, type));
-                return true;
+                coins.log(Level.INFO, "Using economy provider '%s', integrated by %s.".formatted(this.pluginName, type));
+                return RegisterResult.REGISTERED;
             }
         }
         catch (NullPointerException | NoClassDefFoundError _) {}
         warns.warn("""
             Found '%s', but there is no plugin installed that integrates this economy. There are two options to solve this: \
             Install a plugin that integrates and manages %s, or set `integration.enabled` to true for currency '%s'."""
-            .formatted(name, name, currency.getIdentifier()));
-        return false;
-    }
-
-    @Override
-    public void unregister() {
-        if (provider == null) {
-            return;
-        }
-
-        coins.getServer().getServicesManager().unregister(Economy.class, provider);
+            .formatted(pluginName, pluginName, currency.getIdentifier())
+        );
+        return RegisterResult.FAIL;
     }
 
     @Override
@@ -144,4 +138,14 @@ public final class VaultEconomyHook extends EconomyHook {
     public boolean isIntegrationSupported() {
         return true;
     }
+
+    // this should only ever be used when the entire plugin is purged, not after reload
+//    private void unregisterProvider() {
+//        if (provider == null) {
+//            return;
+//        }
+//
+//        coins.getServer().getServicesManager().unregister(Economy.class, provider);
+//        this.provider = null;
+//    }
 }

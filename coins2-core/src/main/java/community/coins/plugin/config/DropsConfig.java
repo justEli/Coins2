@@ -20,15 +20,16 @@ import java.util.concurrent.TimeUnit;
  * @since April 30, 2026
  */
 public final class DropsConfig extends FileConfig<DefinedDrop> {
-    private static final ScheduledExecutorService SCHEDULED_THREAD =
-        Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService SCHEDULED_THREAD = Executors.newSingleThreadScheduledExecutor();
 
     public DropsConfig(CoinsCore coins, ConfigService service) {
         super(coins, service, "drops.yml");
 
         // clean up unused cache
         SCHEDULED_THREAD.scheduleAtFixedRate(() -> {
-            getDefinedItems().forEach(DefinedDrop::cleanUpLocationCache);
+            for (DefinedDrop drop : getDefinedValues()) {
+                drop.cleanUpLocationCache();
+            }
             coins.debug("Cleared all location cooldown caches");
         }, 10, 10, TimeUnit.MINUTES);
     }
@@ -94,13 +95,13 @@ public final class DropsConfig extends FileConfig<DefinedDrop> {
             // now we have a DefinedDrop with EventType, EventFilterConfig and DefinedCoinDrop
             DefinedDrop definedDrop = new DefinedDrop(id, filterConfig, definedCoinDrop);
 
-            // register the DefinedDrop to EventType
+            // register the DefinedDrop to the specific EventType
             event.registerDrop(definedDrop);
 
             configured.put(id, definedDrop);
             coins.debug("Registered drop '%s' for event type '%s'.".formatted(id, definedEvent));
         }
 
-        putDefinedItems(configured, "drop", "drops");
+        putDefined(configured, "drop", "drops");
     }
 }

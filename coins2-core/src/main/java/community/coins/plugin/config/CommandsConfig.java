@@ -2,7 +2,6 @@ package community.coins.plugin.config;
 
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.command.DefinedCommand;
-import community.coins.plugin.command.RegisterResult;
 import community.coins.plugin.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -71,7 +70,7 @@ public final class CommandsConfig extends FileConfig<DefinedCommand> {
             configured.put(name, definedCommand);
         }
 
-        putDefinedItems(configured, "command", "commands");
+        putDefined(configured, "command", "commands");
         firstRun.set(false);
     }
 }

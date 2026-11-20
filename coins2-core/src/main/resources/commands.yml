@@ -41,7 +41,7 @@ commands:
     #  command for withdrawing coins in another currency. For example, you could make a
     #  /bag command that withdraws a specific currency to just "Bag of Coins". To do that,
     #  copy this section, give it another name instead of 'withdraw', and change it to a
-    #  different label.
+    #  different label at `labels`.
     logic: 'withdraw'
     enabled: true
     # By default, /withdraw is the only command label.

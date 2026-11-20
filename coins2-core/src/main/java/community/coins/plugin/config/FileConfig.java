@@ -19,13 +19,13 @@ public abstract class FileConfig<T> extends BasicConfig {
         super(coins, service, fileName);
     }
 
-    private final Map<String, T> defined = new HashMap<>();
+    protected final Map<String, T> defined = new HashMap<>();
 
-    public Optional<T> getDefinedItem(@NotNull String identifier) {
+    public Optional<T> getDefined(@NotNull String identifier) {
         return Optional.ofNullable(defined.get(identifier.toLowerCase()));
     }
 
-    public Collection<T> getDefinedItems() {
+    public Collection<T> getDefinedValues() {
         return defined.values();
     }
 
@@ -33,7 +33,7 @@ public abstract class FileConfig<T> extends BasicConfig {
         return defined.keySet();
     }
 
-    protected void putDefinedItems(Map<String, T> values, String typeSingular, String typePlural) {
+    protected void putDefined(Map<String, T> values, String typeSingular, String typePlural) {
         defined.clear();
         defined.putAll(values);
 

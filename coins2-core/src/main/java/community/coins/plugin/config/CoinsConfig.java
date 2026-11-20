@@ -81,7 +81,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
             }
 
             String currencyName = section.getString("currency", defaultCurrency);
-            Optional<DefinedCurrency> currency = coins.getEconomyService().getCurrency(currencyName);
+            Optional<DefinedCurrency> currency = service.getCurrenciesConfig().getDefined(currencyName);
             if (currency.isEmpty()) {
                 warn("Cannot register coin '%s' because currency '%s' does not exist.".formatted(id, currencyName));
                 continue;
@@ -177,7 +177,7 @@ public final class CoinsConfig extends FileConfig<DefinedCoin> {
             configured.put(id, new DefinedCoin(id, itemStack, singularNameComponent, pluralNameComponent, currency.get()));
         }
 
-        putDefinedItems(configured, "coin", "coins");
+        putDefined(configured, "coin", "coins");
     }
 
     // parsing specific types

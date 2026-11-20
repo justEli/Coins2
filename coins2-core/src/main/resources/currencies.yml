@@ -48,12 +48,12 @@ currencies:
     #  SQL, additional settings (host, port, etc.) need to be configured at 'storage' at
     #  the top of the config.
     integration:
-      # Setting from 'true' to 'false' requires a server restart, to give other plugins a
-      #  chance to integrate the plugin.
+      # Changing `enabled` requires a server reboot, because other plugins may depend on
+      #  the integration that may otherwise break.
       enabled: false
       storage: 'file' # 'file' or 'sql'
     # Amount of decimal points to render values for this currency. Decimals set to 2 will
-    #  render as 1.23.
+    #  render and get saved as '1.23'.
     decimals: 2
     # Currency symbol for this currency. Can be used as a placeholder by using {symbol}.
     symbol: '¢'

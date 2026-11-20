@@ -100,7 +100,7 @@ public final class MintageCommand extends MintageCommandLogic {
                     )
                     .suggests((_, builder) -> {
                         suggestStartsWith(
-                            coins.getEconomyService().getCurrencyIdentifiers(),
+                            coins.getConfigService().getCurrenciesConfig().getDefinedKeys(),
                             builder.getRemainingLowerCase(), builder::suggest
                         );
 

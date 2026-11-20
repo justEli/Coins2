@@ -1,52 +1,32 @@
 package community.coins.plugin.config;
 
 import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import community.coins.plugin.CoinsCore;
 import community.coins.plugin.economy.DefinedCurrency;
 import community.coins.plugin.economy.EconomyHook;
 import community.coins.plugin.economy.storage.BalanceData;
-import community.coins.plugin.economy.storage.CurrencyBalanceStorage;
 import community.coins.plugin.economy.storage.CurrencyStorage;
 import community.coins.plugin.economy.storage.FileStorage;
+import community.coins.plugin.economy.storage.SqlConnection;
 import community.coins.plugin.economy.storage.SqlStorage;
 import community.coins.plugin.misc.MetricsHandler;
 import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jspecify.annotations.Nullable;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 /**
  * @author Eli
  * @since May 05, 2026
  */
 public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
+    private final SqlConnection sql;
     public CurrenciesConfig(CoinsCore coins, ConfigService service) {
         super(coins, service, "currencies.yml");
-
-        coins.addShutdownTask(() -> {
-            closeConnection(); // submit to sql thread that connection must be closed
-            try {
-                // start closing the thread and wait 10 seconds at most for tasks to finish and connection to close
-                SQL_EXECUTOR.shutdown();
-                if (!SQL_EXECUTOR.awaitTermination(10, TimeUnit.SECONDS)) {
-                    SQL_EXECUTOR.shutdownNow();
-                }
-            }
-            catch (InterruptedException _) {
-                SQL_EXECUTOR.shutdownNow();
-            }
-        });
+        this.sql = new SqlConnection(coins);
     }
 
     @Override
@@ -54,7 +34,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
         var config = getOrCreateConfig();
 
         // always close the previous sql connection first
-        closeConnection();
+        sql.closeConnection();
 
         // database config first
         boolean sqlEnabled = config.getBoolean("storage.sql.enabled", false);
@@ -63,18 +43,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
             hikariConfig.setJdbcUrl(config.getString("storage.sql.url"));
             hikariConfig.setUsername(config.getString("storage.sql.username"));
             hikariConfig.setPassword(config.getString("storage.sql.password"));
-            SQL_EXECUTOR.submit(() -> {
-                try {
-                    this.hikari = new HikariDataSource(hikariConfig);
-                }
-                catch (Exception exception) {
-                    Throwable cause = exception.getCause();
-                    coins.log(Level.SEVERE,
-                        "Failed to establish SQL connection: " + exception.getMessage()
-                        + (cause == null? "" : " (%s)".formatted(cause.getMessage()))
-                    );
-                }
-            });
+            sql.openConnection(hikariConfig);
         }
 
         // default values for currencies
@@ -94,14 +63,13 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
             return;
         }
 
-        // clear all currencies and reset economies before parsing all updates
-        coins.getEconomyService().clearEconomies();
-
         // clear metrics
         MetricsHandler.USING_ECONOMY_VAULT = false;
         MetricsHandler.STORAGE_INTEGRATION = "none";
 
+        Map<String, DefinedCurrency> previousCurrencies = new HashMap<>(defined); // track which ones were removed
         Map<String, DefinedCurrency> configured = new HashMap<>();
+
         for (String name : currenciesSection.getKeys(false)) {
             ConfigurationSection section = currenciesSection.getConfigurationSection(name);
             if (section == null) {
@@ -109,19 +77,54 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
             }
 
             String id = Util.toIdentifier(name);
-            String economyName = section.getString("economy");
-            if (economyName == null) {
+
+            // todo if a new currency is added on reload (doesn't contain previousCurrencies) show them
+            //  a warning that it may not be as expected because the integration got registered in runtime.
+            //  but this would only be for another economy integration than Vault that supports multi currency
+
+            String pluginName = section.getString("economy");
+            boolean integrationEnabled = section.getBoolean("integration.enabled", defaultIntegrationEnabled);
+
+            // don't allow to change the economy plugin or integration toggle during a reload
+            DefinedCurrency previousCurrency = previousCurrencies.get(id); // from before a reload
+            boolean hasPreviousCurrency = previousCurrency != null;
+
+            if (hasPreviousCurrency) {
+                if (!previousCurrency.getHook().getPluginName().equals(pluginName)) {
+                    // if plugin name at `economy` changed compared to the previous settings of the currency
+                    warn("""
+                        The economy plugin to use (at `economy`) for currency '%s' cannot be changed during a reload. \
+                        Rebooting the server allows the change.""".formatted(id)
+                    );
+                    pluginName = previousCurrency.getHook().getPluginName();
+                }
+
+                // previousStorage should never be null, unless there are different currencies for a plugin that
+                //  doesn't support it, but that shouldn't happen
+                var previousStorage = previousCurrency.getHook().getCurrencyStorage(previousCurrency);
+                if (previousStorage != null && (previousStorage.getStorage() == null) == integrationEnabled) {
+                    // if `integration.enabled` changed compared to the previous settings of the currency
+                    warn("""
+                        Plugin integration (at `integration.enabled`) for currency '%s' cannot be changed during a \
+                        reload. Rebooting the server allows the change.""".formatted(id)
+                    );
+                    integrationEnabled = previousStorage.getStorage() != null;
+                }
+            }
+
+            previousCurrencies.remove(id); // this currency still exists, so it was not removed
+
+            if (pluginName == null) {
                 warn("Cannot register currency '%s' because no economy or plugin is provided.".formatted(id));
                 continue;
             }
 
-            Optional<EconomyHook> plugin = coins.getEconomyService().getSupportedEconomy(economyName);
+            Optional<EconomyHook> plugin = coins.getEconomyService().getSupportedEconomy(pluginName);
             if (plugin.isEmpty()) {
-                warn("Cannot register currency '%s', because '%s' is not a supported plugin.".formatted(id, economyName));
+                warn("Cannot register currency '%s', because '%s' is not a supported plugin.".formatted(id, pluginName));
                 continue;
             }
 
-            boolean integrationEnabled = section.getBoolean("integration.enabled", defaultIntegrationEnabled);
             String integrationStorage = section.getString("integration.storage", defaultIntegrationStorage);
             int decimals = section.getInt("decimals", defaultDecimals);
             String symbol = section.getString("symbol", defaultSymbol);
@@ -134,8 +137,7 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
             MessagePosition position = Util.getEnum(MessagePosition.class, depositPosition);
             if (position == null) {
                 position = MessagePosition.ACTIONBAR;
-                warn("""
-                    Cannot set deposit message position for currency '%s' because '%s' is invalid."""
+                warn("Cannot set deposit message position for currency '%s' because '%s' is invalid."
                     .formatted(id, depositPosition)
                 );
             }
@@ -147,82 +149,88 @@ public final class CurrenciesConfig extends FileConfig<DefinedCurrency> {
                 );
             }
 
-            DefinedCurrency definedCurrency = new DefinedCurrency(
-                id, plugin.get(), decimals, symbol, singularName, pluralName, format, depositMessage, position
-            );
+            EconomyHook hook = plugin.get();
+            DefinedCurrency definedCurrency =
+                new DefinedCurrency(id, hook, decimals, symbol, singularName, pluralName, format, depositMessage, position);
 
+            if (!hook.isAllowedToRegister(definedCurrency)) {
+                warn("""
+                    Cannot register currency '%s' for plugin '%s' as it only supports one currency at most. Another currency \
+                    is already using this plugin integration. If this is a reload, you could reboot the server to try and \
+                    register the currency."""
+                    .formatted(id, pluginName)
+                );
+                continue;
+            }
+
+            boolean integrationSupported = hook.isIntegrationSupported();
+            if (integrationEnabled && !integrationSupported) {
+                warn("Cannot register economy integration for currency '%s' because it is not supported for plugin '%s'."
+                    .formatted(id, pluginName)
+                );
+                integrationEnabled = false;
+            }
+
+            // first we attempt to register a currency integration with the current plugin
             if (integrationEnabled) {
-                if (!plugin.get().isIntegrationSupported()) {
-                    warn("Cannot add economy integration for currency '%s' because it is not supported for plugin '%s'."
-                        .formatted(id, economyName)
+                // register that this currency should be handled by this plugin
+                CurrencyStorage storage = null;
+                if ("sql".equalsIgnoreCase(integrationStorage)) {
+                    if (sqlEnabled) {
+                        storage = new SqlStorage(sql, definedCurrency.getIdentifier());
+                        MetricsHandler.STORAGE_INTEGRATION = "sql";
+                    }
+                    else {
+                        warn("Cannot register economy integration '%s' for currency '%s' because SQL storage is not configured."
+                            .formatted(pluginName, id)
+                        );
+                    }
+                }
+                else if ("file".equalsIgnoreCase(integrationStorage)) {
+                    storage = new FileStorage(coins, definedCurrency.getIdentifier());
+                    MetricsHandler.STORAGE_INTEGRATION = "file";
+                }
+
+                if (storage == null) {
+                    warn("Cannot register economy integration '%s' for currency '%s' because storage '%s' is invalid."
+                        .formatted(pluginName, id, integrationStorage)
                     );
                 }
                 else {
-                    // register that this currency should be handled by this plugin
-                    CurrencyStorage storage = null;
-                    if ("sql".equalsIgnoreCase(integrationStorage)) {
-                        if (sqlEnabled) {
-                            storage = new SqlStorage(coins, service, definedCurrency.getIdentifier());
-                            MetricsHandler.STORAGE_INTEGRATION = "sql";
-                        }
-                        else {
-                            warn("Cannot register integration for currency '%s' because SQL storage is not configured.".formatted(id));
-                        }
-                    }
-                    else if ("file".equalsIgnoreCase(integrationStorage)) {
-                        storage = new FileStorage(coins, definedCurrency.getIdentifier());
-                        MetricsHandler.STORAGE_INTEGRATION = "file";
-                    }
-
-                    if (storage == null) {
-                        warn("Cannot register integration for currency '%s' because storage '%s' is invalid."
-                            .formatted(id, integrationStorage)
-                        );
-                    }
-                    else {
-                        definedCurrency.getHook().registerIntegration(
-                            configWarns, definedCurrency, new CurrencyBalanceStorage(coins, storage)
-                        );
-                    }
+                    // either register the currency to be integrated by this plugin, or update the currency's storage
+                    definedCurrency.getHook().updateIntegration(configWarns, definedCurrency, storage);
                 }
             }
 
-            // register the currency for the given plugin/economy
-            if (coins.getEconomyService().registerCurrency(configWarns, definedCurrency)) {
-                configured.put(id, definedCurrency);
+            // register or update the currency for the given plugin hook (either handled by this plugin or another)
+            RegisterResult registeredEconomy = hook.registerEconomy(configWarns, definedCurrency);
+            if (registeredEconomy == RegisterResult.NOT_FOUND || registeredEconomy == RegisterResult.FAIL) {
+                warn("Cannot register currency '%s' because plugin '%s' is not properly installed, or is not supported."
+                    .formatted(id, pluginName)
+                );
+                continue;
             }
+
+            configured.put(id, definedCurrency);
         }
 
-        putDefinedItems(configured, "currency", "currencies");
+        // currencies that were removed from the config after reload
+        for (var entry : previousCurrencies.entrySet()) {
+            warn("""
+                Currency '%s' was removed from the config, which can cause problems with the current setup. Please reboot the \
+                server to confirm the removal of this currency. For now, it will continue to function using the old settings. \
+                You can simply re-add the currency and reload, to get the currency to work properly again."""
+                .formatted(entry.getKey())
+            );
+
+            // add them again with their old settings
+            configured.put(entry.getKey(), entry.getValue());
+        }
+
+        putDefined(configured, "currency", "currencies");
 
         if (configured.isEmpty()) {
             warn("No currencies have been registered. This plugin needs at least one currency to function.");
         }
-    }
-
-    // queue for submitting file changes
-    public static final ExecutorService SQL_EXECUTOR = Executors.newSingleThreadExecutor();
-    static {
-        SQL_EXECUTOR.submit(() -> Thread.currentThread().setName("async-sql-io-thread"));
-    }
-
-    private HikariDataSource hikari;
-
-    /// gets an SQL connection from the pool
-    public @Nullable Connection getConnection() throws SQLException {
-        if (hikari == null) {
-            return null;
-        }
-
-        return hikari.getConnection();
-    }
-
-    /// submits to the single threaded sql executor that the connection must be closed
-    private void closeConnection() {
-        SQL_EXECUTOR.submit(() -> {
-            if (hikari != null && !hikari.isClosed()) {
-                hikari.close();
-            }
-        });
     }
 }

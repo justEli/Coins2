@@ -1,4 +1,4 @@
-package community.coins.plugin.command;
+package community.coins.plugin.config;
 
 /**
  * @author Eli
@@ -6,7 +6,7 @@ package community.coins.plugin.command;
  */
 public enum RegisterResult {
     REGISTERED,
-    NO_LOGIC,
-    CONFIG_FAIL,
+    NOT_FOUND,
+    FAIL,
     ALREADY_REGISTERED
 }

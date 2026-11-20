@@ -48,11 +48,11 @@ public abstract class BalanceCommandLogic extends CommandLogic {
                 return;
             }
 
-            showBalance(sender, coins.getConfigService().getCurrenciesConfig().getDefinedItems().iterator().next(), target);
+            showBalance(sender, coins.getConfigService().getCurrenciesConfig().getDefinedValues().iterator().next(), target);
             return;
         }
 
-        Optional<DefinedCurrency> currency = coins.getEconomyService().getCurrency(currencyId);
+        Optional<DefinedCurrency> currency = coins.getConfigService().getCurrenciesConfig().getDefined(currencyId);
         if (currency.isEmpty()) {
             coins.sendMessage(sender, Language.CURRENCY_NOT_FOUND.with(FILL_ID.filled(currencyId)));
             return;
@@ -112,7 +112,7 @@ public abstract class BalanceCommandLogic extends CommandLogic {
 
         String currencyName = section.getString("currency");
         if (currencyName != null) {
-            Optional<DefinedCurrency> currency = service.getCurrenciesConfig().getDefinedItem(currencyName.toLowerCase());
+            Optional<DefinedCurrency> currency = service.getCurrenciesConfig().getDefined(currencyName);
             if (currency.isEmpty()) {
                 warns.warn("Cannot register command '%s' because currency '%s' does not exist.".formatted(defined.getName(), currencyName));
                 return false;
