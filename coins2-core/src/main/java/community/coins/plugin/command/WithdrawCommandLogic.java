@@ -8,6 +8,7 @@ import community.coins.plugin.economy.DefinedCurrency;
 import community.coins.plugin.language.Language;
 import community.coins.plugin.util.ComponentUtil;
 import community.coins.plugin.util.Filler;
+import community.coins.plugin.util.MessagePosition;
 import community.coins.plugin.util.Util;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
@@ -40,9 +41,23 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
     private final AtomicReference<Component> itemName =  new AtomicReference<>();
     private final TreeMap<Long, DefinedCoin> coinValues = new TreeMap<>();
     private final Set<Action> depositActions = ConcurrentHashMap.newKeySet();
+    private final AtomicReference<Component> actionMessage = new AtomicReference<>();
+    private final AtomicReference<MessagePosition> actionPosition = new AtomicReference<>();
 
     @Override
     public boolean parseConfig(ConfigWarns.Named warns, ConfigurationSection section, ConfigService service) {
+        // deposit-actions
+        depositActions.clear();
+        for (String actionString : section.getStringList("deposit-actions")) {
+            try {
+                Action action = Action.valueOf(actionString.toUpperCase());
+                depositActions.add(action);
+            }
+            catch (IllegalArgumentException _) {
+                warns.warn("Deposit action '%s' to use for command '%s' does not exist.".formatted(actionString, defined.getName()));
+            }
+        }
+
         // disabled-worlds
         disabledWorldUuids.clear();
         for (String worldName : section.getStringList("disabled-worlds")) {
@@ -59,6 +74,17 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
 
         // item-name
         itemName.set(ComponentUtil.parse(section.getString("item-name", "<var>{value} {coin.name}")));
+
+        // message, position
+        String rawMessage = section.getString("message");
+        if (rawMessage == null) {
+            actionMessage.set(null);
+            actionPosition.set(null);
+        }
+        else {
+            actionMessage.set(ComponentUtil.parse(rawMessage));
+            actionPosition.set(Util.getEnum(MessagePosition.class, section.getString("position"), MessagePosition.ACTIONBAR));
+        }
 
         // coins
         ConfigurationSection coinsSection = section.getConfigurationSection("coins");
@@ -82,18 +108,6 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
         if (coinValues.isEmpty()) {
             warns.warn("Cannot register command '%s' because there are no coins defined to give.".formatted(defined.getName()));
             return false;
-        }
-
-        // deposit-actions
-        depositActions.clear();
-        for (String actionString : section.getStringList("deposit-actions")) {
-            try {
-                Action action = Action.valueOf(actionString.toUpperCase());
-                depositActions.add(action);
-            }
-            catch (IllegalArgumentException _) {
-                warns.warn("Deposit action '%s' to use for command '%s' does not exist.".formatted(actionString, defined.getName()));
-            }
         }
 
         return true;
@@ -171,9 +185,19 @@ public abstract class WithdrawCommandLogic extends CommandLogic {
 
             if (transaction.withdraw(player.getUniqueId(), cost)) {
                 coins.getScheduler().runEntityTask(player, () -> player.getInventory().addItem(item));
+
+                Component formatted = currency.getFormatMessage(cost);
                 coins.sendMessage(sender, Language.WITHDRAW_GIVE.with(
-                    Filler.AMOUNT.filled(amount), Filler.COIN.filled(name), Filler.PRICE.filled(currency.getFormatMessage(cost))
+                    Filler.AMOUNT.filled(amount), Filler.COIN.filled(name), Filler.PRICE.filled(formatted)
                 ));
+
+                // send an action message if configured, usually in the action bar
+                if (actionMessage.get() != null && actionPosition.get() != null) {
+                    Component message = actionMessage.get()
+                        .replaceText(builder -> builder.matchLiteral("{currency.format}").replacement(formatted))
+                        .replaceText(builder -> builder.matchLiteral("{amount}").replacement(currency.getDecimalFormatted(cost)));
+                    coins.sendMessage(sender, actionPosition.get(), message);
+                }
             }
             else {
                 coins.sendMessage(sender, Language.TRANSACTION_FAIL);

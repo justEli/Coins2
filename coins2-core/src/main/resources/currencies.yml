@@ -19,8 +19,8 @@ default:
   deposit:
     # Message to display when coins of this currency are deposited. Supports coloring in
     #  minimessage format. The position to show this message at can be 'actionbar',
-    #  'subtitle', 'title', or 'chat'.
-    message: '<#148C30>↑ <#6DD47E>{format}'
+    #  'subtitle', 'title', or 'chat'. The color of {format} can be changed above here.
+    message: '<#148C30>↑ {format}'
     position: 'actionbar'
 
 # Settings when storage is used. Balances are not handled by Coins by default. Only if you

@@ -123,7 +123,7 @@ public abstract class CoinsCore extends JavaPlugin {
     }
 
     private static final Title.Times TITLE_DURATION = Title.Times.times(
-        Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500)
+        Duration.ofMillis(200), Duration.ofSeconds(2), Duration.ofMillis(500)
     );
 
     public void sendMessage(CommandSender sender, MessagePosition position, Component component) {

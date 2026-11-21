@@ -61,6 +61,13 @@ commands:
     #  {coin.name}     = The name of the coin item, including its colors.
     #  {currency.name} = The (unformatted) currency name of the coin.
     item-name: '<var>{value} {coin.name}'
+    # An additional action message can be displayed when coins are withdrawn, when the
+    #  command is executed. The tags <coins> and <money> simply indicate the color. The
+    #  value can be displayed in its currency format and color using '{currency.format}'.
+    #  Alternatively, '{amount}' can be used.
+    message: '<coins>→ {currency.format}'
+    # The position to show the message at: 'actionbar', 'subtitle', 'title', or 'chat'.
+    position: 'actionbar'
     # Coin identifiers can be used to set the appearance of the coin, depending on the
     #  value. Value starts at 1, and the last item in the list is the maximum value that
     #  can be withdrawn. By default, 10,000 is the maximum that can be withdrawn.

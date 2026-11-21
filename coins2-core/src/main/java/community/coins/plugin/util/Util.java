@@ -3,6 +3,7 @@ package community.coins.plugin.util;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -70,7 +71,7 @@ public final class Util {
         return OptionalInt.of(millis);
     }
 
-    public static <T extends Enum<T>> @Nullable T getEnum(Class<T> type, String value) {
+    public static <T extends Enum<T>> @Nullable T getEnum(@NotNull Class<T> type, @Nullable String value) {
         if (value == null) {
             return null;
         }
@@ -79,6 +80,11 @@ public final class Util {
         catch (IllegalArgumentException | NullPointerException exception) {
             return null;
         }
+    }
+
+    public static <T extends Enum<T>> @NotNull T getEnum(@NotNull Class<T> type, @Nullable String value, @NotNull T defaultValue) {
+        T nullableEnum = getEnum(type, value);
+        return nullableEnum == null? defaultValue : nullableEnum;
     }
 
     public static double toRoundedMoneyDecimals(double value, int decimals) {
